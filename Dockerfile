@@ -97,9 +97,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # /usr/bin/crackmapexec, so symlink nxc there rather than touching that tool's code.
 # rustc/cargo: NetExec depends on `aardwolf` (an RDP library), which has a Rust extension
 # module (aardwolf/utils/rlers) - confirmed via a real build attempt: "error: can't find Rust
-# compiler".
-RUN apt-get update && apt-get install -y --no-install-recommends rustc cargo \
-    && rm -rf /var/lib/apt/lists/*
+# compiler". Debian bookworm's apt `rustc` package (1.63.0) turned out to be too old for one of
+# aardwolf's own transitive deps (needs 1.71+, confirmed via another real build attempt) - using
+# rustup for a current toolchain instead of the frozen distro package.
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
+ENV PATH="/root/.cargo/bin:${PATH}"
 RUN pip3 install --break-system-packages --no-cache-dir "git+https://github.com/Pennyw0rth/NetExec" \
     && ln -s "$(command -v nxc)" /usr/bin/crackmapexec
 
