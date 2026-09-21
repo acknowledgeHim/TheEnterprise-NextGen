@@ -111,8 +111,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # install.sh: final utility tools (lines 482-483) - p7zip-full already installed above.
-RUN apt-get update && apt-get install -y --no-install-recommends nikto \
-    && rm -rf /var/lib/apt/lists/*
+# nikto isn't in Debian's `main` component (confirmed via a real build attempt: "Unable to
+# locate package nikto" - it's actually in `non-free`, per sources.debian.org). Rather than
+# enabling a whole new apt component for one package, clone it straight from source - it's a
+# Perl script with no build step. libnet-ssleay-perl is added since nikto needs it for HTTPS
+# targets, which apt would otherwise have pulled in automatically as a package dependency.
+RUN apt-get update && apt-get install -y --no-install-recommends perl libnet-ssleay-perl \
+    && rm -rf /var/lib/apt/lists/* \
+    && git clone --depth 1 https://github.com/sullo/nikto.git $PENTESTDIR/nikto \
+    && chmod +x $PENTESTDIR/nikto/program/nikto.pl \
+    && ln -s $PENTESTDIR/nikto/program/nikto.pl /usr/local/bin/nikto
 
 # ---------------------------------------------------------------------------
 # External tool installs (install.sh lines ~55-475). Typos/bugs in the
