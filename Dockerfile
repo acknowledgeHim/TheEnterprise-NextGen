@@ -223,8 +223,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends pkg-config libu
     && rm -rf /var/lib/apt/lists/*
 RUN go install github.com/sensepost/ruler@latest \
     && go install github.com/OJ/gobuster/v3@latest \
-    && go install github.com/bettercap/bettercap@latest \
     && go install github.com/tomsteele/blacksheepwall@latest
+# bettercap's dns_spoof module uses github.com/gobwas/glob's old `Glob` interface
+# (Compile returning `(Glob, error)`), pinned via Gopkg.lock to a pre-v1.0.0 commit.
+# `go install bettercap@latest` has no go.sum to hold that pin, so it resolves glob
+# to its own latest tag v1.0.0, which replaced that interface with a `*Pattern`
+# struct - "undefined: glob.Glob" (confirmed by diffing v0.2.3 vs v1.0.0 of
+# gobwas/glob: v1.0.0 is the breaking rewrite). Build bettercap in a throwaway
+# module instead, where `go get` (not `go mod tidy`, which drops requires that
+# nothing in the empty module imports) can pin the transitive dep to v0.2.3, the
+# last tag with the interface bettercap's code expects; verified end-to-end
+# locally that this resolves and compiles clean with glob held at v0.2.3.
+RUN mkdir -p /tmp/bettercap-build && cd /tmp/bettercap-build \
+    && go mod init bettercap-build \
+    && go get github.com/gobwas/glob@v0.2.3 \
+    && go get github.com/bettercap/bettercap@v2.24.1+incompatible \
+    && go build -o "$GOBIN/bettercap" github.com/bettercap/bettercap \
+    && cd / && rm -rf /tmp/bettercap-build
 # OWASP Amass moved orgs (github.com/OWASP/Amass -> github.com/owasp-amass/amass) and is
 # now v4+ with a /v4 module path; verify against amass's current README if this 404s.
 RUN go install -v github.com/owasp-amass/amass/v4/...@master || true
