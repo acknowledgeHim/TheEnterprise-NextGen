@@ -95,6 +95,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # .../nxc both 404) - its own README documents installing straight from git. That gives an `nxc`
 # console script (per its pyproject.toml). tools/credential/john_local_la.py hardcodes the path
 # /usr/bin/crackmapexec, so symlink nxc there rather than touching that tool's code.
+# rustc/cargo: NetExec depends on `aardwolf` (an RDP library), which has a Rust extension
+# module (aardwolf/utils/rlers) - confirmed via a real build attempt: "error: can't find Rust
+# compiler".
+RUN apt-get update && apt-get install -y --no-install-recommends rustc cargo \
+    && rm -rf /var/lib/apt/lists/*
 RUN pip3 install --break-system-packages --no-cache-dir "git+https://github.com/Pennyw0rth/NetExec" \
     && ln -s "$(command -v nxc)" /usr/bin/crackmapexec
 
