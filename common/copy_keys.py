@@ -1,3 +1,6 @@
+import os
+
+from common import print_text
 from enterprise_conf import BING_API_KEY, GOOGLE_CSE_API_KEY, SHODAN_API_KEY, GITHUB_ACCESS_TOKEN, BUILTWITH_API, \
     CENSYSIO_ID, CENSYSIO_SECRET, FACEBOOK_ACCESS_TOKEN, FLICKR_API, GOOGLE_API, GOOGLE_CSE_CX, HASHES_API, \
     IPINFODB_API, JIGSAW_API, JIGSAW_PASSWORD, JIGSAW_USERNAME, LINKEDIN_API, LINKEDIN_SECRET, PWNDEDLIST_API, \
@@ -6,6 +9,8 @@ from enterprise_conf import BING_API_KEY, GOOGLE_CSE_API_KEY, SHODAN_API_KEY, GI
     INSTAGRAM_TOKEN, INSTAGRAM_CLIENT_ID, INSTAGRAM_CLIENT_SECRET, FULLCONTACT_API, MAILBOXLAYER_API, \
     VIRUSTOTAL_PUBLIC_API, GITHUB_TRAVIS_KEY
 
+DATASPLOIT_CONFIG_PATH = "/pentest/datasploit/config.py"
+
 def copy_keys():
     # Make sure enterprise_config API KEYS are copied to tools/recon/theharvester/API_KEYS (so theHarvester can use them)
     with open("tools/recon/theharvester/API_KEYS.py", "w") as api_keys:
@@ -13,9 +18,20 @@ def copy_keys():
         api_keys.write("GOOGLE_CSE_API_KEY='" + GOOGLE_CSE_API_KEY + "'\n")
         api_keys.write("SHODAN_API_KEY='" + SHODAN_API_KEY + "'\n")
 
+    # DataSploit is a documented gap in the Docker image (Python-2-only, abandoned
+    # upstream - see the Dockerfile header), so it may not be installed at all.
+    # Skip the key sync rather than crashing engagement creation over a tool that
+    # was never provisioned.
+    if not os.path.exists(DATASPLOIT_CONFIG_PATH):
+        print_text.print_warning(
+            "copy_keys: " + DATASPLOIT_CONFIG_PATH + " not found, skipping DataSploit key sync "
+            "(DataSploit is not installed in this environment)"
+        )
+        return
+
     # Make sure enterprise_config API KEYS are copied to /pentest/datasploit/config.py
     new_file = ""
-    with open("/pentest/datasploit/config.py", "r") as conf:
+    with open(DATASPLOIT_CONFIG_PATH, "r") as conf:
         for line in conf.readlines():
             if 'shodan_api' in line:
                 line = 'shodan_api="' + SHODAN_API_KEY + '"\n'
@@ -96,5 +112,5 @@ def copy_keys():
             else:
                 line = line + "\n"
 
-        with open("/pentest/datasploit/config.py", "w") as conf:
+        with open(DATASPLOIT_CONFIG_PATH, "w") as conf:
             conf.write(line)
