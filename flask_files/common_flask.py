@@ -1,10 +1,12 @@
-import sys
+import logging
 import os
 from common import common
 from setup.client_engagement import ClientEngagement
 from setup import profile
 from enterprise_user_conf import OUTPUT_PATH
 from common.database_object import OurCoolDBObject
+
+logger = logging.getLogger(__name__)
 
 
 def loop_through_menu(menu, count=0):
@@ -44,8 +46,7 @@ def just_db_object(repo_file):
             db_object = OurCoolDBObject(repo_file)
             return db_object
         except Exception as e:
-            print("flask-files/common_flask.py except: " + str(e) + " Error on line {}".format(
-                sys.exc_info()[-1].tb_lineno), file=sys.stderr)
+            logger.exception("just_db_object failed: %s", e)
     return db_object
 
 
@@ -67,9 +68,9 @@ def create_db_object(engagement_path, selected_engagement, key, username):
 
                 return db_object
             except Exception as e:
-                print("flask-files/common_flask.py except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
+                logger.exception("create_db_object failed: %s", e)
     except Exception as e:
-        print("flask-files/common_flask.py except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
+        logger.exception("create_db_object failed: %s", e)
 
     return "Unable to initialize Repository.  Might want to verify that the client/engagement folder you " \
                    "selected has a .out file there."
@@ -112,5 +113,5 @@ def setup_base_page(session, db_object=None):
         return {'engagements': engagements + "</div>", 'tester': tester, 'only_owner': only_owner, 'newer_than': newer_than,
                 'client_engagements': client_engagements}
     except Exception as e:
-        print("flask-files/common_flask.py except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
+        logger.exception("setup_base_page failed: %s", e)
 

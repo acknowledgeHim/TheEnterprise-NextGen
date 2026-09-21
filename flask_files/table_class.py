@@ -1,10 +1,12 @@
-import sys
+import logging
 import os
 import importlib
 from common import common, keep_tags
 from flask_files import common_flask
 from common.database_object import OurCoolDBObject
 from sqlalchemy import inspect
+
+logger = logging.getLogger(__name__)
 
 
 from result.deviceport import JOIN_TABLES as DevicePortJoinTables
@@ -44,7 +46,7 @@ class TableClass():
                                 if "_id" == column_name:
                                     pass
         except Exception as e:
-            print("flask_files/table_class 47 except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
+            logger.exception("TableClass.__init__ failed: %s", e)
 
         return
 
@@ -90,7 +92,7 @@ class TableClass():
                     filter_vals.append(ind_search)
 
         except Exception as e:
-            print("flask_files/table_class 69 except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
+            logger.exception("filtering failed: %s", e)
         return filter_cols, filter_vals
 
     def sorting(self):
@@ -110,7 +112,7 @@ class TableClass():
                 if sort_it:
                     columns_to_sort.append([self.all_columns[int(column_order["column"])], column_order['dir']])
         except Exception as e:
-            print("flask_files/table_class 81 except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
+            logger.exception("sorting failed: %s", e)
         return columns_to_sort
 
     def paging(self):
@@ -173,7 +175,7 @@ class TableClass():
                 data = data + "</tr></tfoot>"
             data = data + "</table>"
         except Exception as e:
-            print("flask_files/table_class except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
+            logger.exception("create_table_header failed: %s", e)
 
         return data, datatable_columns
 
@@ -212,8 +214,7 @@ class TableClass():
                 elif self.table_name == "Person":
                     self.join_tables = PersonJoinTables
             except Exception as e:
-                print("flask_files/table_class 52 except: " + str(e) + " Error on line {}".format(
-                    sys.exc_info()[-1].tb_lineno))
+                logger.exception("common_view join_tables lookup failed: %s", e)
                 self.join_tables = None
 
             foreign_display_name = {}
@@ -311,7 +312,7 @@ class TableClass():
                 unfiltered_records = []
                 filtered_records = []
         except Exception as e:
-            print("flask_files/table_class except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno), file=sys.stderr)
+            logger.exception("common_view failed: %s", e)
             model = ""
             all_records = []
             self.all_columns = []
@@ -384,7 +385,7 @@ class TableClass():
 
             return {'draw': draw, 'recordsTotal': total_records, 'recordsFiltered': len(filtered_records), 'data': records}
         except Exception as e:
-            print("flask_files/table_class except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
+            logger.exception("ajax_view failed: %s", e)
 
     def list_view(self):
         """
@@ -399,10 +400,10 @@ class TableClass():
             return self.create_table_header(all_records, foreign_display_name)
 
         except Exception as e:
-            print("flask_files/table_class except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
+            logger.exception("list_view failed: %s", e)
 
     def job_view(self):
         try:
             pass
         except Exception as e:
-            print("flask_files/table_class except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
+            logger.exception("job_view failed: %s", e)

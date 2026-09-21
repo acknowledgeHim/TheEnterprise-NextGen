@@ -1,9 +1,15 @@
-import sys
+import logging
+
+from flask_wtf.csrf import generate_csrf
+
+logger = logging.getLogger(__name__)
+
 
 class FormSetup():
     def __init__(self, form_name, action_url):
         """ Creates form. """
-        self.html_form = '<form name="' + form_name + '" action="' + action_url + '" method=post enctype="multipart/form-data"><table>'
+        csrf_field = '<input type="hidden" name="csrf_token" value="' + generate_csrf() + '">'
+        self.html_form = '<form name="' + form_name + '" action="' + action_url + '" method=post enctype="multipart/form-data">' + csrf_field + '<table>'
 
     def __enter__(self):
         return self
@@ -61,7 +67,7 @@ class FormSetup():
 
             return self.html_form + "<tr><td></td><td><input type=Submit value=Submit></td></tr></table></form>"
         except Exception as e:
-            print("flask_files/form_class except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
+            logger.exception("create_form failed: %s", e)
 
 
     def text_area(self, name, regex, value):
@@ -109,7 +115,7 @@ class FormSetup():
 
             return select_box + "</select>"
         except Exception as e:
-            print("flask_files/form_class except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno), file=sys.stderr)
+            logger.exception("dropdown failed: %s", e)
 
 
     def text_box(self, name, regex, value):

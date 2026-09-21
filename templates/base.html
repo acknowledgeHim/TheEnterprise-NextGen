@@ -1,5 +1,6 @@
 <html>
 <head>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script type="text/javascript" charset="utf-8" src="/static/jquery.min.js"></script>
 
     <!-- Bootstrap core CSS -->
@@ -12,6 +13,16 @@
     <link rel="stylesheet" href="/static/style.css" type="text/css">
 
     <script language="JavaScript">
+        // Attach the CSRF token (see the meta tag above) to every AJAX POST this app makes,
+        // so Flask-WTF's CSRFProtect accepts them without touching each call site individually.
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", $('meta[name="csrf-token"]').attr('content'));
+                }
+            }
+        });
+
         function remove_tags(txt){
             if(txt) {
                 var rex = /(<([^>]+)>)/ig;
