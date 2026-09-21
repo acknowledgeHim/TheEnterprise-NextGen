@@ -34,7 +34,7 @@ WORKDIR /pentest
 # plain Debian base doesn't (install.sh never installs these explicitly).
 # ---------------------------------------------------------------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        ca-certificates curl wget gnupg git unzip p7zip-full sudo openssl \
+        ca-certificates curl wget gnupg git unzip p7zip-full sudo openssl libcap2-bin \
         nmap whois dnsutils netcat-openbsd iputils-ping smbclient \
     && rm -rf /var/lib/apt/lists/*
 
@@ -82,15 +82,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends golang-go \
 RUN apt-get update && apt-get install -y --no-install-recommends mono-devel mono-complete \
     && rm -rf /var/lib/apt/lists/*
 
-# install.sh: CrackMapExec (line 315) - not in Debian's repos; pip install instead of
-# the Kali apt package. If this fails, the maintained fork is NetExec (pip3 install netexec).
-RUN pip3 install --break-system-packages --no-cache-dir crackmapexec
-
-# install.sh: Python3 toolchain (lines 335-337) - python3-venv/python3-pip already
-# covered; no venv here, the container's own interpreter is already isolated.
+# install.sh: Python3 toolchain (lines 335-337) - python3-venv skipped (no venv here, the
+# container's own interpreter is already isolated); python3-pip needed by every pip3 install
+# below, including the very next step.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-pip zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# install.sh: CrackMapExec (line 315) - not in Debian's repos; pip install instead of
+# the Kali apt package. If this fails, the maintained fork is NetExec (pip3 install netexec).
+RUN pip3 install --break-system-packages --no-cache-dir crackmapexec
 
 # install.sh: PhantomJS build deps (lines 471-472)
 RUN apt-get update && apt-get install -y --no-install-recommends \
