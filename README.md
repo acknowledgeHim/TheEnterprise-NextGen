@@ -43,7 +43,10 @@ binary).
    `flask_files/flask.crt`/`.key` for anything internet-facing).
 5. Log in with the admin credentials from step 2 (or, if you left those blank, run
    `docker compose logs app` and look for the auto-generated username/password printed near the
-   start of the logs - it's only shown once, on first boot).
+   start of the logs - it's only shown once, on first boot). The same applies to
+   `TE_ZAP_API_KEY`/`TE_MSFRPC_USER`/`TE_MSFRPC_PASSWORD` if you didn't set them either - see the
+   comments in `.env.example` for exactly where each one shows up (or how to read the live value
+   straight out of the running container at any time).
 6. `docker compose down` stops everything (engagement data survives, in the `client_data` Docker
    volume); `docker compose up -d` restarts it in the background.
 
