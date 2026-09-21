@@ -7,13 +7,61 @@ TE uses RabbitMQ for queuing and Celery for job management from the queue.
 TE is written entirely in python3 and all dependencies are installed within a virtual environment (which keeps it from conflicting with other python installs that might use different versions of libraries)
 
 # Installation
-- Should be done using the install.sh bash script
-- There are some default variables you can change in the install.sh that should be changed for your environment before running it.
-- enterprise_conf.py also has a HASH_KEY password that should be changed from the default at the very least
-- Secrets (`FLASK_KEY`, `HASH_KEY`, `ZAP_API_KEY`, `MSFRPC_USER`/`MSFRPC_PASSWORD`, RabbitMQ credentials) are no longer hardcoded in `enterprise_conf.py`/`enterprise_user_conf.py`. Set them as environment variables before starting the app (each has a randomly-generated fallback for local dev if unset, but you should not rely on that outside local dev):
-  - `TE_FLASK_KEY`, `TE_HASH_KEY`, `TE_ZAP_API_KEY`, `TE_MSFRPC_USER`, `TE_MSFRPC_PASSWORD`, `TE_RABBITMQ_USER`, `TE_RABBITMQ_PASS`
-- The Flask app's TLS cert/key are no longer checked into the repo (`flask_files/flask.crt`/`flask_files/flask.key` are now gitignored). Generate a local dev cert before running `enterprise-flask.py`:
-  - `openssl req -x509 -newkey rsa:4096 -nodes -out flask_files/flask.crt -keyout flask_files/flask.key -days 365 -subj "/CN=localhost"`
+
+## Docker (recommended)
+
+This is the primary, supported way to run TheEnterprise-NextGen. It builds one image containing
+the Flask/Celery app plus the external pentest tool roster, and runs RabbitMQ/Redis as separate
+containers alongside it.
+
+**Prerequisites**: Docker Engine and the Docker Compose plugin (`docker compose version` should
+work - this is the `docker-compose-plugin` package, not the older standalone `docker-compose`
+binary).
+
+1. Clone the repo and `cd` into it.
+2. Copy the example environment file and fill in real values:
+   ```
+   cp .env.example .env
+   ```
+   Generate `TE_FLASK_KEY` with `python3 -c "import secrets; print(secrets.token_hex(20))"` and
+   pick your own `TE_HASH_KEY` (a passphrase - **do not change it once you have real engagement
+   data**, or it becomes unreadable). Both are required; `docker compose` refuses to start
+   without them. Set `TE_ADMIN_USERNAME`/`TE_ADMIN_PASSWORD` too if you want a known login
+   instead of a randomly-generated one buried in the container's startup logs.
+3. Build and start everything:
+   ```
+   docker compose up --build
+   ```
+   The first build installs the full external tool roster (~30 tools, several from old/
+   unmaintained upstream repos) and can take a long time. If an individual `RUN` step in the
+   Dockerfile fails partway through (plausible - some of these projects are from 2015-2019 and
+   may no longer build cleanly), that's the step to look at; the rest of the image is unaffected.
+4. Wait until `docker compose ps` shows `rabbitmq` and `redis` as `healthy`, then open
+   `https://localhost:1820` (or whatever port you set `TE_FLASK_PORT` to). Your browser will warn
+   about the self-signed certificate the container generates on first start - that's expected for
+   a local/internal deployment; accept it (or swap in a real cert via a mounted
+   `flask_files/flask.crt`/`.key` for anything internet-facing).
+5. Log in with the admin credentials from step 2 (or, if you left those blank, run
+   `docker compose logs app` and look for the auto-generated username/password printed near the
+   start of the logs - it's only shown once, on first boot).
+6. `docker compose down` stops everything (engagement data survives, in the `client_data` Docker
+   volume); `docker compose up -d` restarts it in the background.
+
+This has been validated structurally (`docker compose config`) and the underlying code paths
+(Celery/RabbitMQ/Redis wiring, the install bootstrap) have been tested directly, but the full
+image has not yet been build-tested end-to-end on real Docker infrastructure - see the Dockerfile's
+own header comment before relying on it for a real engagement.
+
+## Bare-metal (legacy)
+
+The original install path is still here for reference: `install.sh` (Kali-specific) provisions
+the tool roster directly onto a host, followed by `python install.py`. Same env-var secrets apply
+as above (`TE_FLASK_KEY`, `TE_HASH_KEY`, `TE_ZAP_API_KEY`, `TE_MSFRPC_USER`, `TE_MSFRPC_PASSWORD`,
+`TE_RABBITMQ_USER`, `TE_RABBITMQ_PASS`), and you'll need to generate a TLS cert yourself before
+running `enterprise-flask.py`:
+```
+openssl req -x509 -newkey rsa:4096 -nodes -out flask_files/flask.crt -keyout flask_files/flask.key -days 365 -subj "/CN=localhost"
+```
 
 # Quick Start Guide
 Download from Files -> Documents -> 
