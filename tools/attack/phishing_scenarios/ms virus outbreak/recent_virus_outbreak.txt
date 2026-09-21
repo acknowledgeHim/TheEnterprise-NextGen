@@ -1,0 +1,37 @@
+SUBJECT=Microsoft Security Update
+SMTP_FROM=helpdesk@microsoft.com
+READ_RECEIPT=No
+DATA_FROM=helpdesk@microsoft.com
+PHISHING_URL=https://microsoftsecurityupdates.com
+REAL_URL=https://security-updates.microsoft.com
+SIGNATURE=Thanks, /   Microsoft Help Desk Support Team  /  {img src='cid:micrsoft_banner.png' height=40}
+BODY=Greetings,
+
+A recent group of viruses have been released which put systems at
+risk.  These viruses exploit vulnerabilities in Internet Explorer
+and Outlook.  These viruses destroy data on the local systems and
+leak personal information.  The viruses targeting Microsoft Outlook
+are particularly dangerous because they only require the recipient
+to open the email message in order to execute.
+
+Anyone running Microsoft Windows XP, Vista, 7, or 10 should download the
+following patch and install it immediately, to patch the
+vulnerabilities being exploited.
+
+Instructions:
+
+1. Click on this link
+ PHISHING_URL
+
+2. On the resulting web page, click the "Download" button.
+
+3. A dialog box will pop up (you may need pop-ups enabled).  Start the installation immediately by clicking the "Run" button.  The installation takes less then
+4 minutes, runs in the background, and does not require a reboot.
+
+Thank you, 
+The Microsoft Security Team
+
+Please DO NOT REPLY to this email as this is not a monitored inbox. If
+you have questions/inquiries please visit
+ http://www.microsoft.com
+

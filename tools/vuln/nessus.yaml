@@ -1,0 +1,42 @@
+tool author: "https://www.tenable.com"
+config_creator: "huber"
+tool_name: "nessus"
+simultaneous: False
+group_by: "target"
+targets:
+      scope: "SCOPE_IPS+SCOPE_WEBSITES_AS_DOMAIN"
+      use_original_scope_entry: True
+function_to_call: "FUNCTION:tools.vuln.nessus_run.nessus_run"
+function_pass_json: True
+output_path: "output/vuln/nessus/"
+tool_parser: "parsers.vuln.nessus_parser.nessus_parser"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+nessus_server: "https://127.0.0.1:8834"
+nessus_username: ''
+nessus_password: ''
+nessus_policy: 'EPT - All Ports'
+
+questions:
+      - question: "Enter Full URL for nessus server"
+        name: "nessus_server"
+        nullable: False
+        regex:
+        global: True
+      - question: "Enter Nessus username"
+        name: "nessus_username"
+        nullable: False
+        regex:
+        global: True
+      - question: "Enter the Nessus password"
+        name: "nessus_password"
+        nullable: False
+        regex:
+        global: True
+      - question: "Enter the Nessus policy to use (either built-in or custom name)"
+        name: "nessus_policy"
+        nullable: False
+        regex:
+        global: True

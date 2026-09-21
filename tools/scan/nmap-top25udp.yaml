@@ -1,0 +1,22 @@
+tool author: Nmap
+config_creator: huber
+tool_name: nmap-udp25
+simultaneous: False
+group_by: target
+targets:
+      scope: SCOPE_IPS
+      use_original_scope_entry: True
+command: "sudo nmap -sU --top-ports 25 -Pn -vv --reason <stealth_scan> -oA OUTPUT_FOLDER/FORMATTED_ENTRY__sSCOPE_ID CHECK_ENTRY"
+output_path: output/scan/nmap/
+tool_parser: parsers.scan.nmap_parser.nmap
+check_already_run: True
+create_folder: True
+questions:
+      - question: "Stealth / Blackbox Testing - (R)regular - default, (S)stealth, or (E)extreme stealth"
+        name: stealth_scan
+        nullable: True
+        regex: ^(?:R|S|E)$
+        answers:
+          R:
+          S: " -T3 -D 122.88.89.12 "
+          E: " -T0 -D 122.88.89.12 "

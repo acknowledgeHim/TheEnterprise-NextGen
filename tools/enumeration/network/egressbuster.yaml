@@ -1,0 +1,12 @@
+tool author: "https://github.com/trustedsec/egressbuster/blob/master/egressbuster.py"
+config_creator: "huber"
+tool_name: "egressbuster"
+simultaneous: False
+targets:
+      special: "<your_ip_address>"
+target_by_host_file: True
+command: "python2 tools/enumeration/network/egressbuster.py portquiz.net 1-65536 > OUTPUT_FOLDERegressbuster__sSCOPE_ID.txt"
+output_path: "output/enumeration/egressbuster/"
+tool_parser: "parsers.enumeration.egressbuster.egressbuster"
+check_already_run: False
+create_folder: True

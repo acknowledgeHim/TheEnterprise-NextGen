@@ -1,0 +1,26 @@
+tool author: "https://portswigger.net/burp"
+config_creator: "huber"
+tool_name: "burp"
+simultaneous: False
+group_by: "target"
+targets:
+      scope: "SCOPE_WEBSITES"
+      port_numbers: "80,443,8080,8081,8443"
+      port_descriptions: "web,http,tomcat,iis,apache,nginx,proxy"
+      protocol: "tcp"
+target_by_host_file: False
+command: "CODE_BASE_PATH/tools/vuln/carbonator/launch_burp.sh PROTOCOL FORMATTED_WEBSITE PORT / <burp_jar_path> CODE_BASE_PATH/tools/vuln/carbonator/ OUTPUT_FOLDER/burp__sSCOPE_ID__FORMATTED_ENTRY.xml"
+output_path: "output/vuln/web/burp/"
+tool_parser: "parsers.vuln.web.burp_parser.burp"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+burp_jar_path: '$PENTEST_DIR$/burp/burpsuite_pro.jar'
+
+questions:
+      - question: "Burp Jar Path"
+        name: "burp_jar_path"
+        nullable: False
+        regex: ""
+        global: True

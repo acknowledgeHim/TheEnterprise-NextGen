@@ -1,0 +1,11 @@
+tool author: "python libraries & huber"
+config_creator: "huber"
+tool_name: "dns bruteforce"
+simultaneous: True
+targets:
+      scope: "SCOPE_DOMAINS"
+function_to_call: "FUNCTION:tools.recon.dns_run_bruteforce.dns_run_bruteforce"
+output_path: "output/recon/dns_bruteforce/"
+tool_parser: "parsers.recon.dns_bruteforce_parser.dns"
+check_already_run: True
+create_folder: True

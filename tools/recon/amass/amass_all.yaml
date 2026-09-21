@@ -1,0 +1,8 @@
+config_creator: huber
+simultaneous: False
+callable_yaml:
+  - tools/recon/amass/amass_netdomains-org
+  - tools/recon/amass/amass_netdomains-asn
+  - tools/recon/amass/amass
+  - tools/recon/amass/amass_active
+  - tools/recon/amass/amass_netdomains-whois

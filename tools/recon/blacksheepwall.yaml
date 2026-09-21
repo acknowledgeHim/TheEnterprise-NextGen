@@ -1,0 +1,39 @@
+tool author: "https://github.com/tomsteele/blacksheepwall"
+config_creator: "huber"
+tool_name: "blacksheepwall"
+simultaneous: True
+targets:
+      scope: "SCOPE_DOMAINS"
+command: "$PENTEST_DIR$/golang/bin/blacksheepwall -concurrency <blacksheepwall_concurrent> -server <dns_server> -domain ENTRY -ipv6 -fcrdns -ns -mx -viewdns-html -exfiltrated -crtsh -vt -srv -axfr -headers -tls <shodan_api_key> -json > OUTPUT_FOLDER/blacksheepwall__sSCOPE_ID__ENTRY.txt"
+output_path: "output/recon/blacksheepwall/"
+tool_parser: "parsers.recon.blacksheepwall_parser.blacksheepwall"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+blacksheepwall_concurrent: "100"
+
+questions:
+      - question: "Concurrent threads"
+        name: "blacksheepwall_concurrent"
+        regex: '^(?:[\d]+)$'
+        nullable: True
+        answers:
+          default: "100"
+          blank: "100"
+      - question: "Use DNS Server (default 8.8.8.8)"
+        name: "dns_server"
+        nullable: True
+        regex:
+        global: False
+        answers:
+          blank: "8.8.8.8"
+          default: "8.8.8.8"
+      - question: "SHODAN API Key"
+        name: "shodan_api_key"
+        nullable: True
+        regex:
+        global: True
+        answers:
+          blank:
+          prepend_to_all: " -shodan "

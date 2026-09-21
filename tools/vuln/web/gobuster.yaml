@@ -1,0 +1,41 @@
+tool author: "https://github.com/OJ/gobuster.git"
+config_creator: "huber"
+tool_name: "gobuster"
+simultaneous: True
+targets:
+      special: "all_websites"
+target_by_host_file: False
+command: "$PENTEST_DIR$/golang/bin/gobuster -w <gobuster_wordlist> -u ENTRY -x <gobuster_extensions> -i -k -t <gobuster_threads> -o OUTPUT_FOLDERgobuster__sSCOPE_ID__FORMATTED_ENTRY.txt"
+output_path: "output/vuln/web/gobuster/"
+tool_parser: "parsers.vuln.web.gobuster_parser.gobuster"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+#gobuster_path: "$PENTEST_DIR$/golang/src/github.com/gobuster/main.go"
+gobuster_extensions: "php,asp,jsp,aspx"
+gobuster_wordlist: "$PENTEST_DIR$/py3virtual/the_enterprise/tools/misc/wordlist/directory-list-2_3-medium.txt"
+gobuster_threads: ""
+
+questions:
+      - question: "GoBuster file extensions to use (ex. php,asp,jsp)"
+        name: "gobuster_extensions"
+        nullable: True
+        regex:
+        global: True
+        answers:
+          default: "php,asp,jsp"
+          blank: "php,asp,jsp"
+      - question: "GoBuster threads"
+        name: "gobuster_threads"
+        nullable: True
+        global: True
+        regex:
+        answers:
+          default: 10
+          blank: 10
+      - question: "GoBuster wordlist"
+        name: "gobuster_wordlist"
+        nullable: True
+        global: True
+        regex:

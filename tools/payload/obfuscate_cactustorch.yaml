@@ -1,0 +1,12 @@
+tool author: 'https://github.com/Arno0x/ObfuscateCactusTorch'
+config_creator: 'huber'
+tool_name: 'obfuscate_cactustorch_payload'
+simultaneous: True
+targets:
+      scope: SINGLE_SCOPE_IP
+function_to_call: 'FUNCTION:tools.payload.obfuscate_cactustorch_run.obfuscate_cactustorch'
+function_pass_json: False
+output_path: 'output/payload/obfuscate_cactustorch/'
+tool_parser: ''
+check_already_run: False
+create_folder: True

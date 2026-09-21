@@ -1,0 +1,49 @@
+tool author: "https://github.com/tmeiczin/pydhcp"
+config_creator: "huber"
+tool_name: "dhcp_server"
+simultaneous: True
+targets:
+      scope: "SCOPE_IPS"
+command: "<pythonv2_path> <pydhcp_path>/dhcp.py --interface <interface_name> --subnet ENTRY --start <ip_pool_start> --end <ip_pool_end> <mac_addresses_to_serve>"
+output_path: "output/recon/dhcp_server/"
+tool_parser: "parsers.recon.dhcp_server_parser.dhcp_server"
+check_already_run: False
+create_folder: True
+questions:
+      - question: "Pythonv2 full path (ex. /usr/bin/python2.7)"
+        name: "pythonv2_path"
+        nullable: True
+        regex:
+        global: True
+        answers:
+            blank: "/usr/bin/python2.7"
+            default: "/usr/bin/python2.7"
+      - question: "PyDHCP Path (ex. /pentest/pydhcp/)"
+        name: "pydhcp_path"
+        nullable: True
+        regex:
+        global: False
+        answers:
+          blank: "/pentest/pydhcp/"
+          default: "/pentest/pydhcp/"
+      - question: "Network Interface"
+        name: "interface_name"
+        nullable: False
+        options: "NETWORK_INTERFACE_NAME"
+        regex:
+        global: True
+      - question: "Last Octet of IP Address for 1st address to lease in DHCP POOL (ex. 128 if ip was 192.168.1.128)"
+        name: "ip_pool_start"
+        nullable: False
+        regex:
+        global: False
+      - question: "Last Octet of IP Address for last address to lease in DHCP POOL (ex. 132 if ip was 192.168.1.132)"
+        name: "ip_pool_end"
+        nullable: False
+        regex:
+        global: False
+      - question: "MAC Address to Serve"
+        name: "mac_addresses_to_serve"
+        nullable: True
+        regex:
+        global: False

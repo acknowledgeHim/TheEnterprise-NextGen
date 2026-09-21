@@ -1,0 +1,12 @@
+tool author: "https://github.com/bradley-evans/cfltools"
+config_creator: "huber"
+tool_name: "LogExtractIRAnalytics"
+simultaneous: True
+group_by: "target"
+targets:
+      scope: SINGLE_SCOPE_IP
+FUNCTION: 'extract_irdata_from_logs'
+output_path: "output/forensics/send-extract_irdata_from_logs/"
+tool_parser: "parsers.forensics.extract_irdata_from_logs_parser.extract_irdata_from_logs"
+check_already_run: False
+create_folder: True

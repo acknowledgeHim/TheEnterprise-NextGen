@@ -1,0 +1,12 @@
+tool author: ph3eds
+config_creator: huber
+tool_name: 'scope_creep'
+simultaneous: True
+targets:
+      scope: ALL_DOMAINS
+function_to_call: 'FUNCTION:tools.recon.scope_creep_run.scope_creep'
+function_pass_json: False
+output_path: 'output/recon/scope_creep/'
+tool_parser: 'parsers.recon.scope_creep.scope_creep'
+check_already_run: False
+create_folder: True

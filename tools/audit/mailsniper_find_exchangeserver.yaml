@@ -1,0 +1,48 @@
+tool author: "https://github.com/dafthack/MailSniper"
+config_creator: "huber"
+tool_name: "mailsniper (find_emailserver)"
+simultaneous: True
+group_by: "target"
+targets:
+      scope: SINGLE_SCOPE_DOMAIN
+command: 'pwsh -Command "&{Import-Module <mailsniper_path>;Invoke-GlobalMailSearch -AdminUserName <exchangeadmin> -AdminPassword <exchangeadminpassword> -ExchHostname <exchangeserver> -OutputCsv OUTPUT_FOLDER/mailsniper-findexchange_mailsniper_search__sSCOPE_ID__<exchangeserver>.csv}"'
+output_path: "output/audit/mailsniper/"
+tool_parser: "parsers.audit.mailsniper_parser.find_emailserver"
+check_already_run: False
+create_folder: True
+
+# Global Vars
+mailsniper_path: '$PENTEST_DIR/MailSniper/MailSniper.ps1'
+
+questions:
+      - question: "MailSniper path (including MailSniper.ps1)"
+        name: "mailsniper_path"
+        nullable: False
+        regex:
+        global: True
+        answers:
+            blank: "/pentest/MailSniper/MailSniper.ps1"
+            default: "/pentest/MailSniper/MailSniper.ps1"
+      - question: "Exchange Server"
+        name: "exchangeserver"
+        nullable: False
+        regex:
+        global: False
+      - question: "Exchange Admin Username"
+        name: "exchangeadmin"
+        nullable: False
+        regex:
+        global: False
+      - question: 'Exchange Admin Password'
+        name: "exchangeadminpassword"
+        nullable: False
+        regex:
+        global: False
+selections:
+    - table: "Scope"
+      name: "scope_entry"
+      display_fields:
+        - "entry"
+        - "Location.name"
+      return_field: "id"
+      filter: "CURRENT_LOCATION"

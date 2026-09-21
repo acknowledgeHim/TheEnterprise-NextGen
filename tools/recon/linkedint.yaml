@@ -1,0 +1,54 @@
+tool author: Vincent Yiu (modifed for TheEnterprise by huber) - https://github.com/mdsecactivebreach/LinkedInt.git
+config_creator: huber
+tool_name: 'linkedint'
+simultaneous: True
+targets:
+      scope: SINGLE_SCOPE_DOMAIN
+command: "python tools/recon/linkedint/LinkedInt.py -s '<company_name>' -u <linkedin_username> -p '<linkedin_password>' -f <email_format> -c <company_filter> <companyid> -d <scope_entry> -o OUTPUT_FOLDER/linkedint__sSCOPE_ID__<scope_entry>"
+output_path: output/recon/linkedint/
+tool_parser: parsers.recon.linkedint_parser.linkedint
+check_already_run: True
+create_folder: True
+
+# GLOBAL VARS
+linkedin_username: ''
+linkedin_password: ''
+
+questions:
+      - question: "Client Name"
+        name: company_name
+        nullable: False
+        regex:
+      - question: filter by Client Name, N|Y
+        name: company_filter
+        nullable: False
+        regex: '^(?:N|Y)$'
+      - question: a company ID (leave blank to automate)
+        name: companyid
+        regex: '^(?:[\d]+)$'
+        nullable: True
+        answers:
+          default: -i <companyid>
+          blank:
+      - question: email format (full|firstlast|firstmlast|flast|first.last|fmlast)
+        name: email_format
+        regex: '^(?:full|firstlast|firstmlast|flast|first.last|fmlast)$'
+        nullable: False
+      - question: LinkedIn username
+        name: linkedin_username
+        regex:
+        nullable: False
+        global: True
+      - question: LinkedIn password
+        name: linkedin_password
+        regex:
+        nullable: False
+        global: True
+selections:
+    - table: "Scope"
+      name: "scope_entry"
+      display_fields:
+        - "entry"
+        - "Location.name"
+      return_field: "entry"
+      filter: {'type': 'DOMAIN'}

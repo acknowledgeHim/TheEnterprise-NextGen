@@ -1,0 +1,12 @@
+tool author: "https://github.com/bettercap/bettercap"
+config_creator: "huber"
+tool_name: "bettercap_arp"
+simultaneous: False
+targets:
+      special: "<your_ip_address>"
+target_by_host_file: True
+command: "$PENTEST_DIR$/golang/bin/bettercap net.recon on > OUTPUT_FOLDERbettercap_arp__sSCOPE_ID__arpcache.txt"
+output_path: "output/enumeration/bettercap_arp/"
+tool_parser: "parsers.enumeration.bettercap_arp_parser.bettercap"
+check_already_run: False
+create_folder: True

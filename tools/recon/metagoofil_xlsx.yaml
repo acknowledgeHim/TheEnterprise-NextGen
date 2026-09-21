@@ -1,0 +1,49 @@
+tool author: Christian Martorella (https://github.com/laramies/metagoofil)
+config_creator: huber
+tool_name: metagoofil_xlsx
+simultaneous: False
+group_by: tool
+sleep_between_targets: True
+targets:
+      scope: SCOPE_DOMAINS
+command: "<pythonv2_path> <metagoofil_path> -l <metagoofil_max_results> -n <metagoofil_max_download> -d ENTRY -t xlsx -o OUTPUT_FOLDER/ -f OUTPUT_FOLDER/metagoofil_xlsx__sSCOPE_ID__ENTRY.html"
+output_path: "output/recon/metagoofil/xlsx/"
+tool_parser: parsers.recon.metagoofil_parser.metagoofil_parser
+check_already_run: True
+create_folder: True
+
+# Global Vars
+metagoofil_path: '$PENTEST_DIR$/metagoofil/metagoofil.py'
+metagoofil_max_results: '100'
+metagoofil_max_download: '50'
+
+questions:
+      - question: "Pythonv2 full path (ex. /usr/bin/python2.7)"
+        name: "pythonv2_path"
+        nullable: True
+        regex:
+        global: True
+        answers:
+            blank: "/usr/bin/python2.7"
+            default: "/usr/bin/python2.7"
+      - question: "Metagoofil full path (ex. /pentest/metagoofil/)"
+        name: "metagoofil_path"
+        nullable: False
+        regex:
+        global: True
+      - question: "Metagoofil max search results (default: 100)"
+        name: "metagoofil_max_results"
+        nullable: False
+        regex:
+        global: True
+        answers:
+            blank: "100"
+            default: "100"
+      - question: "Metagoofil max file to download (default: 50)"
+        name: "metagoofil_max_download"
+        nullable: False
+        regex:
+        global: True
+        answers:
+            blank: "50"
+            default: "50"

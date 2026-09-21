@@ -1,0 +1,11 @@
+tool author: "?"
+config_creator: "Lollipop"
+tool_name: "dnsfootprint"
+simultaneous: True
+targets:
+      scope: SCOPE_DOMAINS
+command: "tools/recon/dnsfootprint.pl -n ENTRY -a ENGAGEMENT_PATH/hosts/scope_ips.txt > OUTPUT_FOLDER/dnsfootprint__sSCOPE_ID__ENTRY.txt"
+output_path: "output/recon/dnsfootprint/"
+tool_parser: "parsers.recon.dnsfootprint_parser.dnsfootprint"
+check_already_run: True
+create_folder: True

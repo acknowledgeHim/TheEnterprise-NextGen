@@ -1,0 +1,77 @@
+Preparing system for Celery job management:
+
+Celery
+- pip install celery
+- mkdir /var/run/celery
+
+RabbitMQ
+- apt-get install rabbitmq-server
+- systemctl start rabbitmq-server && systemctl enable rabbitmq-server
+
+Redis
+- pip install redis
+- pip install -U celery[redis]
+- Make sure port is 6379 in conf file
+
+
+#config file for Celery
+
+BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+CELERY_IMPORTS = ('common.jobs.tasks', )
+
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_RESULT_EXPIRES = None
+
+CELERY_WORKER_DIRECT = True
+
+    user = getpass.getuser()
+    print "Username is {}".format(user)
+    print "going to run a task...."
+
+    hosts = sorted(celery.current_app.control.inspect().ping().keys())
+    print ",".join(hosts)
+
+    #MultiTool(app=app).execute_from_commandline(['multi', 'start', 'foo', 'bar', 'baz', '--pidfile=/var/log/celery/%n.pid'])
+
+    task = run_command.apply_async(("ping google.com -c 3","0","0"),exchange='C.dq', routing_key="celery@test")
+    while task.state != 'SUCCESS' and task.state != 'FAILURE':
+        print task.state
+        time.sleep(0.5)
+    print task.get()
+    print task.state
+
+from celery.task.control import inspect
+i = inspect()
+i.scheduled()
+i.active()
+
+
+# Start Celery
+celery worker --app=common.jobs.celery_app --loglevel=INFO -Q your_profile_email_address -n your_profile_email_address --concurrency=#_of_celery_tasks_that_can_run_concurrently
+
+
+# If when starting celery get similar to this: "CRITICAL/MainProcess] Unrecoverable error: TypeError("'NoneType' object is not callable",)"
+Then in tasks.py you must comment out the by putting '#' in front of #app.task then starting celery and hard killing with multiple CTRL-C,
+then un-do # in tasks.py you added and start celery again!
+
+
+# Purging celery queue
+celery -A proj purge
+OR
+from proj.celery import app
+app.control.purge()
+# After purging should pkill celery and then restart celery
+
+# Purging rabbitmq queue (list_queue will show the queue names you can purge)
+sudo rabbitmqctl purge_queue celery
+
+# WHEN START PAT, check to see if celery running (ps -ef | grep celery programmitically), if not then do what is
+mentioned in: http://stackoverflow.com/questions/15899798/subprocess-popen-in-different-console (which will start celery
+in new console tab) OR if pat_config.py variable CELERY_CONSOLE = "console" OR "screen" is screen then open new screen
+window: http://stackoverflow.com/questions/15899798/subprocess-popen-in-different-console
+
+
+# STARTING FLASK
+python zanimat-flask.py

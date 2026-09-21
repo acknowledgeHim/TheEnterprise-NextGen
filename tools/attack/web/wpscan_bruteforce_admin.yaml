@@ -1,0 +1,37 @@
+tool author: "https://wpscan.org/"
+config_creator: "huber"
+tool_name: "wpscan-bruteforce"
+simultaneous: False
+group_by: "target"
+targets:
+      special: "all_websites"
+command: '<wpscan_path> --url ENTRY:PORT --wordlist <wpscan_wordlist> --threads <wpscan_threads> --user-agent  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36" > OUTPUT_FOLDERwpscan_nonintrusive__sSCOPE_ID__FORMATTED_ENTRY.txt'
+output_path: "output/attack/web/wpscan_bruteforce/"
+tool_parser: "parsers.vuln.wpscan_parser.wpscan_parser"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+wpscan_path: 'wpscan'
+wpscan_threads: ''
+default_wordlist: ''
+
+questions:
+      - question: "WPScan path"
+        name: "wpscan_path"
+        nullable: False
+        regex:
+        global: True
+      - question: "Threads"
+        name: "wpscan_threads"
+        nullable: True
+        regex: "[0-9]+"
+        global: True
+        answers:
+          blank: "50"
+          default: "50"
+      - question: "Bruteforce WordList"
+        name: "default_wordlist"
+        nullable: True
+        regex: ""
+        global: True

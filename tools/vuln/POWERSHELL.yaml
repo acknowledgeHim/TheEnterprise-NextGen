@@ -1,0 +1,38 @@
+tool author: "https://cirt.net/Nikto2"
+config_creator: "huber"
+tool_name: "nikto"
+simultaneous: False
+group_by: "target"
+targets:
+      special: "all_websites"
+command: "powershell "
+output_path: "output/vuln/nikto/"
+tool_parser: "parsers.vuln.nikto_parser.nikto_parser"
+check_already_run: True
+create_folder: True
+questions:
+      - question: "Nikto path"
+        name: "nikto_path"
+        nullable: False
+        regex:
+        global: True
+      - question: "Pause between scans (in secs)"
+        name: "nikto_pause_time"
+        nullable: False
+        regex: "[0-9]+"
+        global: True
+      - question: "Maximum execution time per website (in minutes)"
+        name: "nikto_max_execution_time"
+        nullable: False
+        regex: "[0-9]+"
+        global: True
+      - question: "Nikto evasion"
+        name: "nikto_stealthy"
+        nullable: False
+        regex: "^(?:Y|N)$"
+        global: True
+        answers:
+          Y: "-evasion 1"
+          N: ""
+          blank: ""
+          default: ""

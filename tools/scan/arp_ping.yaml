@@ -1,0 +1,34 @@
+tool author: "huber"
+config_creator: "huber"
+tool_name: "arp_ping"
+simultaneous: True
+group_by: "target"
+targets:
+      special: "<your_ip_address>"
+function_to_call: "FUNCTION:tools.scan.arp_ping.arp_ping"
+function_pass_json: True
+output_path: "output/scan/arp_ping/"
+tool_parser: "parsers.scan.arp_ping_parser.arp_ping_parser"
+check_already_run: False
+create_folder: True
+questions:
+      - question: "Network Interface"
+        name: "interface_name"
+        nullable: False
+        options: "NETWORK_INTERFACE_NAME"
+        regex:
+        global: True
+      - question: "Your IP Address"
+        name: "your_ip_address"
+        nullable: False
+        options: "NETWORK_IP_ADDRESS"
+        regex:
+        global: True
+selections:
+    - table: "Scope"
+      name: "scope_id"
+      display_fields:
+        - "entry"
+        - "Location.name"
+      return_field: "id"
+      filter: "CURRENT_LOCATION"

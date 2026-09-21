@@ -1,0 +1,15 @@
+#command: "amass.netdomains -org ENTRY > OUTPUT_FOLDER/amass_netdomains-org__sSCOPE_ID__ENTRY.txt"
+tool author: "https://github.com/OWASP/Amass"
+config_creator: "huber"
+tool_name: "amass_netdomains-org"
+simultaneous: True
+targets:
+      scope: "CLIENTNAME"
+command: "amass intel -org ENTRY > OUTPUT_FOLDERamass_org__sSCOPE_ID__FORMATTED_ENTRY.json"
+output_path: "output/recon/amass/netdomains/org/"
+tool_parser: "parsers.recon.amass.netdomains.amass_org_parser.amass"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+#amass_path: "$PENTEST_DIR$/golang/src/github.com/amass/cmd/amass.netdomains/main.go"

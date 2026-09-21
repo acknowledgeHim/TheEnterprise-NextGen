@@ -1,0 +1,24 @@
+#command: "amass.netdomains -cidr ENTRY -p '80,443,8080,25,22,21,23,8888,5900,3389,445'> OUTPUT_FOLDER/amass_netdomains-ports__sSCOPE_ID__ENTRY.txt"
+tool author: "https://github.com/OWASP/Amass"
+config_creator: "huber"
+tool_name: "amass_netdomains-ports"
+simultaneous: True
+targets:
+      scope: "SCOPE_IPS"
+command: "amass enum -cidr ENTRY -p 80,443,8080,25,22,21,23,8888,5900,3389,445 -d <domain_scope> OUTPUT_FOLDERamass_ports__sSCOPE_ID__FORMATTED_ENTRY.json"
+output_path: "output/recon/amass/netdomains/ports/"
+tool_parser: "parsers.recon.amass.netdomains.amass_ports_parser.amass"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+#amass_path: "$PENTEST_DIR$/golang/src/github.com/amass/cmd/amass.netdomains/main.go"
+
+selections:
+    - table: "Scope"
+      name: "scope_id"
+      display_fields:
+        - "entry"
+        - "Location.name"
+      return_field: "id"
+      filter: "CURRENT_LOCATION"

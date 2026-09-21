@@ -1,0 +1,71 @@
+SUBJECT=FW: Critical Microsoft Security Update
+SMTP_FROM=helpdesk@microsoft.com
+READ_RECEIPT=No
+DATA_FROM=helpdesk@microsoft.com
+PHISHING_URL=https://microsoftsecurityupdates.com
+REAL_URL=https://security-update.microsoft.com
+SIGNATURE=Thanks, Help Desk
+BODY=<html>
+<head>
+  
+</head>
+<DIV dir=ltr align=left><FONT face=Arial color=#0000ff size=2><SPAN Class=435293017-13022007>Microsoft has provided an update this morning that needs to be   
+applied to all computers as soon as possible.  Please follow the instructions below to install   
+this update on your computer. </SPAN></FONT></DIV>
+<DIV dir=ltr align=left><FONT face=Arial color=#0000ff size=2><SPAN Class=435293017-13022007></SPAN></FONT>&nbsp;</DIV>
+<DIV dir=ltr align=left><FONT face=Arial color=#0000ff size=2><SPAN Class=435293017-13022007>Thanks,</SPAN></FONT></DIV>
+<DIV dir=ltr align=left><FONT face=Arial color=#0000ff size=2><SPAN Class=435293017-13022007></SPAN></FONT>&nbsp;</DIV>
+<DIV dir=ltr align=left><FONT face=Arial color=#0000ff size=2><SPAN Class=435293017-13022007>IT_CONTACT_NAME</SPAN></FONT></DIV>
+<DIV class=OutlookMessageHeader lang=en-us dir=ltr align=left>
+<HR tabIndex=-1>
+</DIV>
+<DIV class=OutlookMessageHeader lang=en-us dir=ltr align=left>
+<FONT face=Tahoma><FONT size=2><B>From:</B> Microsoft Security Info
+[mailto:security@microsoft.com] <BR><B>Sent:</B>&nbsp;<SPAN
+class=435293017-13022007><FONT face=Arial color=#0000ff>&nbsp;<FONT face=Tahoma
+color=#000000>CURRENT_DATE</FONT></FONT></SPAN></FONT></FONT></DIV>
+<DIV class=OutlookMessageHeader lang=en-us dir=ltr align=left><FONT
+face=Tahoma><FONT size=2><B>To:</B>&nbsp;<SPAN class=435293017-13022007><FONT
+face=Arial color=#0000ff>&nbsp;<FONT face=Tahoma
+color=#000000>IT_CONTACT_NAME</FONT></FONT></SPAN></FONT></FONT></DIV>
+<DIV class=OutlookMessageHeader lang=en-us dir=ltr align=left><FONT
+face=Tahoma><FONT size=2><B>Subject:</B> Microsoft Security Update
+<BR></FONT></FONT><BR></DIV>
+
+SIGNATURE
+
+<body bgcolor="#ffffff" text="#000000">
+<img alt="" src="cid:microsoft_banner.png" height=40><br>
+<br>
+
+<b>Greetings,</b><br>
+<br>
+A recent group of viruses have been released which put systems at         
+risk.  These viruses exploit vulnerabilities in Internet Explorer
+and Outlook.  These viruses destroy data on the local systems and
+leak personal information.  The viruses targeting Microsoft Outlook
+are particularly dangerous because they only require the recipient
+to open the email message in order to execute.<br>
+<br>
+Anyone running Microsoft Windows XP, Vista, or 7 should download the
+following patch and install it immediately, to patch the
+vulnerabilities being exploited.<br>
+<br>
+<b>Instructions:</b><br>
+<br>
+1. Click on this link PHISHING_URL<br>
+<br>
+2. On the resulting web page, click the "Download" button.<br>
+<br>
+3. A dialog box will pop up (you may need pop-ups enabled).  Start the installation immediately by clicking the "Run" button.  The installation takes less then
+4 minutes, runs in the background, and does not require a reboot.<br>
+<br>
+Thank you, <br>
+Microsoft Help Desk Support Team<br>
+<br>
+Please DO NOT REPLY to this email as this is not a monitored inbox. If
+you have questions/inquiries please visit <a
+ href="http://www.microsoft.com">http://www.microsoft.com</a>.<br>
+<br>
+</body>
+</html>

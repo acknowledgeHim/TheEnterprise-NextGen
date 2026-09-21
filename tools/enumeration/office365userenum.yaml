@@ -1,0 +1,14 @@
+tool author: "unknown"
+config_creator: "huber"
+tool_name: "office365 user enum"
+simultaneous: True
+group_by: "target"
+targets:
+      port_numbers: "161"
+      protocol: "udp"
+target_by_host_file: True
+command: "CODE_BASE_PATH/tools/enumeration/office365userenum.py -f HOST_FILE -o OUTPUT_FOLDER/snmp_scanner__sSCOPE_ID__ENTRY.txt"
+output_path: "output/enumeration/office365userenum/"
+tool_parser: "parsers.enumeration.office365userenum_parser.office365userenum"
+check_already_run: True
+create_folder: True

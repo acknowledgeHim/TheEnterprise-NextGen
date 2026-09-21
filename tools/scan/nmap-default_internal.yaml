@@ -1,0 +1,21 @@
+tool author: Nmap
+config_creator: huber
+tool_name: nmap-internal
+simultaneous: False
+group_by: target
+targets:
+      scope: SCOPE_IPS
+command: "sudo nmap -n -p 21,22,23,25,80,135,139,443,445,902,1158,1433,1521,3306,3389,5432,5800,5900,6000,8080,8443,50000 -Pn -vv --reason <stealth_scan> -oA OUTPUT_FOLDER/nmap__sSCOPE_ID__FORMATTED_ENTRY CHECK_ENTRY"
+output_path: output/scan/nmap/
+tool_parser: parsers.scan.nmap_parser.nmap
+check_already_run: True
+create_folder: True
+questions:
+      - question: "Stealth / Blackbox Testing - (R)regular - default, (S)stealth, or (E)extreme stealth"
+        name: stealth_scan
+        nullable: True
+        regex: r'^(?:R|S|E)$'
+        answers:
+          R:
+          S: " -T3 -D 122.88.89.12 "
+          E: " -T0 -D 122.88.89.12 "

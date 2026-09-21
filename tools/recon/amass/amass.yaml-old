@@ -1,0 +1,11 @@
+tool author: "https://github.com/OWASP/Amass"
+config_creator: "huber"
+tool_name: "amass"
+simultaneous: True
+targets:
+      scope: "SCOPE_DOMAINS"
+command: "amass -brute -ip -min-for-recursive 2 -src -d ENTRY > OUTPUT_FOLDER/amass__sSCOPE_ID__ENTRY.txt"
+output_path: "output/recon/amass/"
+tool_parser: "parsers.recon.amass.amass_parser.amass"
+check_already_run: True
+create_folder: True

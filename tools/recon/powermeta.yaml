@@ -1,0 +1,35 @@
+tool author: "https://github.com/dafthack/PowerMeta"
+config_creator: "huber"
+tool_name: "powermeta"
+simultaneous: True
+group_by: "target"
+targets:
+      scope: "SCOPE_DOMAINS"
+#command: 'pwsh -Command "&{Import-Module <powermeta_path>;Invoke-PowerMeta -TargetDomain ENTRY -Download -Extract -OutputDir OUTPUT_FOLDER/ -ExtractAllToCsv powermeta__sSCOPE_ID__ENTRY.csv}"'
+command: 'pwsh -exec bypass -file <powermeta_path> -TargetDomain ENTRY -FileTypes "<file_types>" -Download -Extract -MaxSearchPages <max_searchpages> -OutpuDir OUTPUT_FOLDER -ExtractAllToCsv OUTPUT_FOLDER/powermeta__sSCOPE_ID__FORMATTED_ENTRY.csv'
+output_path: "output/recon/powermeta/"
+tool_parser: "parsers.recon.powermeta_parser.powermeta"
+check_already_run: False
+create_folder: True
+
+# Global Vars
+powermeta_path: '$PENTEST_DIR$/PowerMeta/PowerMeta.ps1'
+file_types: 'pdf,doc,docx,xls,xlsx,ppt,pptx,pst'
+max_searchpages: '10'
+
+questions:
+      - question: "PowerMeta path (including PowerMeta.ps1)"
+        name: "powermeta_path"
+        nullable: False
+        regex:
+        global: True
+      - question: "File Types to Search For (multiple separated by ',')"
+        name: "file_types"
+        nullable: False
+        regex:
+        global: True
+      - question: "Maximum Search Pages"
+        name: "max_searchpages"
+        nullable: False
+        regex:
+        global: True

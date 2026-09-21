@@ -1,0 +1,145 @@
+{% extends "main.html" %}
+
+{% block head %}
+    <link href="/static/datatables/jquery.dataTables.min.css" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="/static/datatables/jquery.dataTables.min.js"></script>
+    <script language="JavaScript">
+        function query_lookup(div_id) {
+            $("#" + div_id + "_item_lookup").on('onblur change', function() { //.keyup(function(){
+                data = 'title='+$('#'+div_id+'_item_lookup').val()+'&div_id='+div_id
+                $("#" + div_id + "_information").hide();
+                $.ajax({
+                    url: '/device/lookup_merge',
+                    data: data,
+                    type: "post",
+                    success: function(data){
+                        $("#" + div_id + "_suggestion").show();
+                        $("#" + div_id + "_suggestion").html(data);
+                    },
+                });
+            });
+        }
+        function grab_information(div_id, info_id){
+            $.ajax({
+                    url: '/device/lookup_info',
+                    data: 'info_id='+info_id+'&div_id='+div_id,
+                    type: "post",
+                    success: function(data){
+                        $("#" + div_id + "_information").show();
+                        $("#" + div_id + "_information").html(data);
+                    },
+            });
+        }
+
+        function select_item(div_id, id, val, info_id){
+            $("#" + div_id + "_item_lookup").val(val);
+            $("#" + div_id + "_suggestion").hide();
+            $("#" + div_id + "_suggestion").html();
+            $("#" + div_id + "_hidden_item").val(id);
+
+            grab_information(div_id, info_id);
+        }
+
+        var url = window.location.href;
+        $(document).ready(function() {
+            query_lookup("delete");
+            query_lookup("mergeto");
+
+            $("#mergeform").submit(function(e) {
+                $.ajax({
+                   type: "POST",
+                   url: "/device/merge",
+                   data: $("#mergeform").serialize(), // serializes the form's elements.
+                   success: function(html){
+                       if(html.indexOf("Success") > -1) {
+                            $('input[type=text]').val('');
+                            $('#delete_information').html('');
+                            $('#mergeto_information').html('');
+                       }
+                       $("#message").html(html + "<img src='img/close.png' onclick='$(\"#message\").hide();' class='close'>");
+                       $("#message").show();
+                   }
+                });
+                e.preventDefault(); // avoid to execute the actual submit of the form.
+            });
+        });
+
+        function ajax_load(ajax_url) {
+            $.ajax({
+                url: ajax_url,
+                type: "get",
+                success: function(data) {
+                    $("#popup").html(data);
+                    $("#popup").show();
+                },
+            });
+        }
+
+        function confirm_delete(url) {
+            if(confirm("Are you sure you want to merge these items?  There is no undo!")) {
+                ajax_submit(url, "get");
+            }
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+    This page allows you to merge one or more items together.  The "Merge To" item is the one whose information will
+be kept over other ones if not blank.  The "Merge From" items are the ones whose associated data will be updated to
+association with the "Merge To" item and then the "Merge From" items will be deleted.
+
+<form method="post" action="/device/merge" id="mergeform" name="mergeform">
+    <center>
+    <div id="main_info">Merge EngagementDevice/Asset<p></p><p></p>
+        <div class="font8">This Page allows you to delete a engagement device/asset, left side, that is a duplicate of another engagement device/asset but delete with a special 'merge' capacity.
+            <p>Merge meaning that all associations that point to this engagement device/asset to be deleted will have its association move to the 'merge to' or selected engagement device/asset in the right side.
+            <p>Lookup Text boxes are provided to quickly select the engagement device/asset to 'delete' and the engagement device/asset to 'merge to'.</p>
+            <p>Start typing in a lookup boxes to get the list of engagement device/assets that match your lookup text and then select the desired one.</p>
+        </div>
+        <div class="left_align"><b>engagement device/asset to Delete:</b>
+            <div class="lookup">
+                <input type="text" id="delete_item_lookup" name="delete_item_lookup" placeholder="Search {{ item_search_txt }}" autocomplete="off">
+                <input type="hidden" name="hidden_delete_item" id="delete_hidden_item">
+                <div id="delete_suggestion" class="suggestion" style="display:none;"></div>
+                <div id="delete_information" style="display:none;" class="suggestion_information"></div>
+            </div>
+        </div>
+        <div class="left_align" width="20"><p></p><input type="submit" value="Merge" onclick="return confirm('Are you sure you want to MERGE (' + $('#delete_item_lookup').val() + ') to (' + $('#mergeto_item_lookup').val() + ')?');"></div>
+        <div class="left_align"><b>Engagement Device/Asset to Merge To:</b>
+            <div class="lookup">
+                <input type="text" id="mergeto_item_lookup" name="mergeto_item_lookup" placeholder="Search {{ item_search_txt }}" autocomplete="off">
+                <input type="hidden" name="hidden_mergeto_item" id="mergeto_hidden_item">
+                <div id="mergeto_suggestion" class="suggestion" style="display:none;"></div>
+                <div id="mergeto_information" style="display:none;" class="suggestion_information"></div>
+            </div>
+        </div>
+    </div>
+    </center>
+    </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>Search for the Device/Asset that you will "Merge To": <form id="merge_to_form" name="merge_to_form" action="/device/lookup_mergeto" method=post enctype="multipart/form-data">
+    <input type="text" name="merge_to" id="merge_to"></form></p>
+<div id="merge_to_suggestions"></div>
+<br><textarea cols="300" rows="10" id="merge_to_info" name="merge_to_info"></textarea>
+<p>Search for the Device(s)/Asset(s) that you will "Merge From": <input type="text" name="merge_from" id="merge_from"></p>
+<div id="merge_from_devices_div">
+
+</div>
+
+    {{ content|safe }}
+
+{% endblock %}

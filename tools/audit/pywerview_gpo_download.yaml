@@ -1,0 +1,46 @@
+tool author: "https://github.com/CoreSecurity/impacket"
+config_creator: "huber"
+tool_name: "pywerview_gpo"
+simultaneous: True
+group_by: "target"
+targets:
+      special: "all_domain_controllers"
+function_to_call: "FUNCTION:tools.audit.pywerview_with_gpo_download.pywerview_run"
+function_pass_json: True
+output_path: "output/audit/pywerview_gpo/"
+tool_parser: "parsers.audit.pywerview_parse.pywerview_parse"
+check_already_run: False
+create_folder: True
+
+# Global Vars
+pywerview_path: '$PENTEST_DIR/pywerview/'
+
+questions:
+      - question: 'Domain'
+        name: "domain"
+        nullable: False
+        regex:
+        global: False
+      - question: "Pythonv2 full path (ex. /usr/bin/python2.7)"
+        name: "pythonv2_path"
+        nullable: False
+        regex:
+        global: True
+        answers:
+            blank: "/usr/bin/python2.7"
+            default: "/usr/bin/python2.7"
+      - question: "Pywerview full path (ex. /pentest/pywerview/)"
+        name: "pywerview_path"
+        nullable: False
+        regex:
+        global: True
+      - question: "Local or Domain Admin username"
+        name: "la_da_username"
+        nullable: False
+        regex:
+        global: False
+      - question: "Local or Domain Admin password"
+        name: "la_da_password"
+        nullable: False
+        regex:
+        global: False

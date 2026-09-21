@@ -1,0 +1,32 @@
+tool author: "https://github.com/maurosoria/dirsearch"
+config_creator: "huber"
+tool_name: "dirsearch"
+simultaneous: False
+group_by: "target"
+targets:
+      special: "all_websites"
+target_by_host_file: False
+command: "python <dirsearch_path> -e <dirsearch_extensions> -u ENTRY --json-report=OUTPUT_FOLDERdirsearch__sSCOPE_ID__FORMATTED_ENTRY.txt"
+output_path: "output/vuln/web/dirsearch/"
+tool_parser: "parsers.vuln.web.dirsearch_parser.dirsearch"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+dirsearch_path: "$PENTEST_DIR$/dirsearch/dirsearch.py"
+dirsearch_extensions: ""
+
+questions:
+      - question: "Dirsearch path"
+        name: "dirsearch_path"
+        nullable: False
+        regex:
+        global: True
+      - question: "Dirsearch file extensions to use (ex. php,asp,jsp)"
+        name: "dirsearch_extensions"
+        nullable: True
+        regex:
+        global: True
+        answers:
+          default: "php,asp,jsp"
+          blank: "php,asp,jsp"

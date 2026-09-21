@@ -1,0 +1,18 @@
+tool author: enum4linux
+config_creator: huber
+tool_name: enum4linux
+simultaneous: True
+group_by: target
+targets:
+      scope: "SINGLE_IP"
+command: "CODE_BASE_PATH/tools/enumeration/enum4linux-scan.sh <domain_controller> OUTPUT_FOLDER/enum4linux__sSCOPE_ID__<domain_controller>.txt"
+output_path: output/enumeration/enum4linux/
+tool_parser: parsers.enumeration.enum4linux_parser.enum4linux
+check_already_run: True
+create_folder: True
+questions:
+      - question: "Domain Controller IP"
+        name: "domain_controller"
+        nullable: False
+        regex: ""
+        global: False

@@ -1,0 +1,12 @@
+tool author: https://github.com/robertdavidgraham/masscan
+config_creator: huber
+tool_name: massscan
+simultaneous: True
+group_by: target
+targets:
+      scope: SCOPE_IPS
+command: "sudo masscan -p0-65535 -oX OUTPUT_FOLDER/FORMATTED_ENTRY ENTRY" # --max-rate 10000000
+output_path: output/scan/massscan/
+tool_parser: parsers.scan.massscan_parser.massscan
+check_already_run: True
+create_folder: True

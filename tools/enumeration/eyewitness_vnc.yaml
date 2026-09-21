@@ -1,0 +1,30 @@
+tool author: "https://github.com/ChrisTruncer/EyeWitness"
+config_creator: "huber"
+tool_name: "eyewitness_vnc"
+simultaneous: True
+group_by: "target"
+targets:
+      port_numbers: "5900,5901,5902,5903,5904,5905"
+      port_descriptions: "vnc"
+      protocol: "tcp"
+target_by_host_file: True
+command: "<pythonv2_path> <eyewitness_path> --no-prompt --vnc -f VNC_HOST_FILE -d OUTPUT_FOLDER"
+output_path: "output/enumeration/eyewitness/vnc/"
+tool_parser: "parsers.enumeration.eyewitness_parser.eyewitness"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+eyewitness_path: '$PENTEST_DIR$/eyewitness//EyeWitness.py'
+
+questions:
+      - question: "Python v2 Path"
+        name: "pythonv2_path"
+        nullable: False
+        regex: ""
+        global: True
+      - question: "Eyewitenss Path"
+        name: "eyewitness_path"
+        nullable: False
+        regex: ""
+        global: True

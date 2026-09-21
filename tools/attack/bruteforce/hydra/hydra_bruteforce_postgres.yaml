@@ -1,0 +1,31 @@
+tool author: "http://freeworld.thc.org/releases/hydra-6.3-src.tar.gz"
+config_creator: "huber"
+tool_name: "hydra bruteforce postgres"
+simultaneous: False
+group_by: "target"
+targets:
+      port_numbers: "5432"
+      port_descriptions: "postgres"
+      protocol: "tcp"
+target_by_host_file: True
+command: "hydra -L <msfrpc_userlist> -P <msfrpc_wordlist> -V -I -T32 -M HOST_FILE postgres -o OUTPUT_FOLDERhydra__sSCOPE_ID__PORT.txt"
+output_path: "output/attack/hydra/postgres/"
+tool_parser: "parsers.attack.hydra_parser.hydra_parser"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+default_userlist: ''
+default_wordlist: ''
+
+questions:
+      - question: "Full path to userlist"
+        name: "default_userlist"
+        nullable: False
+        regex:
+        global: True
+      - question: "Full path to wordlist"
+        name: "default_wordlist"
+        nullable: False
+        regex:
+        global: True

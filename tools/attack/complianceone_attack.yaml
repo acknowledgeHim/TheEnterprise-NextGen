@@ -1,0 +1,33 @@
+tool author: "?"
+config_creator: "missingnull"
+tool_name: "complianceone"
+simultaneous: True
+group_by: "target"
+targets:
+      scope: "SINGLE_SCOPE_IP"
+target_by_host_file: True
+command: "<pythonv2_path> tools/attack/complianceone_attack.py <complianceone_url> -v <admin_config_file> > OUTPUT_FOLDER/FORMATTED_ENTRY__sSCOPE_ID.txt"
+output_path: "output/attack/windows/complianceone"
+tool_parser: "parsers.attack.windows.complianceone_parser.complianceone_parser"
+check_already_run: False
+create_folder: True
+
+# Global Vars
+pythonv2_path: '/usr/bin/python2.7'
+
+questions:
+      - question: "PythonV2 Path"
+        name: "pythonv2_path"
+        nullable: False
+        regex:
+        global: True
+      - question: "Compliance One URL (ex. http://127.0.0.1:8080)"
+        name: "complianceone_url"
+        nullable: False
+        regex:
+        global: False
+      - question: "Admin Config File Path (ex. Program Files (x86)\\ComplianceOne\\Admin.exe.config)"
+        name: "admin_config_file"
+        nullable: True
+        regex:
+        global: False

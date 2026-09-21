@@ -1,0 +1,44 @@
+tool author: "huber"
+config_creator: "huber"
+tool_name: "dhcp_forcerenew"
+simultaneous: True
+group_by: "target"
+targets:
+      special: "<your_ip_address>"
+function_to_call: "FUNCTION:tools.attack.network.scapy_dhcp_forcerenew.dhcp_forcerenew"
+function_pass_json: True
+output_path: "output/attack/network/dhcp_forcerenew/"
+tool_parser: "parsers.attack.network.dhcp_forcerenew_parser.dhcp_forcerenew_parser"
+check_already_run: False
+create_folder: True
+questions:
+      - question: "Network Interface"
+        name: "interface_name"
+        nullable: False
+        options: "NETWORK_INTERFACE_NAME"
+        regex:
+        global: True
+      - question: "Your IP Address"
+        name: "your_ip_address"
+        nullable: False
+        options: "NETWORK_IP_ADDRESS"
+        regex:
+        global: True
+      - question: "Real DHCP server IP"
+        name: "dhcp_server"
+        nullable: False
+        regex:
+        global: False
+      - question: "IP address to target"
+        name: "ip_to_target"
+        nullable: False
+        regex:
+        global: False
+selections:
+    - table: "Scope"
+      name: "scope_id"
+      display_fields:
+        - "entry"
+        - "Location.name"
+      return_field: "id"
+      filter: "CURRENT_LOCATION"

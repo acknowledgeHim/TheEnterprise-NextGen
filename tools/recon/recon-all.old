@@ -1,0 +1,23 @@
+config_creator: huber
+simultaneous: True
+callable_yaml:
+  - tools/recon/dns_lookup
+  - tools/recon/dnsrecon
+  - tools/recon/dnsdict6
+  - tools/recon/blacksheepwall
+  - tools/recon/dnsfootprint
+  - tools/recon/gobuster_dns
+  - tools/recon/hunter_io
+  - tools/recon/crt_sh
+  - tools/recon/sublist3r
+  - tools/recon/s3scanner
+  - tools/recon/shodan
+  - tools/recon/shodan_host
+  - tools/recon/theharvester-google
+  - tools/recon/theharvester-baidu
+  - tools/recon/theharvester-bing
+  - tools/recon/theharvester-dogpile
+  - tools/recon/theharvester-pgp
+  - tools/recon/theharvester-yahoo
+  - tools/recon/find_frontable_domain
+  - tools/recon/zone_transfer

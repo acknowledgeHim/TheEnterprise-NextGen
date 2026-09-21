@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block leftcolumn %}
+<div class="leftside_tab" id="leftside_tab" onclick="$('#left_popout').toggle();">Show/Hide Engagements</div>
+<div class="engagements" id="left_popout">
+    <ul id="main-menu2" class="sm sm-blue">
+        {{ engagements|safe }}
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+    Welcome to TheEnterprise: The Pentest Automation Framework web frontend.  The menu here is identical to the
+commmand-line version (python enterprise.py). <p>{{ celery|safe }}</p>
+
+{% endblock %}

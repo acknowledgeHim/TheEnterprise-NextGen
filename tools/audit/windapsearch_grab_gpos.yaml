@@ -1,0 +1,45 @@
+tool author: "https://github.com/ropnop/windapsearch"
+config_creator: "huber"
+tool_name: "windapsearch - grab gpos"
+simultaneous: True
+group_by: "target"
+targets:
+      special: "<domain>"
+command: "<windapsearch_path> -d <domain> --gpos -u '<da_username>' -p'<da_password>' > OUTPUT_FOLDER/<domain>__sSCOPE_ID__gpos.txt"
+output_path: "output/audit/windapsearch_grab_gpos/"
+tool_parser: "parsers.audit.windapsearch_grab_gpos.grab_gpos"
+check_already_run: False
+create_folder: True
+
+windapsearch_path: '$PENTEST_DIR$/windapsearch/'
+
+questions:
+      - question: "Domain (fqdn)"
+        name: "domain"
+        nullable: False
+        regex:
+        global: False
+      - question: "DA Username (ex: netbios_domain\user)"
+        name: "da_username"
+        nullable: False
+        regex:
+        global: False
+      - question: "DA Password"
+        name: "da_password"
+        nullable: False
+        regex:
+        global: False
+      - question: "Windapsearch full path (ex. /pentest/windapsearch/)"
+        name: "windapsearch_path"
+        nullable: False
+        regex:
+        global: True
+
+selections:
+    - table: "Scope"
+      name: "scope_entry"
+      display_fields:
+        - "entry"
+        - "Location.name"
+      return_field: "id"
+      filter: "CURRENT_LOCATION"

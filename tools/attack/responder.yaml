@@ -1,0 +1,56 @@
+tool author: "https://github.com/lgandx/Responder"
+config_creator: "huber"
+tool_name: "responder"
+simultaneous: False
+group_by: "target"
+targets:
+        special: "<your_ip_address>"
+command: "sudo <pythonv2_path> <responder_path>/Responder.py -I <interface_name> -i <your_ip_address> -<responder_switches>"
+output_path: "output/attack/responder/"
+tool_parser: "parsers.attack.responder_parser.responder_parser"
+check_already_run: False
+create_folder: True
+
+# Global Vars
+responder_path: '$PENTEST_DIR$/responder/'
+responder_switches: 'wrfv'
+
+questions:
+      - question: "Network Interface"
+        name: "interface_name"
+        nullable: False
+        options: "NETWORK_INTERFACE_NAME"
+        regex:
+        global: True
+      - question: "Your IP Address"
+        name: "your_ip_address"
+        nullable: False
+        options: "NETWORK_IP_ADDRESS"
+        regex:
+        global: True
+      - question: "Pythonv2 full path (ex. /usr/bin/python2.7)"
+        name: "pythonv2_path"
+        nullable: True
+        regex:
+        global: True
+        answers:
+            blank: "/usr/bin/python2.7"
+            default: "/usr/bin/python2.7"
+      - question: "Responder full path (ex. /pentest/responder/)"
+        name: "responder_path"
+        nullable: False
+        regex:
+        global: True
+      - question: "Responder switches (default is wfv)"
+        name: "responder_switches"
+        nullable: False
+        regex:
+        global: True
+selections:
+    - table: "Scope"
+      name: "scope_id"
+      display_fields:
+        - "entry"
+        - "Location.name"
+      return_field: "id"
+      filter: "CURRENT_LOCATION"

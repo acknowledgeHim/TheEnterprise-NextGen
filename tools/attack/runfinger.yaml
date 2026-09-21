@@ -1,0 +1,45 @@
+tool author: "https://github.com/lgandx/Responder"
+config_creator: "huber"
+tool_name: "runfinger"
+simultaneous: True
+group_by: "target"
+targets:
+      special: "<scope_entry_selected>"
+command: 'sudo <pythonv2_path> <responder_path>/tools/RunFinger.py -g -i <scope_entry_selected> > OUTPUT_FOLDER/runfinger__sSCOPE_ID__FORMATTED_ENTRY.txt'
+output_path: "output/attack/runfinger/"
+tool_parser: "parsers.attack.runfinger_parser.runfinger_parser"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+responder_path: '$PENTEST_DIR$/responder/'
+
+questions:
+      - question: "Pythonv2 full path (ex. /usr/bin/python2.7)"
+        name: "pythonv2_path"
+        nullable: True
+        regex:
+        global: True
+        answers:
+            blank: "/usr/bin/python2.7"
+            default: "/usr/bin/python2.7"
+      - question: "Responder full path (ex. /pentest/responder)"
+        name: "responder_path"
+        nullable: False
+        regex:
+        global: True
+selections:
+    - table: "Scope"
+      name: "scope_entry"
+      display_fields:
+        - "entry"
+        - "Location.name"
+      return_field: "id"
+      filter: "CURRENT_LOCATION"
+    - table: "Scope"
+      name: "scope_entry_selected"
+      display_fields:
+        - "entry"
+        - "Location.name"
+      return_field: "entry"
+      filter: "CURRENT_LOCATION"

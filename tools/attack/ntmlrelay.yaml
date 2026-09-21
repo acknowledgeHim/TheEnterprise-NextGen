@@ -1,0 +1,61 @@
+tool author: "https://github.com/CoreSecurity/impacket"
+config_creator: "huber"
+tool_name: "ntlmrelay"
+simultaneous: True
+group_by: "target"
+targets:
+      special: "devices_smb_signing_disabled"
+target_by_host_file: True
+command: "sudo <pythonv2_path> <impacket_path>examples/ntlmrelayx.py -tf SMB_SIGNING_DISABLED_FILE > OUTPUT_FOLDER/FORMATTED_ENTRY__sSCOPE_ID.txt"
+output_path: "output/attack/ntlmrelay/"
+tool_parser: "parsers.attack.ntlmrelay_parser.ntlmrelay_parser"
+check_already_run: False
+create_folder: True
+
+# Global Vars
+impacket_path: '$PENTEST_DIR$/impacket/'
+
+questions:
+      - question: "Impacket full path (ex. /pentest/impacket/)"
+        name: "impacket_path"
+        nullable: False
+        regex:
+        global: True
+        answers:
+          default: "/pentest/impacket/"
+          blank: "/pentest/impacket/"
+      - question: "Network Interface"
+        name: "your_ip_address"
+        nullable: False
+        options: "NETWORK_IP_ADDRESS"
+        regex:
+        global: True
+      - question: "Pythonv2 full path (ex. /usr/bin/python2.7)"
+        name: "pythonv2_path"
+        nullable: True
+        regex:
+        global: True
+        answers:
+            blank: "/usr/bin/python2.7"
+            default: "/usr/bin/python2.7"
+      - question: "Full path where targets SMB signing disabled (RunFinger generates this for you if you run it first)"
+        name: "smb_signing_disabled_targets_file"
+        nullable: True
+        regex:
+        global: False
+      - question: "(Optional) Command to run on successful NTLM relayed targets"
+        name: "ntlm_relay_command"
+        nullable: True
+        regex:
+        global: False
+        answers:
+          blank:
+          prepend_to_all: " -c "
+selections:
+    - table: "Scope"
+      name: "scope_entry"
+      display_fields:
+        - "entry"
+        - "Location.name"
+      return_field: "id"
+      filter: "CURRENT_LOCATION"

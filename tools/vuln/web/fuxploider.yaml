@@ -1,0 +1,21 @@
+tool author: "https://github.com/almandin/fuxploider"
+config_creator: "huber"
+tool_name: "fuxploider"
+simultaneous: True
+targets:
+      scope: "SCOPE_WEBSITES"
+command: 'python <fuxploider_path> -u ENTRY --not-regex "wrong file type" > OUTPUT_FOLDER/fuxploider__sSCOPE_ID__ENTRY.txt'
+output_path: "output/vuln/web/fuxploider/"
+tool_parser: "parsers.vuln.web.fuxploider_parser.fuxploider"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+fuxploider_path: '$PENTEST_DIR$/fuxploider/fuxploider.py'
+
+questions:
+      - question: "Fuxploider Path"
+        name: "fuxploider_path"
+        nullable: False
+        regex: ""
+        global: True

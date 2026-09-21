@@ -1,0 +1,29 @@
+tool author: "https://github.com/vysec/S3Scanner"
+config_creator: "huber"
+tool_name: "s3scanner"
+simultaneous: True
+targets:
+      scope: SINGLE_SCOPE_DOMAIN
+command: "<pythonv2_path> <s3scanner_path> --include-closed --out-file OUTPUT_FOLDER/s3scanner__sSCOPE_ID.txt --dump ENGAGEMENT_PATH/hosts/scope_domains.txt"
+output_path: "output/recon/s3scanner/"
+tool_parser: "parsers.recon.s3scanner_parser.s3scanner"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+s3scanner_path: '$PENTEST_DIR$/s3scanner/s3scanner.py'
+
+questions:
+      - question: "Pythonv2 full path (ex. /usr/bin/python2.7)"
+        name: "pythonv2_path"
+        nullable: False
+        regex:
+        global: True
+        answers:
+            blank: "/usr/bin/python2.7"
+            default: "/usr/bin/python2.7"
+      - question: "S3Scanner path"
+        name: "s3scanner_path"
+        nullable: False
+        regex:
+        global: True

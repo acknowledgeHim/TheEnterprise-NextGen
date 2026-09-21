@@ -1,0 +1,22 @@
+tool author: "João Filho Matos Figueiredo <joaomatosf@gmail.com> https://github.com/joaomatosf/jexboss.git"
+config_creator: "huber"
+tool_name: "jexboss"
+tool_path: 'tools/vuln/jexboss/jexboss.py'
+simultaneous: False
+group_by: "target"
+targets:
+      special: "all_websites"
+command: "<pythonv2_path> tools/vuln/web/jexboss/jexboss.py -host ENTRY:PORT -out OUTPUT_FOLDERjexboss__SCOPE_ID__FORMATTED_ENTRY.txt -results OUTPUT_FOLDERjexboss__SCOPE_ID__FORMATTED_ENTRY.log"
+output_path: "output/vuln/jexboss/web/"
+tool_parser: "parsers.vuln.web.jexboss_parser.jexboss_parser"
+check_already_run: True
+create_folder: True
+questions:
+      - question: "Pythonv2 full path (ex. /usr/bin/python2.7)"
+        name: "pythonv2_path"
+        nullable: True
+        regex:
+        global: True
+        answers:
+            blank: "/usr/bin/python2.7"
+            default: "/usr/bin/python2.7"

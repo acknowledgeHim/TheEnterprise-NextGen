@@ -1,0 +1,61 @@
+# Curated dependency list for TheEnterprise.
+#
+# The previous version of this file was an unpruned `pip freeze` of an entire
+# Kali pentest environment (~315 packages, many unrelated to this app, ten
+# unused Flask extensions, and missing celery/redis/kombu/pika entirely even
+# though they're imported throughout common/jobs/ and menus/job.py). This
+# version only lists packages actually imported somewhere in this repo
+# (outside the vendored tools/recon/theharvester/ subproject, which is left
+# as its own future replace-with-an-up-to-date-fork candidate).
+#
+# SQLAlchemy is pinned to the last 1.4.x release, not 2.0: the codebase uses
+# 1.x-style Query APIs throughout (common/sqlalchemy_db.py,
+# common/database_object.py) and migrating to 2.0's API is a separate,
+# larger effort, not part of this pass.
+
+# --- Core web app / task queue ---
+Flask==3.1.3
+SQLAlchemy==1.4.54
+celery==5.6.3
+redis==8.1.0
+pika==1.4.4
+PyYAML==6.0.3
+requests==2.34.2
+
+# --- Tool-wrapper & parser dependencies ---
+beautifulsoup4==4.15.0
+colorclass==2.2.2
+crtsh==0.3.1
+dnspython==2.8.0
+exchangelib==5.6.0
+GeoIP==1.3.2
+impacket==0.13.1
+IPy==1.01
+ipwhois==1.3.0
+ldap3==2.9.1
+lxml==6.1.3
+msgpack==1.2.2
+nameparser==2.3.0
+netaddr==1.3.0
+netifaces==0.11.0
+nltk==3.10.3
+pandas==3.0.6
+paramiko==5.0.0
+psutil==7.2.2
+pyasn1==0.6.4
+pycryptodome==3.23.0
+pygeoip==0.3.2
+pyhunter==2.1.0
+python-dateutil==2.9.0.post0
+python-owasp-zap-v2.4==0.1.0
+python-whois==0.9.6
+pysmb==1.2.15
+scapy==2.7.0
+Scrapy==2.19.0
+selenium==4.49.0
+shodan==1.31.0
+simplejson==4.1.2
+spamcheck==1.0.4
+terminaltables==3.1.10
+wmi_client_wrapper==0.0.12
+XlsxWriter==3.2.9

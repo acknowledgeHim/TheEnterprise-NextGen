@@ -1,0 +1,12 @@
+tool author: "nmap"
+config_creator: "huber"
+tool_name: "nmap promiscuous"
+simultaneous: False
+group_by: "target"
+targets:
+      scope: SCOPE_IPS
+command: "sudo nmap -Pn -vv --script=sniffer-detect -oA OUTPUT_FOLDER"
+output_path: "output/vuln/promiscuous/"
+tool_parser: "parsers.scan.nmap_parser.nmap"
+check_already_run: True
+create_folder: True

@@ -1,0 +1,26 @@
+tool author: https://github.com/VonStruddle/PyHunter
+config_creator: huber
+tool_name: 'hunter_io_company'
+simultaneous: True
+targets:
+      scope: SINGLE_SCOPE_DOMAIN
+function_to_call: 'FUNCTION:tools.recon.hunter_io_run.hunter_io_company'
+function_pass_json: True
+output_path: 'output/recon/hunter_io_company/'
+tool_parser: 'parsers.recon.hunter_io_parser.hunter_io'
+check_already_run: True
+create_folder: True
+
+# GLOBAL VARS
+hunter_io_key: ''
+
+questions:
+      - question: 'Hunter IO Key'
+        name: 'hunter_io_key'
+        regex:
+        nullable: False
+        global: True
+      - question: "Client Name (leave blank to use engagement entered client name)"
+        name: 'company_name'
+        nullable: True
+        regex:

@@ -1,0 +1,12 @@
+tool author: https://github.com/PaulSec/crt.sh
+config_creator: huber
+tool_name: 'crt.sh'
+simultaneous: True
+targets:
+      scope: ALL_DOMAINS
+function_to_call: 'FUNCTION:tools.recon.crt_sh_run.crt_sh'
+function_pass_json: False
+output_path: 'output/recon/crt_sh/'
+tool_parser: 'parsers.recon.crt_sh.crt_sh'
+check_already_run: True
+create_folder: True

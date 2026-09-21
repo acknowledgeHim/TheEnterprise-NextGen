@@ -1,0 +1,6 @@
+config_creator: "huber"
+simultaneous: True
+callable_yaml:
+  - "tools/enumeration/eyewitness_rdp"
+  - "tools/enumeration/eyewitness_vnc"
+  - "tools/enumeration/eyewitness_web"

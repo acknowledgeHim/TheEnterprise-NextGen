@@ -1,0 +1,12 @@
+tool author: "https://github.com/vanhauser-thc/thc-ipv6"
+config_creator: "huber"
+tool_name: "dnsdict6"
+simultaneous: True
+sleep_between_targets: False
+targets:
+      scope: "SCOPE_DOMAINS"
+command: "dnsdict6 -4 -d -S -u ENTRY > OUTPUT_FOLDER/dnsdict6__sSCOPE_ID__ENTRY.txt"
+output_path: "output/recon/dnsdict6/"
+tool_parser: "parsers.recon.dnsdict6_parser.dnsdict6"
+check_already_run: True
+create_folder: True

@@ -1,0 +1,31 @@
+tool author: "https://nmap.org/ncrack/dist/ncrack-0.5.tar.gz"
+config_creator: "huber"
+tool_name: "ncrack bruteforce redis"
+simultaneous: False
+group_by: "target"
+targets:
+      port_numbers: "6379"
+      port_descriptions: "redis"
+      protocol: "tcp"
+target_by_host_file: True
+command: "ncrack -U <default_userlist> -P <default_wordlist> -vv -T5 -iL HOST_FILE -p PORT -oA OUTPUT_FOLDER/ncrack__sSCOPE_ID__PORT"
+output_path: "output/attack/ncrack/redis/"
+tool_parser: "parsers.attack.ncrack_parser.ncrack_parser"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+default_userlist: ''
+default_wordlist: ''
+
+questions:
+      - question: "Full path to userlist"
+        name: "default_userlist"
+        nullable: False
+        regex:
+        global: True
+      - question: "Full path to wordlist"
+        name: "default_wordlist"
+        nullable: False
+        regex:
+        global: True

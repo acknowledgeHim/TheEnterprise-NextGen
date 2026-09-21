@@ -1,0 +1,37 @@
+tool author: "https://github.com/rvrsh3ll/FindFrontableDomains"
+config_creator: huber
+tool_name: "find frontable domains"
+simultaneous: True
+targets:
+      scope: "SCOPE_DOMAINS"
+command: "<pythonv2_path> <findfrontabledomains_path> --domain ENTRY --threads <number_threads> > OUTPUT_FOLDERfindfrontabledomains__sSCOPE_ID__FORMATTED_ENTRY.txt"
+output_path: "output/recon/find_frontable_domain/"
+tool_parser: "parsers.recon.find_frontable_domain_parser.find_frontable_domain"
+check_already_run: True
+create_folder: True
+
+#Global Vars
+findfrontabledomains_path: '$PENTEST_DIR$/FindFrontableDomains/FindFrontableDomains.py'
+
+questions:
+      - question: "Pythonv2 full path (ex. /usr/bin/python2.7)"
+        name: "pythonv2_path"
+        nullable: True
+        regex:
+        global: True
+        answers:
+            blank: "/usr/bin/python2.7"
+            default: "/usr/bin/python2.7"
+      - question: "FindFrontableDomains full path (ex. /pentest/FindFrontableDomains)"
+        name: "findfrontabledomains_path"
+        nullable: False
+        regex:
+        global: True
+      - question: "# threads"
+        name: "number_threads"
+        nullable: True
+        regex:
+        global: False
+        answers:
+          default: 20
+          blank: 20

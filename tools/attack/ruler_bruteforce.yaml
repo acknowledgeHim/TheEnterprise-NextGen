@@ -1,0 +1,33 @@
+tool author: "https://github.com/sensepost/ruler/wiki/Getting-Started"
+config_creator: "huber"
+tool_name: "ruler bruteforce"
+simultaneous: False
+group_by: "target"
+targets:
+      scope: SINGLE_SCOPE_DOMAIN
+command: "$PENTEST_DIR$/golang/bin/ruler --domain ENTRY --insecure -o365 brute --users <users.txt> --passwords <msfrpc_wordlist> --verbose"
+output_path: "output/attack/ruler/bruteforce/"
+tool_parser: "parsers.attack.ruler_parser.ruler_bruteforce_parser"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+ruler_path: '$PENTEST_DIR$/golang/src/github.com/ruler/ruler.go'
+default_wordlist: ''
+
+questions:
+      - question: "Ruler Path"
+        name: "ruler_path"
+        nullable: False
+        regex:
+        global: True
+      - question: "Full path to users.txt"
+        name: "users.txt"
+        nullable: False
+        regex:
+        global: True
+      - question: "Full path to passwords.txt"
+        name: "default_wordlist"
+        nullable: False
+        regex:
+        global: True

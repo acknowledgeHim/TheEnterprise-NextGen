@@ -1,0 +1,22 @@
+tool author: "https://pypi.python.org/pypi/shodan"
+config_creator: huber
+tool_name: shodan
+simultaneous: False
+targets:
+      scope: SCOPE_DOMAINS
+function_to_call: FUNCTION:tools.recon.shodan_run.shodan_search
+function_pass_json: True
+output_path: output/recon/shodan/
+tool_parser: parsers.recon.shodan_lookup_parser.shodan_parser
+check_already_run: True
+create_folder: True
+
+# Global Vars
+shodan_api_key: ""
+
+questions:
+      - question: "Shodan API Key"
+        name: "shodan_api_key"
+        nullable: False
+        regex:
+        global: True

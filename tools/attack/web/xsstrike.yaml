@@ -1,0 +1,38 @@
+tool author: "https://github.com/s0md3v/XSStrike"
+config_creator: "huber"
+tool_name: "xsstrike"
+simultaneous: True
+group_by: "target"
+targets:
+        special: "all_websites"
+command: "python <xsstrike_path> -u ENTRY --params --fuzzer --crawl -l <crawling_level> -t <num_threads> --file-log-level RUN --log-file OUTPUT_FOLDER/FORMATTED_ENTRY__sSCOPE_ID.txt"
+output_path: "output/attack/web/xsstrike/"
+tool_parser: "parsers.attack.web.xsstrike_parser.xsstrike_parser"
+check_already_run: False
+create_folder: True
+
+# Global Vars
+xsstrike_path: '$PENTEST_DIR$/xsstrike/'
+
+questions:
+      - question: "XSStrike path"
+        name: "xsstrike_path"
+        nullable: False
+        regex:
+        global: True
+        answers:
+          default: "/pentest/xsstrike/"
+          blank: "/pentest/xsstrike/"
+      - question: "Crawling level"
+        name: "crawling_level"
+        nullable: False
+        regex: '[\d]'
+        global: False
+      - question: "Number of Threads"
+        name: "num_threads"
+        nullable: False
+        regex: '[\d]'
+        global: False
+        answers:
+          default: 3
+          blank: 3

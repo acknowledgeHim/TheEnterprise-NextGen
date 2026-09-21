@@ -1,0 +1,35 @@
+tool author: "https://github.com/ropnop/windapsearch"
+config_creator: "huber"
+tool_name: "windapsearch - find dc"
+simultaneous: True
+group_by: "target"
+targets:
+      special: "<domain>"
+command: "<windapsearch_path> -d <domain> > OUTPUT_FOLDER/<domain>__sSCOPE_ID__dc.txt"
+output_path: "output/enumeration/windapsearch_find_dc/"
+tool_parser: "parsers.enumeration.windapsearch_find_dc.find_dc"
+check_already_run: False
+create_folder: True
+
+windapsearch_path: '$PENTEST_DIR$/windapsearch/'
+
+questions:
+      - question: "Domain (fqdn)"
+        name: "domain"
+        nullable: False
+        regex:
+        global: False
+      - question: "Windapsearch full path (ex. /pentest/windapsearch/)"
+        name: "windapsearch_path"
+        nullable: False
+        regex:
+        global: True
+
+selections:
+    - table: "Scope"
+      name: "scope_entry"
+      display_fields:
+        - "entry"
+        - "Location.name"
+      return_field: "id"
+      filter: "CURRENT_LOCATION"

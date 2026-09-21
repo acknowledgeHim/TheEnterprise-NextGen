@@ -1,0 +1,5 @@
+config_creator: "huber"
+simultaneous: True
+callable_yaml:
+  - "tools/attack/bruteforce/metasploit/metasploit_bruteforce*"
+  - "tools/attack/bruteforce/metasploit/metasploit_anonymous*"

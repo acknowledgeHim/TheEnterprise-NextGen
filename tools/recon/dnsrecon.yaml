@@ -1,0 +1,11 @@
+tool author: "https://github.com/vanhauser-thc/thc-ipv6"
+config_creator: "huber"
+tool_name: "dnsrecon"
+simultaneous: True
+targets:
+      scope: "SCOPE_DOMAINS"
+command: "dnsrecon -d ENTRY > OUTPUT_FOLDER/dnsrecon__sSCOPE_ID__ENTRY.txt"
+output_path: "output/recon/dnsrecon/"
+tool_parser: "parsers.recon.dnsrecon_parser.dnsrecon"
+check_already_run: True
+create_folder: True

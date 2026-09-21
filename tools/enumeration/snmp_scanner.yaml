@@ -1,0 +1,14 @@
+tool author: "unknown"
+config_creator: "huber"
+tool_name: "snmp scanner"
+simultaneous: True
+group_by: "target"
+targets:
+      port_numbers: "161"
+      protocol: "udp"
+target_by_host_file: True
+command: "CODE_BASE_PATH/tools/enumeration/snmp-scanner.pl -f HOST_FILE -o OUTPUT_FOLDER/snmp_scanner__sSCOPE_ID__ENTRY.txt"
+output_path: "output/enumeration/snmp_parser/"
+tool_parser: "parsers.enumeration.snmp_parser.snmp"
+check_already_run: True
+create_folder: True

@@ -1,0 +1,17 @@
+# TLS cert/key generated locally at deploy time (see README's Installation section)
+flask_files/flask.crt
+flask_files/flask.key
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+venv/
+
+# Per-engagement runtime data / logs
+*.log
+
+# IDE-local config
+.idea/
+.vscode/

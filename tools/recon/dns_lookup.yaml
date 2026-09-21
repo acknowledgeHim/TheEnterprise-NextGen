@@ -1,0 +1,11 @@
+tool author:
+config_creator: huber
+tool_name: dns lookup
+simultaneous: True
+targets:
+      scope: SCOPE_DOMAINS
+function_to_call: FUNCTION:tools.recon.dns_query.dns_query
+output_path: output/recon/dns_lookup/
+tool_parser: parsers.recon.dns_lookup_parser.dns
+check_already_run: True
+create_folder: True

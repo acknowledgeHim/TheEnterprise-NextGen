@@ -1,0 +1,12 @@
+tool author: byt3bl33d3r
+config_creator: huber
+tool_name: crackmapexec_smb
+simultaneous: False
+group_by: target
+targets:
+      scope: SCOPE_IPS
+command: "crackmapexec smb ENTRY > OUTPUT_FOLDER/FORMATTED_ENTRY__sSCOPE_ID.txt"
+output_path: output/enumeration/crackmapexec/smb/
+tool_parser: parsers.enumeration.crackmapexec_smb_parser.smb
+check_already_run: False
+create_folder: True

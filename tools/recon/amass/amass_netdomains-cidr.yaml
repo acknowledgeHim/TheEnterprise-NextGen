@@ -1,0 +1,16 @@
+#command: "amass.netdomains -cidr ENTRY > OUTPUT_FOLDER/amass_netdomains-cidr__sSCOPE_ID__ENTRY.txt"
+tool author: "https://github.com/OWASP/Amass"
+config_creator: "huber"
+tool_name: "amass_netdomains-cidr"
+simultaneous: True
+targets:
+      scope: "SCOPE_IPS"
+target_by_host_file: False
+command: "amass intel -cidr ENTRY -dir OUTPUT_FOLDER/  > OUTPUT_FOLDERamass_cidr__sSCOPE_ID__FORMATTED_ENTRY.json"
+output_path: "output/recon/amass/netdomains/cidr/"
+tool_parser: "parsers.recon.amass.netdomains.amass_cidr_parser.amass"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+#amass_path: "$PENTEST_DIR$/golang/src/github.com/amass/cmd/amass.netdomains/main.go"

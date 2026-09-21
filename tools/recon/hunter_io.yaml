@@ -1,0 +1,22 @@
+tool author: https://github.com/VonStruddle/PyHunter
+config_creator: huber
+tool_name: 'hunter_io'
+simultaneous: True
+targets:
+      scope: SCOPE_DOMAINS
+function_to_call: 'FUNCTION:tools.recon.hunter_io_run.hunter_io'
+function_pass_json: True
+output_path: 'output/recon/hunter_io/'
+tool_parser: 'parsers.recon.hunter_io_parser.hunter_io'
+check_already_run: True
+create_folder: True
+
+# GLOBAL VARS
+hunter_io_key: ''
+
+questions:
+      - question: 'Hunter IO Key'
+        name: 'hunter_io_key'
+        regex:
+        nullable: False
+        global: True

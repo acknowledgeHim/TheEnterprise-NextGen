@@ -1,0 +1,109 @@
+tool author: "HUBER"
+config_creator: "huber"
+tool_name: "emailfilter"
+simultaneous: False
+group_by: "tool"
+targets:
+      special: "all_email_servers_including_relays"
+      special_args: ["<email_to>"]
+target_by_host_file: False
+function_to_call: "FUNCTION:tools.vuln.email_filter_run.email_filter_run"
+function_pass_json: True
+output_path: "output/vuln/emailfilter/"
+tool_parser: "parsers.vuln.email_filter_parser.email_filter"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+email_relay_servers_to_bounce_emails_from: '' #'relay.mail.cogentco.com' # multiple separated by ';'
+invalid_user_name: 'clawasneverhere'
+spoof_domain_no_spf_dmarc_dkim: 'contoso.com'                         # multiple separated by ';'
+spoof_domain_with_spf_hardfail: 'microsoft.com'
+spoof_domain_with_spf_softfail: 'symantec.com'
+emailfilter_pause_time: ''
+num_invalid_domains_to_try: '5'
+email_msg_where_to_forward_back_to: 'relay@issgs.net'
+send_read_receipt_to: ''
+testers_domain: 'issgs.net'
+public_ip: '38.126.169.102'
+your_ip_address: '10.10.1.38'
+smtp_ehlo_server: 'scanner1.issgs.net'
+username: ''
+passwd: ''
+
+questions:
+      - question: "Pause between email filter/relay tests (in secs)"
+        name: "emailfilter_pause_time"
+        nullable: False
+        regex: "[0-9]+"
+        global: True
+      - question: "Number of invalid domains to try"
+        name: "num_invalid_domains_to_try"
+        nullable: False
+        regex: "[0-9]+"
+        global: True
+        answers:
+          blank: 5
+          default: 5
+      - question: "Enter the email address the client should forward received emails back to (relay@issgs.net)"
+        name: "email_msg_where_to_forward_back_to"
+        nullable: False
+        regex:
+        global: True
+      - question: "Enter the email address where the Read Receipt (delivery confirmation) should be sent back (your ISSG or your CLA email)"
+        name: "send_read_receipt_to"
+        nullable: False
+        regex:
+        global: True
+      - question: "Domain you are testing from"
+        name: 'testers_domain'
+        nullable: False
+        global: True
+      - question: "Your Public IP"
+        name: 'public_ip'
+        nullable: False
+        global: True
+      - question: "Your Private IP"
+        name: 'your_ip_address'
+        nullable: False
+        global: True
+      - question: 'SMTP Helo Server'
+        name: 'smtp_ehlo_server'
+        nullable: False
+        global: True
+      - question: "(Optional) Email servers to bounce emails from (separate by ';' if multiple)"
+        name: 'email_relay_servers_to_bounce_emails_from'
+        nullable: True
+        global: True
+      - question: "Invalid Username to Use"
+        name: 'invalid_user_name'
+        nullable: False
+        global: True
+      - question: 'Domain to Spoof that has no SPF or DMARC or DKIM'
+        name: 'spoof_domain_no_spf_dmarc_dkim'
+        nullable: False
+        global: True
+      - question: 'Domain to Spoof that has HardFail SPF -all'
+        name: 'spoof_domain_with_spf_hardfail'
+        nullable: False
+        global: True
+      - question: 'Domain to Spoof that has SoftFail SPF ~all'
+        name: 'spoof_domain_with_spf_softfail'
+        nullable: False
+        global: True
+      - question: '(Optional) if email relay server needs authentication (username)'
+        name: 'username'
+        nullable: True
+        global: True
+      - question: '(Optional) if email relay server needs authentication (password)'
+        name: 'passwd'
+        nullable: True
+        global: True
+
+selections:
+      - table: "ClientContact"
+        name: "email_to"
+        display_fields:
+          - "contact_name"
+          - "contact_email"
+        return_field: "contact_email"

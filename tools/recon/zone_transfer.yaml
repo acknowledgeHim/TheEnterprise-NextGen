@@ -1,0 +1,11 @@
+tool author:
+config_creator: huber
+tool_name: dns zonetransfer
+simultaneous: True
+targets:
+      scope: SCOPE_DOMAINS
+function_to_call: FUNCTION:tools.recon.zonetransfer_run.zonetransfer
+output_path: output/recon/dns_zonetransfer/
+tool_parser: parsers.recon.dns_zonetransfer_parser.dns
+check_already_run: True
+create_folder: True

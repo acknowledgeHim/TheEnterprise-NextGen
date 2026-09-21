@@ -1,0 +1,31 @@
+tool author: "https://wpscan.org/"
+config_creator: "huber"
+tool_name: "wpscan-nonintrusive"
+simultaneous: False
+group_by: "target"
+targets:
+      special: "all_websites"
+command: '<wpscan_path> --url ENTRY --threads <wpscan_threads> --disable-tls-checks --random-agent --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36" > OUTPUT_FOLDERwpscan_nonintrusive__sSCOPE_ID__FORMATTED_ENTRY.txt'
+output_path: "output/vuln/web/wpscan_nonintrusive/"
+tool_parser: "parsers.vuln.web.wpscan_parser.wpscan_parser"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+wpscan_path: 'wpscan'
+wpscan_threads: '50'
+
+questions:
+      - question: "WPScan path"
+        name: "wpscan_path"
+        nullable: False
+        regex:
+        global: True
+      - question: "Threads"
+        name: "wpscan_threads"
+        nullable: True
+        regex: "[0-9]+"
+        global: True
+        answers:
+          blank: "50"
+          default: "50"

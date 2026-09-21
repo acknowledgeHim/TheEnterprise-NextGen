@@ -1,0 +1,36 @@
+tool author: "arpspoof"
+config_creator: "huber"
+tool_name: "arpspoof"
+simultaneous: False
+group_by: "target"
+targets:
+        special: "<your_ip_address>"
+command: "sudo arpspoof -i <interface_name> -c -t <target_ip> -r <gateway_or_fileshare_ip>"
+output_path: "output/attack/network/arpspoof/"
+tool_parser: "parsers.attack.network.arpspoof.arpspoof_parser"
+check_already_run: False
+create_folder: True
+
+questions:
+      - question: "Network Interface"
+        name: "interface_name"
+        nullable: False
+        options: "NETWORK_INTERFACE_NAME"
+        regex:
+        global: True
+      - question: "Target IP Address"
+        name: "target_ip"
+        nullable: False
+        regex:
+      - question: "Gateway or Fileshare IP (if on same network)"
+        name: "gateway_or_fileshare_ip"
+        nullable: False
+        regex:
+selections:
+    - table: "Scope"
+      name: "scope_id"
+      display_fields:
+        - "entry"
+        - "Location.name"
+      return_field: "id"
+      filter: "CURRENT_LOCATION"

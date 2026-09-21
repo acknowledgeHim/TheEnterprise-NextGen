@@ -1,0 +1,12 @@
+tool author: 'https://github.com/trustedsec/nps_payload'
+config_creator: 'huber'
+tool_name: 'nps_payload'
+simultaneous: True
+targets:
+      scope: SINGLE_SCOPE_IP
+function_to_call: 'FUNCTION:tools.payload.nps_run.nps'
+function_pass_json: False
+output_path: 'output/payload/nps/'
+tool_parser: ''
+check_already_run: False
+create_folder: True

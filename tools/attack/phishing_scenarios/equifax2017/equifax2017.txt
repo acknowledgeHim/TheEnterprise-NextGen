@@ -1,0 +1,17 @@
+SUBJECT=Equifax Security Incident
+SMTP_FROM=security@equifax.com
+READ_RECEIPT=No
+DATA_FROM=security@equifax.com
+PHISHING_URL=https://equifax2017.urlsec.net
+REAL_URL=https://www.equifaxsecurity2017.com/
+SIGNATURE=Thanks, \nEquifax 2017 Security Team
+BODY=<html><body><span style='font-size:10.0pt; color:#1F497D'><p class='x_MsoNormal'>To Whom It May Concern,
+            <p>The cybersecurity firm that we, Equifax, utilized for its forensic investigation has completed its review.  The review includes a more accurate list of consumers that were affected by the incident.
+            <br>Since you were affected by this incident, we have provided a free tool on our website to monitor your credit.  This tool is in addition to signing up for the free credit monitoring and is an important step in securing your data.
+            <p>You can download the tool at PHISH_URL in the upper-right corner below the 'Enroll to Protect & Monitor Credit - Free' button.  Simply download and run the tool to perform an exhaustive credit monitoring check.
+            The URL is specific to your account so that we can monitor who has taken advantage of our free monitoring solutions in order to mitigate any affects from the breach.
+            <p>Please direct all questions to the FAQs at REAL_URL or use the contact information found under 'Contact Us'.
+            <p>We appreciate your understanding and apologize for any inconvenience this may have caused,
+
+SIGNATURE
+</body></html>

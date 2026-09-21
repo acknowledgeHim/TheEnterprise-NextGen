@@ -1,0 +1,15 @@
+#command: "amass.netdomains -whois -asn ENTRY > OUTPUT_FOLDER/amass_netdomains-whois__sSCOPE_ID__ENTRY.txt"
+tool author: "https://github.com/OWASP/Amass"
+config_creator: "huber"
+tool_name: "amass_netdomains-whois"
+simultaneous: True
+targets:
+      scope: "SCOPE_DOMAINS"
+command: "amass intel -whois -public-dns -d ENTRY > OUTPUT_FOLDERamass_whois__sSCOPE_ID__FORMATTED_ENTRY.json"
+output_path: "output/recon/amass/netdomains/whois/"
+tool_parser: "parsers.recon.amass.netdomains.amass_whois_parser.amass"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+#amass_path: "$PENTEST_DIR$/golang/src/github.com/amass/cmd/amass.netdomains/main.go"

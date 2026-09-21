@@ -1,0 +1,52 @@
+tool author: "https://www.metasploit.com/"
+config_creator: "huber"
+tool_name: "metasploit enumeration http_version"
+simultaneous: True
+group_by: "target"
+targets:
+      port_numbers: "80,8080,443,8443"
+      port_descriptions: "http,iis,tomcat,apache,nginx,web"
+      protocol: "tcp"
+target_by_host_file: True
+function_to_call: "FUNCTION:tools.enumeration.metasploit_enum_run.metasploit_enum_run"
+function_pass_json: True
+output_path: "output/enumeration/metasploit/http_version/"
+tool_parser: "parsers.enumeration.metasploit_parser.metasploit"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+msfrpc_userlist: ''
+msfrpc_wordlist: ''
+
+questions:
+      - question: "MSFRPC URL"
+        name: "msfrpc_url"
+        nullable: False
+        regex: r'^[a-zA-Z0-9.-_]+']
+        global: True
+      - question: "MSFRPC Port"
+        name: "msfrpc_port"
+        nullable: False
+        regex: r'[\d]+']
+        global: True
+      - question: "MSFRPC Username"
+        name: "msfrpc_user"
+        nullable: False
+        regex: ''
+        global: True
+      - question: "MSFRPC Password"
+        name: "msfrpc_password"
+        nullable: False
+        regex: ''
+        global: True
+      - question: "MSFRPC UserList"
+        name: "msfrpc_userlist"
+        nullable: False
+        regex: ''
+        global: True
+      - question: "MSFRPC Wordlist"
+        name: "msfrpc_wordlist"
+        nullable: False
+        regex: ''
+        global: True

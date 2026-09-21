@@ -1,0 +1,25 @@
+tool author: "https://github.com/aboul3la/Sublist3r/blob/master/README.md"
+config_creator: "huber"
+tool_name: "sublist3r"
+simultaneous: True
+targets:
+      scope: "SCOPE_DOMAINS"
+command: "<pythonv2_path> <sublist3r_path> -v -d ENTRY > OUTPUT_FOLDER/sublist3r__sSCOPE_ID__ENTRY.txt"
+output_path: "output/recon/sublist3r/"
+tool_parser: "parsers.recon.sublist3r_parser.sublist3r"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+sublist3r_path: '$PENTEST_DIR$/Sublist3r/sublist3r.py'
+pythonv2_path: '/usr/bin/python2.7'
+
+questions:
+      - question: "Sublist3r Path"
+        name: "sublist3r_path"
+        nullable: False
+        regex: ""
+        global: True
+      - question: "Python 2 Path"
+        name: "pythonv2_path"
+        global: True

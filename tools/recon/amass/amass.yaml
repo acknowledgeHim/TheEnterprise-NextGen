@@ -1,0 +1,26 @@
+tool author: "https://github.com/OWASP/Amass"
+config_creator: "huber"
+tool_name: "amass"
+simultaneous: True
+targets:
+      scope: "SCOPE_DOMAINS"
+target_by_host_file: False
+command: "amass enum -v -src -ip -brute -min-for-recursive <min_for_recursive> -d ENTRY -dir OUTPUT_FOLDER -do OUTPUT_FOLDERamass__sSCOPE_ID__FORMATTED_ENTRY.do -json OUTPUT_FOLDERamass__sSCOPE_ID__FORMATTED_ENTRY.json"
+output_path: "output/recon/amass/brute/"
+tool_parser: "parsers.recon.amass.amass_parser.amass"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+#amass_path: "$PENTEST_DIR$/golang/src/github.com/OWASP/amass/cmd/amass/main.go"
+min_for_recursive: 3
+
+questions:
+      - question: "Min"
+        name: "min_for_recursive"
+        nullable: True
+        global: True
+        regex:
+        answers:
+          default: 20
+          blank: 20

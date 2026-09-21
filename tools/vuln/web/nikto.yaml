@@ -1,0 +1,51 @@
+tool author: "https://cirt.net/Nikto2"
+config_creator: "huber"
+tool_name: "nikto"
+simultaneous: False
+group_by: "target"
+targets:
+      special: "all_websites"
+command: '<nikto_path> -nointeractive <nikto_stealthy> -Format XML -Pause <nikto_pause_time> -maxtime <nikto_max_execution_time>m -host ENTRY:PORT SSL -Tuning x6 -ask no -output OUTPUT_FOLDERnikto__sSCOPE_ID__FORMATTED_ENTRY.xml -D v -useragent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/67.0.3396.99 Safari/537.36"'
+output_path: "output/vuln/web/nikto/"
+tool_parser: "parsers.vuln.web.nikto_parser.nikto_parser"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+nikto_path: "nikto"
+nikto_pause_time: ''
+nikto_max_execution_time: ''
+nikto_stealthy: ''
+
+questions:
+      - question: "Nikto path"
+        name: "nikto_path"
+        nullable: False
+        regex:
+        global: True
+      - question: "Pause between scans (in secs)"
+        name: "nikto_pause_time"
+        nullable: False
+        regex: "[0-9]+"
+        global: True
+        answers:
+          blank: "1"
+          default: "1"
+      - question: "Maximum execution time per website (in minutes)"
+        name: "nikto_max_execution_time"
+        nullable: False
+        regex: "[0-9]+"
+        global: True
+        answers:
+          blank: "480"
+          default: "480"
+      - question: "Nikto evasion"
+        name: "nikto_stealthy"
+        nullable: False
+        regex: "^(?:Y|N)$"
+        global: True
+        answers:
+          Y: "-evasion 1"
+          N: ""
+          blank: ""
+          default: ""

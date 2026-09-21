@@ -1,0 +1,24 @@
+tool author: "https://www.owasp.org/index.php/OWASP_Zed_Attack_Proxy_Project"
+config_creator: "huber"
+tool_name: "zap"
+simultaneous: False
+group_by: "target"
+targets:
+      special: "all_websites"
+function_to_call: "FUNCTION:tools.vuln.web.zap_run.zap_run"
+function_pass_json: True
+output_path: "output/vuln/web/zap/"
+tool_parser: "parsers.vuln.web.zap_parser.zap_parser"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+zap_proxy: 'http://127.0.0.1:8080'
+zap_api_key: ''
+
+questions:
+      - question: "ZAP Proxy URL"
+        name: "zap_proxy"
+        nullable: False
+        regex:
+        global: True

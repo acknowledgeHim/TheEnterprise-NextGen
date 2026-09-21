@@ -1,0 +1,72 @@
+self.test9(email_filter_output)  # valid email from no SPF domain, should get thru unless Rev DNS used
+self.test20(email_filter_output)  # identical to #10, except contains plain text alternative
+self.test10(email_filter_output)  # spoofed URL <a href>
+self.test11(email_filter_output)  # spoofed from, smtp from is different than body FROM
+self.test5(email_filter_output)  # spoof TLD (ex. google.com becomes google.c0m)
+self.test6(email_filter_output)  # spoof domain (ex. google.com becomes g00gle.com)
+self.test7(email_filter_output)  # no domain (ex. jim@google.com becomes jim)
+self.test8(email_filter_output)  # no top level (ex. google.com becomes google)
+self.test12(email_filter_output)  # test .exe
+self.test13(email_filter_output)  # test .exe in zip
+self.test14(email_filter_output)  # test eicar
+self.test15(email_filter_output)  # test eicar in zip
+self.test16(email_filter_output)  # test eicar in zip in zip
+self.test17(email_filter_output)  # test SPF (so send from microsoft.com, instead of contoso.com)
+self.test18(email_filter_output)  # test .gadget
+self.test19(email_filter_output)  # test .bat
+self.test21(email_filter_output)  # test EXFIL (<img src for 22,80,443,53,8080,64999)  # you must have these ports open and listening somewhere accessible from the Internet for this test to mean anything
+self.test22(email_filter_output)  # test .hta files
+self.test23(email_filter_output)  # test Word Doc w/ Macro files
+self.test24(email_filter_output)  # test SPF SoftFail (~all)
+self.test25(email_filter_output)  # with read receipt email differing from SMTP FROM email
+self.test26(email_filter_output)  # with read receipt email differing from DATA FROM email but same as SMTP FROM
+self.test27(email_filter_output)  # spoof domain used in test17 by SMTP FROM for only the DATA FROM (SMTP FROM is same as test17)
+self.test28(email_filter_output)  # SMTP FROM base64 encode but DATA FROM is not (shadow attack)
+self.test29(email_filter_output) # .exe attachment with renamed extension as .txt
+self.test30(email_filter_output) # .exe attachment with renamed extension as .txt inside zip
+self.test31(email_filter_output)  # .chm attachment
+self.test32(email_filter_output)  # .dll attachment)#
+self.test33(email_filter_output)  # .mui attachment
+self.test34(email_filter_output)  # .mui attachment without LN extension
+self.test35(email_filter_output)  # .msi attachment
+self.test36(email_filter_output)  # .jar attachment
+self.test37(email_filter_output)  # .scr attachment
+self.test38(email_filter_output)  # .ps1 attachment
+self.test39(email_filter_output)  # .vbs attachment
+self.test40(email_filter_output)  # .sct attachment
+self.test41(email_filter_output)  # .htm attachment
+self.test42(email_filter_output)  # .html attachment
+self.test43(email_filter_output)  # .js attachment
+self.test44(email_filter_output)  # both SMTP FROM and DATA FROM are base64 encoded (shadow attack)
+self.test45(email_filter_output)  # SMTP FROM base64 encoded and DATA FROM is just username (shadow attack)
+self.test46(email_filter_output)  # Resent-From (by way of) is valid internal and SMTP FROM is spoofed
+self.test47(email_filter_output)  # Resent-From (by way of) is spoofed and SMTP FROM is valid internal
+self.test48(email_filter_output)  # Sender (on behalf of) is spoofed and SMTP FROM is valid internal
+self.test49(email_filter_output)  # Sender (on behalf of) is valid internal and SMTP FROM is spoofed
+self.test50(email_filter_output)  # Sender domain is localhost
+self.test51(email_filter_output)  # Sender domain is IP localhost - [127.0.0.1]
+self.test52(email_filter_output)  # null sender address: <>
+self.test53(email_filter_output)  # Sender address used local hostname
+self.test54(email_filter_output)  # Sender address uses Public IP of local host @[200.200.200.200]
+self.test55(email_filter_output)  # Sender address uses Private IP of local host
+self.test56(email_filter_output)  # Sender email to use % hack where routing is valid user + % + domain
+self.test57(email_filter_output)  # Sender email to use % hack where routing is valid user but not valid domain
+self.test58(email_filter_output)  # Sender email to use % hack where routing is valid user + domain but routing from is Public IP
+self.test59(email_filter_output)  # Sender email to use % hack where routing is valid user but not valid domain & routed from Public IP
+self.test60(email_filter_output)  # SMTP FROM email to use % hack where routing is valid user & domain but routing is Public IP of email_server
+self.test61(email_filter_output)  # SMTP FROM email if client email in quotes
+self.test62(email_filter_output)  # SMTP FROM email if client email in quotes + % hack from valid user + valid domain
+self.test63(email_filter_output)  # SMTP FROM email if client email in quotes + % hack from valid user + valid domain and routed is Public IP
+self.test64(email_filter_output)  # SMTP TO email uses source routing (client_email @ domain_list)
+self.test65(email_filter_output)  # SMTP TO email uses source routing (client_email @ domain_list) where client_email is encapsulated in quotes
+self.test66(email_filter_output)  # SMTP TO email uses source routing (client_email @ PUBLIC IP)
+self.test67(email_filter_output)  # SMTP TO email uses source routing (client_email @ Public IP of email_server)
+self.test68(email_filter_output)  # base Striker URL approach
+self.test69(email_filter_output)  # X-Originator-IP spoofing
+self.test70(email_filter_output)  # folding/unfolding in SMTP From
+self.test71(email_filter_output)  # Extremely long SMTP From (longer than 998 chars)
+self.test72(email_filter_output)   # Base64 encode display name portion that can proceed email address (and put title, etc to make it long and block out the real email address when displayed in Outlook)
+self.test3(email_filter_output)  # send to valid internal from valid internal
+self.test4(email_filter_output)  # send to valid internal from invalid internal
+self.test1(email_filter_output)  # open relay to from anyone external to anyone external
+self.test2(email_filter_output)  # open relay from valid internal to anyone external

@@ -1,0 +1,6 @@
+config_creator: huber
+simultaneous: True
+callable_yaml:
+  - tools/scan/nmap-default_internal
+  - tools/scan/nmap-tcpdefault
+  - tools/scan/nmap-top25udp

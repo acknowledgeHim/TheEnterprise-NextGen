@@ -1,0 +1,30 @@
+tool author: "https://github.com/ChrisTruncer/EyeWitness"
+config_creator: "huber"
+tool_name: "eyewitness_rdp"
+simultaneous: True
+group_by: "target"
+targets:
+      port_numbers: "3389"
+      port_descriptions: "rdp,mstsc"
+      protocol: "tcp"
+target_by_host_file: True
+command: "<pythonv2_path> <eyewitness_path> --no-prompt --rdp -f RDP_HOST_FILE -d OUTPUT_FOLDER"
+output_path: "output/enumeration/eyewitness/rdp/"
+tool_parser: "parsers.enumeration.eyewitness_parser.eyewitness"
+check_already_run: True
+create_folder: True
+
+# Global Vars
+eyewitness_path: '$PENTEST_DIR$/eyewitness//EyeWitness.py'
+
+questions:
+      - question: "Python v2 Path"
+        name: "pythonv2_path"
+        nullable: False
+        regex: ""
+        global: True
+      - question: "Eyewitenss Path"
+        name: "eyewitness_path"
+        nullable: False
+        regex: ""
+        global: True

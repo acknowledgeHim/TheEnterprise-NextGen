@@ -1,0 +1,12 @@
+tool author: "https://github.com/mazen160/struts-pwn_CVE-2017-9805"
+config_creator: "huber"
+tool_name: "struts_pwn_2017-9805"
+simultaneous: False
+group_by: "target"
+targets:
+      special: "all_websites"
+command: 'python tools/attack/web/struts/struts_pwn-2017-9805.py --url "ENTRY" > OUTPUT_FOLDERstruts_pwn__sSCOPE_ID__FORMATTED_ENTRY.txt'
+output_path: "output/attack/web/struts_pwn/"
+tool_parser: "parsers.attack.web.struts.struts_pwn_parser-2017-9805.struts_pwn_parser"
+check_already_run: True
+create_folder: True

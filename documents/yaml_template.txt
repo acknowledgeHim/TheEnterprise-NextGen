@@ -1,0 +1,94 @@
+### USE single quotes around all strings
+author: nmap
+config_creator: huber
+tool_name: nmap traditional-internal
+simultaneous: True|False (default is True)
+group_by: tool|targets (only necessary if simultaneous is False (default is targets)
+targets:
+      target:
+      special: all_email_servers|all_websites|all_vnc_servers|all_rdp_servers|<QUESTION_FIELD_NAME>  # If you do a <QUESTION_FIELD_NAME> you will need to have a selection for the Scope since this needs to be associated with a scope entry somehow
+      scope: SCOPE_IPS|SCOPE_DOMAINS|SCOPE_WEBSITES|ALL|SINGLE_SCOPE_DOMAIN
+      port_numbers: "80,8080,443,8081"
+      port_descriptions: 'web,iis,tomcat,apache'
+      protocol: tcp|udp|both (default tcp)
+target_by_host_file: True|False (default is False)
+command: 'sudo nmap -n -p 21,22,23,25,80,135,139,443,445,902,1158,1433,1521,3306,3389,5432,5800,5900,6000,8080,8443,50000 -Pn -vv --reason <scanspeed> <decoy> -oA OUTPUT_FOLDER'
+function_to_call: FUNCTION:tools.recon.dns_query.dns_query
+function_pass_json: True|False (default False)
+questions:
+    - question: if stealth scan (Y|N)
+      name: stealth
+      nullable: True
+      options: NETWORK_INTERFACE_NAME|NETWORK_IP_ADDRESS (optional and WILL REPLACE the regex based on these predefined results)
+      regex: '^(?:Y|N)$'  # YOU MUST USE single quotes to encapsulate the regex string!!!!
+      answers:  (Must have a strict regex where only those values are exceptable)
+          Y: -T1 -D 10.1.1.1
+          N:
+          default:
+          blank:
+          prepend_to_all: "sudo "
+          append_to_all: " -c text.txt"
+      replacements:
+          space: ZZZZZ (it will look for spaces in the field and replace with ZZZZZ)
+    - question: Scan speed (-T1, -T4, etc)
+      name: scanspeed
+      nullable: False|True (default is False)
+      regex: '^(?:\-T[\d]{1})$'
+      global: False|True (default is False)
+    - question: Decoy IP (send out scans with bogus source IP)
+      name: decoy
+      nullable: True|False (default is False)
+      regex: '^(?:\-D[0-9a-zA-Z .:]{1,})$'
+    - question: Select client contact to email
+      name: client_contact
+      nullable: False|True (default is False)
+      global: False|True (default is False)
+      repo_entries: CLIENT_CONTACTS|LOCATIONS|CORP_CONTACTS
+      question_to_filter_on: None (can be name of prior question name)
+selections:
+    - table: Scope
+      name: "scope_id"
+      display_fields:
+        - entry
+        - Location.name
+      return_field: id
+      filter: CURRENT_LOCATION or {'type': 'DOMAIN'} (optional) - either a keyword like CURRENT_LOCATION or a dictionary where key is column name and value is value to filter on associated key
+output_path: output/scan/nmap/
+tool_parser: parsers.scan.nmap_parser.nmap
+check_already_run: True|False (default is True)
+create_folder: True|False (default is True)
+sleep_between_targets: False|True (default is False)
+email:
+    - start_or_end: "start"
+        subject: "Nmap started for ENTRY"
+        tester_msg: "Started COMMAND.
+        client_msg: "You are being Port Scanned for ENTRY."
+        corp_msg: "We are Port Scanning our client, CLIENTNAME for ENTRY."
+    - start_or_end: "end"
+        subject: "Nmap ended for ENTRY"
+        tester_msg: "Ended COMMAND.
+        client_msg: "Finished being Port Scanned for ENTRY."
+        corp_msg: "We are done Port Scanning our client, CLIENTNAME for ENTRY."
+
+
+-----------------
+yaml template to call other yaml templates
+
+config_creator: huber
+simultaneous: True | False
+callable_yaml:
+  - yaml_file_to_call
+  - yaml_file_to_call
+  ...
+
+
+
+
+
+------- NOT YET IMPLEMENTED --------
+sub_group: (allows you to group tools together so that only one in each group is running at a time.  this way you can
+    group by tool and then by sub group (useful in theHarvester where more than 1 tool hits google)
+  - name: group_name
+    members:
+      - yaml_file_to_call (must be in callable_yaml list above)
+      - yaml_file_to_call (must be in callable_yaml list above)

@@ -1,0 +1,4 @@
+config_creator: "huber"
+simultaneous: True
+callable_yaml:
+  - "tools/attack/bruteforce/ncrack/ncrack_bruteforce_*"

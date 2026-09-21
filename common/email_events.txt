@@ -1,0 +1,120 @@
+You may Edit any of the Text below.  Please be careful not to remove fields (ie, subject or corp_msg lines) or mess
+with the formatting as it must conform to JSON formatted data.
+Explanation of fields:
+event = is the name of the event (corresponds to the tool) that will be looked for to auto-kick of the email.
+    For example, when dns lookup finishes, the parser will automatically send emails to the appropriate people (based on
+    who has been marked to receive emails and if the corresponding message is not blank).
+tester_msg = is the message body that will go to whoever kicked off that tool to run
+client_msg = is the message body that will go be send to all Client Contacts who are designated to receive notifcations
+corp_msg = is the message body that will go to all of your company's staff you've identified to receive notifications
+subject = is the email's subject (notice this is the same for all 3 groups of people that could receive an email for
+    the event
+* If a message is blank (ex. client_msg is blank, than that means no message will be sent to Client Contacts for that
+    event even if they have it marked to receive notifications.  The same is true for the tester and your company
+    (corp_msg) contacts.
+* Wildcards:  There are certain reserved words in all CAPS that will automatically be substitued when the email is sent,
+    that list is as follows:
+        CLIENTNAME = the name of the Client (Company Name)
+        ENGAGEMENT = the engagement # you entered for the current engagement
+        SERVICE = the name of the service (SMTP, HTTP, etc)
+        DOMAINNAME = the domain name (from a Scope entry)
+        SCENARIONAME = the email phishing scenario name being used
+        EMAIL_ADDRESS = the email address in your profile
+        TOOLNAME = the name of the Tool that was used
+        EMAIL_MSG_WHERE_TO_FORWARD_BACK_TO = the email address that they should forward email tests back to (grabs from pat_user_conf.py)
+
+
+---------------------------- Everything below this line must conform to a JSON formatted data -----------------------
+{'events': [
+    {'event':'bruteforce',
+         'tester_msg':'Attempting to brute force SERVICE discovered for CLIENTNAME.',
+         'client_msg':'',
+         'corp_msg':'Attempting to brute force SERVICE discovered for CLIENTNAME during ENGAGEMENT.',
+         'subject':'Brute force SERVICE for CLIENTNAME'},
+    {'event':'dirbuster',
+         'tester_msg':'Directory guessing using a similar approach to dirbuster (and the dirbuster word list), has started for CLIENTNAME.',
+         'client_msg':'',
+         'corp_msg':'',
+         'subject':'Directory guessing started for CLIENTNAME'},
+    {'event': 'dns bruteforce',
+         'tester_msg': 'DNS bruteforcing for DOMAINNAME has finished',
+         'client_msg': '',
+         'corp_msg': '',
+         'subject': 'DNS bruteforcing for CLIENTNAME'},
+    {'event': 'dns lookup',
+         'tester_msg': 'DNS lookup for DOMAINNAME has finished',
+         'client_msg': '',
+         'corp_msg': '',
+         'subject': 'DNS lookup for CLIENTNAME'},
+    {'event': 'dns zonetransfer',
+         'tester_msg': 'DNS zonetransfer attempt for DOMAINNAME has finished',
+         'client_msg': '',
+         'corp_msg': '',
+         'subject': 'DNS zonetransfer for CLIENTNAME'},
+    {'event':'email filter',
+         'tester_msg':'Email Filter/Relay Test messages sent for all mailservers / mx records identified for CLIENTNAME',
+         'client_msg':'For the Email Filter/Relay section you will receive a series of emails for each identified email server.  Please forward back each message to the identified recepient inside the body of the email.  These test emails will not appear to come from EMAIL_ADDRESS.  Each subject will say \'Test # ...,\' please forward to EMAIL_MSG_WHERE_TO_FORWARD_BACK_TO',
+         'corp_msg':'The Email Relay Tests help determine the configuration of the email server(s) setup for CLIENTNAME\'s network.  Each identified email server is sent a series of emails to identify its configuration.  This helps us identify configuration problems, and vulnerabilities.',
+         'subject':'Email Filter Relay Testing for CLIENTNAME'},
+    {'event':'email phishing',
+         'tester_msg':'Email phishing using SCENARIONAME for CLIENTNAME.',
+         'client_msg':'Currently selected emails have all been sent the phishing email.',
+         'corp_msg':'Email phishing for CLIENTNAME is completed.',
+         'subject':'Email phishing SCENARIONAME'},
+    {'event':'enum4linux',
+         'tester_msg':'Enum4Linux for DOMAINNAME completed',
+         'client_msg':'Anonymous Active Directory enumeration was attempted.',
+         'corp_msg':'',
+         'subject':'Anonymous AD enumeration'},
+    {'event':'hashcat cracking',
+         'tester_msg':'HashCat cracking finished.',
+         'client_msg':'',
+         'corp_msg':'',
+         'subject':'HashCat cracking'},
+    {'event':'theharvester',
+         'tester_msg':'Search engine harvesting has been started for CLIENTNAME.',
+         'client_msg':'',
+         'corp_msg':'',
+         'subject':'Search engine harvesting for CLIENTNAME.'},
+    {'event':'ike_scan',
+         'tester_msg':'IKE-Scan attempts to bruteforce the ISAKMP settings through several layers in an effort to obtain the Pre-Shared Key.',
+         'client_msg':'',
+         'corp_msg':'',
+         'subject':'IKE-Scan bruteforcing for CLIENTNAME'},
+    {'event':'nessus',
+         'tester_msg':'Nessus vulnerability scanner has started for CLIENTNAME.',
+         'client_msg':'',
+         'corp_msg':'',
+         'subject':'Vulnerability Scanner started for CLIENTNAME'},
+    {'event':'nikto',
+         'tester_msg':'Nikto website vulnerability scanner has been started for CLIENTNAME.',
+         'client_msg':'',
+         'corp_msg':'Nikto automated website vulnerability scanner has been started for CLIENTNAME.',
+         'subject':'Website Vulnerability Scan for CLIENTNAME'},
+    {'event':'nmap',
+         'tester_msg':'Nmap scanning started for CLIENTNAME which includes the top 25 and the top 1024 most common ports for both UDP and TCP and then also a full TCP port scan.',
+         'client_msg':'Open port scanning has been started by EMAIL_ADDRESS.  If you receive any notifications or alerts, please let EMAIL_ADDRESS know.',
+         'corp_msg':'Port scannings purpose is to identify the services that are available which can then be tested for vulerabilities and weaknesses.',
+         'subject':'Port Scanning started for CLIENTNAME'},
+    {'event': 'metasploit bruteforce',
+         'tester_msg':'Bruteforce using TOOLNAME',
+         'client_msg':'Easily guessable or default bruteforcing attempts for open service performed.',
+         'corp_msg':'',
+         'subject':'TOOLNAME for CLIENTNAME'},
+    {'event':'responder',
+         'tester_msg':'Responder LLMNR, NBT-NS, MDNS poisoner for CLIENTNAME.',
+         'client_msg':'',
+         'corp_msg':'',
+         'subject':'MitM started for CLIENTNAME'},
+    {'event':'shodan',
+         'tester_msg':'Shodan search for device / public reconnaissance.',
+         'client_msg':'',
+         'corp_msg':'',
+         'subject':'Shodan search for CLIENTNAME'},
+    {'event':'skipfish',
+         'tester_msg':'Skipfish website vulnerability scanner has been started for CLIENTNAME.',
+         'client_msg':'',
+         'corp_msg':'',
+         'subject':'Skipfish started for CLIENTNAME'},
+    ]
+}

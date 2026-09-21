@@ -1,0 +1,24 @@
+tool author: Christian Martorella (modifed for TheEnterprise by huber - https://github.com/laramies/theHarvester)
+config_creator: huber
+tool_name: theharvester-baidu
+simultaneous: False
+group_by: "tool"
+sleep_between_targets: True
+targets:
+      scope: SCOPE_DOMAINS
+command: python tools/recon/theharvester/theHarvester.py -l 500 -a <additional_word_to_search>____<site_or_regular> -b baidu -dENTRY -f OUTPUT_FOLDER/theharvester-baidu__sSCOPE_ID__ENTRY.xml
+output_path: output/recon/theharvester/
+tool_parser: parsers.recon.theharvester_lookup_parser.theharvester_parser
+check_already_run: True
+create_folder: True
+questions:
+      - question: additional word(s) to search on
+        name: additional_word_to_search
+        nullable: True
+        regex:
+        replacements:
+          space: ZZZZZ
+      - question: "Y - to search within the current domain (ie using site:) Y|N"
+        name: site_or_regular
+        regex: ^(?:Y|N)$
+        nullable: False

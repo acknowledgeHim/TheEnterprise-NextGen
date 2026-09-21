@@ -1,0 +1,12 @@
+tool author: Nmap
+config_creator: huber
+tool_name: ping
+simultaneous: True
+group_by: target
+targets:
+      scope: FORCE_SCOPE_IPS
+command: "sudo nmap -n -sn -PE -oA OUTPUT_FOLDER/FORMATTED_ENTRY__sSCOPE_ID ENTRY"
+output_path: output/scan/ping/
+tool_parser: parsers.scan.ping_parser.ping
+check_already_run: True
+create_folder: True

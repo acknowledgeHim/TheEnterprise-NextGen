@@ -1,0 +1,740 @@
+NAVIGATION = [
+    ['Setup', [
+            ['Engagement', [
+                    ['View Engagement', '/view?table=Engagement', ['setup.engagement', 'Engagement.view']],
+                    ['Update Engagement', None, ['setup.engagement', 'Engagement.update']]
+                ],
+            ],
+            ['Location', [
+                    ['View Location', '/view?table=Location', ['setup.location', 'Location.view']],
+                    ['Add Location', None, ['setup.location', 'Location.add']],
+                    ['Update Location', None, ['setup.location', 'Location.update']],
+                    ['Delete Location', None, ['setup.location', 'Location.delete']]
+                ]
+            ],
+            ['Current Testing Location', [
+                    ['View Current Testing Location', '/view?table=CurrentLocation&field=current_location', ['setup.testing_location', 'TestingLocation.custom_view']],
+                    ['Switch Current Testing Location', None, ['setup.testing_location', 'TestingLocation.switch']]
+                ]
+            ],
+            ['Client Contact', [
+                    ['View Client Contact', '/view?table=ClientContact', ['setup.client_contact', 'ClientContact.view']],
+                    ['Add Client Contact', None, ['setup.client_contact', 'ClientContact.add']],
+                    ['Update Client Contact', None, ['setup.client_contact', 'ClientContact.update']],
+                    ['Delete Client Contact', None, ['setup.client_contact', 'ClientContact.delete']]
+                ]
+            ],
+            ['Corporate Contact', [
+                    ['View Corporate Contact', '/view?table=CorpContact', ['setup.corp_contact', 'CorpContact.view']],
+                    ['Add Corporate Contact', None, ['setup.corp_contact', 'CorpContact.add']],
+                    ['Update Corporate Contact', None, ['setup.corp_contact', 'CorpContact.update']],
+                    ['Delete Corporate Contact', None, ['setup.corp_contact', 'CorpContact.delete']]
+                ]
+            ],
+            ['Scope', [
+                    ['View Scope', '/view?table=Scope', ['setup.scope', 'Scope.join_view']],
+                    ['Filtered View Scope', None, ['setup.scope', 'Scope.join_view_filter']], #this does not have equivalent in Flask (not necessary)
+                    ['Add Scope', None, ['setup.scope', 'Scope.add']],
+                    ['Upload Scope', None, ['tools.scope_batch_setup', 'ScopeSetup.setup']],
+                    ['Update Scope', None, ['setup.scope', 'Scope.update']],
+                    ['Bulk Update Scope', None, ['setup.scope', 'Scope.update_where']],
+                    ['Delete Scope', None, ['setup.scope', 'Scope.delete']],
+                    ['Bulk Delete Scope', None, ['setup.scope', 'Scope.delete_where']]
+                ]
+            ],
+            #['Not Yet Implemented - Schedule Jobs', [
+            #        ['View Scheduled Tasks', '/view?table=ScheduledTask', ['setup.scheduled_task', 'ScheduledTask.join_view']],
+            #        ['Add Scheduled Tasks', None, ['setup.scheduled_task', 'ScheduledTask.add']],
+            #        ['Delete Scheduled Tasks', None, ['setup.scheduled_task', 'ScheduledTask.delete']]
+            #    ]
+            #],
+            ['Tester IP', [
+                    ['View Tester IP', '/view?table=TesterDevice', ['setup.tester_device', 'TesterDevice.join_view']],
+                    ['Add Tester IP', None, ['setup.tester_device', 'TesterDevice.add']],
+                    ['Delete Tester IP', None, ['setup.tester_device', 'TesterDevice.delete']]
+                ]
+            ],
+            ['WebApp User', [
+                    ['View WebApp User', None, ['setup.flaskuser', 'FlaskUser.view']],
+                    ['Add WebApp User', None, ['setup.flaskuser', 'FlaskUser.add']],
+                    ['Update WebApp User', None, ['setup.flaskuser', 'FlaskUser.update']],
+                    ['Delete WebApp User', None, ['setup.flaskuser', 'FlaskUser.delete']]
+                ]
+            ]
+       ],
+    ],
+    ['Recon', [
+            #['DataSploit', '/recon/datasploit', ['tools.recon.datasploit_setup', 'DataSploit.search']],
+        ['Amass', [
+            ['Amass', '/tool?tool=tools/recon/amass/amass',
+                ['tools.tool_config', 'ToolConfig.setup:tools/recon/amass/amass']],
+            ['Amass (active)', '/tool?tool=tools/recon/amass/amass_active',
+                ['tools.tool_config', 'ToolConfig.setup:tools/recon/amass/amass_active']],
+            ['Amass.netdomains org', '/tool?tool=tools/recon/amass/amass_netdomains-org',
+                ['tools.tool_config', 'ToolConfig.setup:tools/recon/amass/amass_netdomains-org']],
+            ['Amass.netdomains asn', '/tool?tool=tools/recon/amass/amass_netdomains-asn',
+                ['tools.tool_config', 'ToolConfig.setup:tools/recon/aamass/mass_netdomains-asn']],
+            #['Amass.netdomains cidr', '/tool?tool=tools/recon/amass/amass_netdomains-cidr',
+            #    ['tools.tool_config', 'ToolConfig.setup:tools/recon/amass/amass_netdomains-cidr']],
+            #['Amass.netdomains ports', '/tool?tool=tools/recon/amass/amass_netdomains-ports',
+            # [  'tools.tool_config', 'ToolConfig.setup:tools/recon/amass/amass_netdomains-ports']],
+            ['Amass.netdomains whois', '/tool?tool=tools/recon/amass/amass_netdomains-whois',
+                ['tools.tool_config', 'ToolConfig.setup:tools/recon/amass/amass_netdomains-whois']],
+            ['Amass all ', '/tool?tool=tools/recon/amass/amass_all',
+                ['tools.tool_config', 'ToolConfig.setup:tools/recon/amass/amass_all']],
+            ],
+        ],
+        ['Blacksheepwall', '/tool?tool=tools/recon/blacksheepwall',
+                ['tools.tool_config', 'ToolConfig.setup:tools/recon/blacksheepwall']],
+        ['crt.sh', '/tool?tool=tools/recon/crt_sh',
+                ['tools.tool_config', 'ToolConfig.setup:tools/recon/crt_sh']],
+        ['DNS Lookup', '/tool?tool=tools/recon/dns_lookup',
+                ['tools.tool_config', 'ToolConfig.setup:tools/recon/dns_lookup']],
+        #['DNS Bruteforce', '/tool?tool=tools/recon/dns_bruteforce',
+        #        ['tools.tool_config', 'ToolConfig.setup:tools/recon/dns_bruteforce']],
+        ['DNSDict6 (bruteforcer)', '/tool?tool=tools/recon/dnsdict6',
+                ['tools.tool_config', 'ToolConfig.setup:tools/recon/dnsdict6']],
+        ['dnsfootprint', '/tool?tool=tools/recon/dnsfootprint',
+                ['tools.tool_config', 'ToolConfig.setup:tools/recon/dnsfootprint']],
+        ['DNS Recon', '/tool?tool=tools/recon/dnsrecon',
+                ['tools.tool_config', 'ToolConfig.setup:tools/recon/dnsrecon']],
+        ['DNS Zone Transfer', '/tool?tool=tools/recon/zone_transfer',
+                ['tools.tool_config', 'ToolConfig.setup:tools/recon/zone_transfer']],
+        ['FindFrontableDomain', '/tool?tool=tools/recon/find_frontable_domain',
+                ['tools.tool_config', 'ToolConfig.setup:tools/recon/find_frontable_domain']],
+        #['LinkedInt', '/tool?tool=tools/recon/linkedint',
+        #        ['tools.tool_config', 'ToolConfig.setup:tools/recon/linkedint']],
+        ['GoBuster DNS', '/tool?tool=tools/recon/gobuster_dns',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/recon/gobuster_dns']],
+        ['Hunter.io', '/tool?tool=tools/recon/hunter_io',
+                ['tools.tool_config', 'ToolConfig.setup:tools/recon/hunter_io']],
+        ['Extract Names from Searches', '/tool?tool=tools/recon/theharvester-google-searchsite_for_name', ['tools.tool.config', 'ToolConfig.setup:tools/recon/theharvester-google-searchsite_for_name']],
+        ['S3Scanner (Find open S3 buckets)', '/tool?tool=tools/recon/s3scanner', ['tools.tool_config', 'ToolConfig.setup:tools/recon/s3scanner']],
+        #['Shodan Search', '/tool?tool=tools/recon/shodan', ['tools.tool_config', 'ToolConfig.setup:tools/recon/shodan']],
+        ['Shodan Host Search', '/tool?tool=tools/recon/shodan_host', ['tools.tool_config', 'ToolConfig.setup:tools/recon/shodan_host']],
+        ['Sublist3r', '/tool?tool=tools/recon/sublist3r', ['tools.tool_config', 'ToolConfig.setup:tools/recon/sublist3r']],
+        ['theHarvester', [
+                ['theHarvester baidu', '/tool?tool=tools/recon/theharvester-baidu',
+                        ['tools.tool_config', 'ToolConfig.setup:tools/recon/theharvester-baidu']],
+                ['theHarvester bing', '/tool?tool=tools/recon/theharvester-bing',
+                        ['tools.tool_config', 'ToolConfig.setup:tools/recon/theharvester-bing']],
+                ['theHarvester dogpile', '/tool?tool=tools/recon/theharvester-dogpile',
+                        ['tools.tool_config', 'ToolConfig.setup:tools/recon/theharvester-dogpile']],
+                ['theHarvester google', '/tool?tool=tools/recon/theharvester-google',
+                        ['tools.tool_config', 'ToolConfig.setup:tools/recon/theharvester-google']],
+                ['theHarvester googleCSE', '/tool?tool=tools/recon/theharvester-googleCSE',
+                        ['tools.tool_config', 'ToolConfig.setup:tools/recon/theharvester-googleCSE']],
+                ['theHarvester googleplus', '/tool?tool=tools/recon/theharvester-googleplus',
+                        ['tools.tool_config', 'ToolConfig.setup:tools/recon/theharvester-googleplus']],
+                ['theHarvester google file search', '/tool?tool=tools/recon/theharvester-googlefile',
+                        ['tools.tool_config', 'ToolConfig.setup:tools/recon/theharvester-googlefile']],
+                ['theHarvester linkedin', '/tool?tool=tools/recon/theharvester-linkedin',
+                        ['tools.tool_config', 'ToolConfig.setup:tools/recon/theharvester-linkedin']],
+                ['theHarvester pgp', '/tool?tool=tools/recon/theharvester-pgp',
+                        ['tools.tool_config', 'ToolConfig.setup:tools/recon/theharvester-pgp']],
+                ['theHarvester yahoo', '/tool?tool=tools/recon/theharvester-yahoo',
+                        ['tools.tool_config', 'ToolConfig.setup:tools/recon/theharvester-yahoo']],
+                ['theHarvester all (except googleCSE, googlefile, googleplus, linkedin)', '/tool?tool=tools/recon/theharvester_all',
+                        ['tools.tool_config', 'ToolConfig.setup:tools/recon/theharvester_all']],
+                #['theHarvester twitter', '/recon/theharvester/twitter', ['tools.recon.the_harvester_setup', 'TheHarvester.search_twitter']]
+            ],
+        ],
+        ['Metagoofil (Metadata extraction)', [
+                ['metagoofil_doc', '/tool?tool=tools/recon/metagoofil_doc', ['tools.tool_config', 'ToolConfig.setup:tools/recon/metagoofil_doc']],
+                ['metagoofil_docx', '/tool?tool=tools/recon/metagoofil_docx', ['tools.tool_config', 'ToolConfig.setup:tools/recon/metagoofil_docx']],
+                ['metagoofil_pdf', '/tool?tool=tools/recon/metagoofil_pdf', ['tools.tool_config', 'ToolConfig.setup:tools/recon/metagoofil_pdf']],
+                ['metagoofil_ppt', '/tool?tool=tools/recon/metagoofil_ppt', ['tools.tool_config', 'ToolConfig.setup:tools/recon/metagoofil_ppt']],
+                ['metagoofil_pptx', '/tool?tool=tools/recon/metagoofil_pptx', ['tools.tool_config', 'ToolConfig.setup:tools/recon/metagoofil_pptx']],
+                ['metagoofil_xls', '/tool?tool=tools/recon/metagoofil_xls', ['tools.tool_config', 'ToolConfig.setup:tools/recon/metagoofil_xls']],
+                ['metagoofil_xlsx', '/tool?tool=tools/recon/metagoofil_xlsx', ['tools.tool_config', 'ToolConfig.setup:tools/recon/metagoofil_xlsx']],
+            ]
+        ],
+        #['PowerMeta (search/extract metadata from files)', '/tool?tool=tools/recon/powermeta',
+        #        ['tools.tool_config', 'ToolConfig.setup:tools/recon/powermeta']],
+        ['All Recon', '/tool?tool=tools/recon/recon-all', ['tools.tool_config', 'ToolConfig.setup:tools/recon/recon-all']],
+        ]
+    ],
+    ['Scan', [
+            #['Create hosts files (after port scanning is done)', '/scan/create_hosts_file', ['tools.scan.create_hosts_file', 'CreateHostsFile.setup']],
+            ['ARP Ping', '/tool?tool=tools/scan/arp_ping',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/scan/arp_ping']],
+            ['Ping (find live hosts)', '/tool?tool=tools/scan/ping', ['tools.tool_config',
+                                                                      'ToolConfig.setup:tools/scan/ping']],
+            ['Nmap Port Scanning', [
+                    ['External-ish Scans', [
+                        ['Nmap TCP Top 25', '/tool?tool=tools/scan/nmap-tcp25',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/scan/nmap-tcp25']],
+                        ['Nmap TCP Default Scan', '/tool?tool=tools/scan/nmap-tcpdefault',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/scan/nmap-tcpdefault']],
+                        ['Nmap UDP Top 25', '/tool?tool=tools/scan/nmap-top25udp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/scan/nmap-top25udp']],
+                        ['Nmap TCP All Scan', '/tool?tool=tools/scan/nmap-tcp_all',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/scan/nmap-tcp_all']],
+                        ['Nmap UDP Top 250', '/tool?tool=tools/scan/nmap-top250udp',
+                                ['tools.tool_config', 'ToolConfig.setup:tools/scan/nmap-top250udp']],
+                        ['Nmap All External Scans', '/tool?tool=tools/scan/nmap-all_external',
+                                ['tools.tool_config', 'ToolConfig.setup:tools/scan/nmap-all_external']]
+                    ]],
+                    ['Internal-ish Scans', [
+                        ['Nmap Traditional Internal', '/tool?tool=tools/scan/nmap-default_internal',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/scan/nmap-default_internal']],
+                        ['Nmap TCP Default Scan', '/tool?tool=tools/scan/nmap-tcpdefault',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/scan/nmap-tcpdefault']],
+                        ['Nmap UDP Top 25', '/tool?tool=tools/scan/nmap-top25udp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/scan/nmap-top25udp']],
+                        ['Nmap All Internal Scans', '/tool?tool=tools/scan/nmap-all_internal',
+                                ['tools.tool_config', 'ToolConfig.setup:tools/scan/nmap-all_internal']]
+                    ]]
+                ],
+            ],
+            #['MassScan', '/tool?tool=tools/scan/massscan', ['tools.tool_config',
+            #                                                          'ToolConfig.setup:tools/scan/massscan']],
+            #['Webscrapper', '/scan/webscrapper', ['tools.scan.webscrapper', 'WebScrapper.scan']]
+        ]
+    ],
+    ['Enumeration', [
+            ['AD Computers (secretsdump netview) - must have DC port TCP/88 or UDP389 open in OpenPort table', '/tool?tool=tools/enumeration/secretsdump_netview',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/secretsdump_netview']],
+            ['Enum4Linux Active Directory Enumeration', '/tool?tool=tools/enumeration/enum4linux',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/enum4linux']],
+            #['Eyewitness - screenshot tool', [
+            #        ['Eyewitness RDP', '/tool?tool=tools/enumeration/eyewitness_rdp',
+            #                        ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/eyewitness_rdp']],
+            #        ['Eyewitness VNC', '/tool?tool=tools/enumeration/eyewitness_vnc',
+            #                        ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/eyewitness_vnc']],
+            #        ['Eyewitness Web', '/tool?tool=tools/enumeration/eyewitness_web',
+            #                        ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/eyewitness_web']],
+            #        ['Eyewitness All', '/tool?tool=tools/enumeration/eyewitness_all',
+            #                        ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/eyewitness_all']]
+            #    ]
+            #],
+            ['CrackMapExec SMB', '/tool?tool=tools/enumeration/crackmapexec_device_info',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/crackmapexec_device_info']],
+            ['Metasploit Enumeration', [
+                    ['AFP Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_afp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_afp']],
+                    ['DB2 Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_db2',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_db2']],
+                    ['Dell IDRAC Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_idrac',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_idrac']],
+                    ['Cold Fusion Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_coldfusion',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_coldfusion']],
+                    ['ESX Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_esx',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_esx']],
+                    ['Finger Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_finger',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_finger']],
+                    ['FTP Anonymous Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_ftp_anon',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_ftp_anon']],
+                    ['FTP Version Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_ftp_ver',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_ftp_ver']],
+                    ['HTTP Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_http',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_http']],
+                    ['HTTP Put Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_http_put',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_http_put']],
+                    ['JBoss Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_jboss',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_jboss']],
+                    ['Jenkins Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_jenkins',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_jenkins']],
+                    ['Joomla Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_joomla',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_joomla']],
+                    ['MSSQL Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_mssql',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_mssql']],
+                    ['MYSQL Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_mysql',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_mysql']],
+                    ['Netbios Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_netbios',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_netbios']],
+                    ['NFS Mount Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_nfs',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_nfs']],
+                    ['Oracle EMC SID Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_oracle_emc_sid',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_oracle_emc_sid']],
+                    ['Oracle SID Bruteforce Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_oracle_sid_bruteforce',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_oracle_sid_bruteforce']],
+                    ['Oracle SID Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_oracle_sid',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_oracle_sid']],
+                    ['Oracle Spy SID Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_oracle_spy_sid',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_oracle_spy_sid']],
+                    ['Oracle Version Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_oracle_ver',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_oracle_ver']],
+                    ['Postgres Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_postgres',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_postgres']],
+                    ['SMB Domain Users Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_smb_domain_users',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_smb_domain_users']],
+                    ['SMB Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_smb',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_smb']],
+                    ['SMB Shares Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_smb_shares',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_smb_shares']],
+                    ['SMB Users Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_smb_users',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_smb_users']],
+                    ['SMTP Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_smtp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_smtp']],
+                    ['SSH Anonymous Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_ssh',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_ssh']],
+                    ['Telnet Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_telnet',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_telnet']],
+                    ['Tomcat Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_tomcat',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_tomcat']],
+                    ['VMware Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_vmware',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_vmware']],
+                    ['VNC Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_vnc',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_vnc']],
+                    ['WebDav Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_webdav',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_webdav']],
+                    ['X11 Enumeration', '/tool?tool=tools/enumeration/metasploit_enumeration_x11',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_x11']],
+                    ['Perform All Enumerations', '/tool?tool=tools/enumeration/metasploit_enumeration_all',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/metasploit_enumeration_all']]
+                ]
+            ],
+            ['Network', [
+                    ['Bettercap Arp Cache', '/tool?tool=tools/enumeration/network/bettercap_arp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/network/bettercap_arp']],
+                    ['Egress Buster', '/tool?tool=tools/enumeration/network/egressbuster',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/network/egressbuster']]
+                ]
+            ],
+            ['SNMP-Scanner', '/tool?tool=tools/enumeration/snmp_scanner',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/snmp_scanner']],
+            ['Windapsearch (find DC)', '/tool?tool=tools/enumeration/windapsearch_find_dc',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/enumeration/windapsearch_find_dc']],
+        ]
+    ],
+    ['Vulnerability Scan', [
+            ['Email Filter/Relay', '/tool?tool=tools/vuln/emailfilter',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/vuln/emailfilter']],
+            ['Find Devices in Promiscuous Mode', '/tool?tool=tools/vuln/promiscuous',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/vuln/promiscuous']],
+            ['Nessus', '/tool?tool=tools/vuln/nessus',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/vuln/nessus']],
+            #['Skipfish', '/vuln_scan/skipfish', ['tools.vuln.skipfish', 'SkipfishSetup.scan']],
+            ['Web', [
+                    ['Not yet fully implemented (working out a bug still): Burp', '/tool?tool=tools/vuln/web/burp',
+                            ['tools.tool_config', 'ToolConfig.setup:tools/vuln/web/burp']],
+                    ['Dirsearch', '/tool?tool=tools/vuln/web/dirsearch', ['tools.tool_config', 'ToolConfig.setup:tools/vuln/web/dirsearch']],
+                    ['Droopscan', '/tool?tool=tools/vuln/web/droopscan', ['tools.tool_config', 'ToolConfig.setup:tools/vuln/web/droopscan']],
+                    ['Fuxploider', '/tool?tool=tools/vuln/web/fuxploider',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/vuln/web/fuxploider']],
+                    ['GoBuster', '/tool?tool=tools/vuln/web/gobuster', ['tools.tool_config', 'ToolConfig.setup:tools/vuln/web/gobuster']],
+                    ['Jexboss (Web Vuln Scanner)', '/tool?tool=tools/vuln/web/jexboss',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/vuln/web/jexboss']],
+                    ['Nikto', '/tool?tool=tools/vuln/web/nikto',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/vuln/web/nikto']],
+                    ['Nikto (html output)', '/tool?tool=tools/vuln/web/nikto_html_output',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/vuln/web/nikto_html_output']],
+                    ['WPScan', [
+                            ['WPScan Non-Intrusive', '/tool?tool=tools/vuln/web/wpscan_nonintrusive', ['tools.tool_config', 'ToolConfig.setup:tools/vuln/web/wpscan_nonintrusive']],
+                            ['WPScan Enumerate', '/tool?tool=tools/vuln/web/wpscan_enumerate', ['tools.tool_config', 'ToolConfig.setup:tools/vuln/web/wpscan_enumerate']]
+                        ]
+                    ],
+                    ['ZAP', '/tool?tool=tools/vuln/web/zap', ['tools.tool_config', 'ToolConfig.setup:tools/vuln/web/zap']]
+                ]
+            ]
+        ]
+    ],
+    ['Attack', [
+            #['NOT IMPLEMENTED YET - Email Phishing', [
+            #        ['View Possible Email Filter Tests for Phishing Use', '/attack/phishing/email_filter_options', ['menus.email_phishing', 'PhishingScenarioMenu.possible_filter_tests']],
+            #        ['View Phishing Scenario', '/attack/phishing/scenario/view', ['menus.email_phishing', 'PhishingScenarioMenu.view']],
+            #        ['Add Phishing Scenario', '/attack/phishing/scenario/add', ['menus.email_phishing', 'PhishingScenarioMenu.add']],
+            #        ['Update Phishing Scenario', '/attack/phishing/scenario/update', ['menus.email_phishing', 'PhishingScenarioMenu.update']],
+            #        ['Delete Phishing Scenario', '/attack/phishing/scenario/delete', ['menus.email_phishing', 'PhishingScenarioMenu.delete']],
+            #        ['Go Phishing with Scenario', [
+            #                ['View Email\'s Already Phished', '/attack/phishing/already_phished', ['menus.go_phishing', 'GoPhish.view']],
+            #                ['Go Phishing', '/attack/phishing/go_phishing', ['menus.go_phishing', 'GoPhish.phishing']]
+            #            ]
+            #        ],
+            #        ['Create Azure VM', '/attack/phishing/create_azure_vm', ['menus.email_phishing', 'PhishingScenarioMenu.create_azure_vm']],
+            #        ['Website to clone', '/attack/phishing/clone_website', ['menus.email_phishing', 'PhishingScenarioMenu.clone_website']],
+            #        ['Create PHP script of client IP ranges for phishing website', '/attack/phishing/php_script', ['menus.email_phishing', 'PhishingScenarioMenu.php_script']]
+            #    ]
+            #],
+            ['Bruteforce / Anonymous', [
+                    ['Hydra Bruteforce', [
+                            ['Asterix Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_asterix',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_asterix']],
+                            ['Cisco Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_cisco_aaa',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_cisco_aaa']],
+                            ['Cisco Enable Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_cisco_enable',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_cisco_enable']],
+                            ['CVS Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_cvs',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_cvs']],
+                            ['Firebird Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_firebird',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_firebird']],
+                            ['FTP Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_ftp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_ftp']],
+                            ['FTPS Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_ftps',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_ftps']],
+                            ['HTTPS Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_https',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_https']],
+                            ['ICQ Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_icq',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_icq']],
+                            ['IMAP Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_imap',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_imap']],
+                            ['IRC Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_irc',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_irc']],
+                            ['LDAP2 Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_ldap2',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_ldap2']],
+                            ['LDAP3 Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_ldap3',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_ldap3']],
+                            ['MSSQL Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_mssql_bruteforce',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_mssql_bruteforce']],
+                            ['MYSQL Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_mysql',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_mysql']],
+                            ['NNTP Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_nntp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_nntp']],
+                            ['Oracle Listener Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_oracle_listener',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_oracle_listener']],
+                            ['PCAnywhere Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_pcanywhere',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_pcanywhere']],
+                            ['PCNFS Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_pcnfs',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_pcnfs']],
+                            ['POP3 Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_pop3',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_pop3']],
+                            ['POSTGRES Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_postgres',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_postgres']],
+                            ['RADMIN2 Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_radmin2',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_radmin2']],
+                            ['REXEC Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_rexec',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_rexec']],
+                            ['RDP Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_rdp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_rdp']],
+                            ['RLOGIN Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_rlogin',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_rlogin']],
+                            ['RSH Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_rsh',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_rsh']],
+                            ['SIP Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_sip',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_sip']],
+                            ['SMB Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_smb',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_smb']],
+                            ['SMTP Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_smtp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_smtp']],
+                            ['SMTPS Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_smtps',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_smtps']],
+                            ['SNMP Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_snmp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_snmp']],
+                            ['SOCKS5 Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_socks5',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_socks5']],
+                            ['SSH Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_ssh',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_ssh']],
+                            ['Subversion/SVN Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_svn',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_svn']],
+                            ['TeamSpeak Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_teamspeak',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_teamspeak']],
+                            ['Telnet Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_telnet',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_telnet']],
+                            ['VNC Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_vnc',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_vnc']],
+                            ['XMPP Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_bruteforce_xmpp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_bruteforce_xmpp']],
+                            ['Perform All Hydra Bruteforce', '/tool?tool=tools/attack/bruteforce/hydra/hydra_all_bruteforce',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/hydra/hydra_all_bruteforce']]
+                        ]
+                    ],
+                    ['Medusa Bruteforce', [
+                            ['CVS Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_cvs',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_cvs']],
+                            ['FTP Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_ftp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_ftp']],
+                            ['HTTP Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_http',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_http']],
+                            ['IMAP Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_imap',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_imap']],
+                            ['MSSQL Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_mssql_bruteforce',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_mssql_bruteforce']],
+                            ['MYSQL Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_mysql',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_mysql']],
+                            ['NNTP Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_nntp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_nntp']],
+                            ['PCAnywhere Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_pcanywhere',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_pcanywhere']],
+                            ['POP3 Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_pop3',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_pop3']],
+                            ['POSTGRES Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_postgres',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_postgres']],
+                            ['RDP Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_rdp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_rdp']],
+                            ['RLOGIN Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_rlogin',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_rlogin']],
+                            ['RSH Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_rsh',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_rsh']],
+                            ['SMB Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_smb',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_smb']],
+                            ['SMTP Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_smtp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_smtp']],
+                            ['SMTP VRFY Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_smtp_vrfy',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_smtp_vrfy']],
+                            ['SNMP Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_snmp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_snmp']],
+                            ['SSH Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_ssh',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_ssh']],
+                            ['Subversion/SVN Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_svn',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_svn']],
+                            ['Telnet Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_telnet',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_telnet']],
+                            ['VNC Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_vnc',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_vnc']],
+                            ['WebForm Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_bruteforce_webform',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_bruteforce_webform']],
+                            ['Perform All Medusa Bruteforce', '/tool?tool=tools/attack/bruteforce/medusa/medusa_all_bruteforce',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/medusa/medusa_all_bruteforce']]
+                        ]
+                    ],
+                    ['Metasploit Bruteforce', [
+                            ['ESX Bruteforce', '/tool?tool=tools/attack/bruteforce/metasploit/metasploit_bruteforce_esx',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/metasploit/metasploit_bruteforce_esx']],
+                            ['FTP Bruteforce', '/tool?tool=tools/attack/bruteforce/metasploit/metasploit_bruteforce_ftp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/metasploit/metasploit_bruteforce_ftp']],
+                            ['SMB Anonymous', '/tool?tool=tools/attack/bruteforce/metasploit/metasploit_anonymous_smb',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/metasploit/metasploit_anonymous_smb']],
+                            ['SMB Bruteforce', '/tool?tool=tools/attack/bruteforce/metasploit/metasploit_bruteforce_smb',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/metasploit/metasploit_bruteforce_smb']],
+                            ['SNMP Bruteforce', '/tool?tool=tools/attack/bruteforce/metasploit/metasploit_bruteforce_snmp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/metasploit/metasploit_bruteforce_snmp']],
+                            ['SSH Bruteforce', '/tool?tool=tools/attack/bruteforce/metasploit/metasploit_bruteforce_ssh',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/metasploit/metasploit_bruteforce_ssh']],
+                            ['Telnet Bruteforce', '/tool?tool=tools/attack/bruteforce/metasploit/metasploit_bruteforce_telnet',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/metasploit/metasploit_bruteforce_telnet']],
+                            ['VNC Bruteforce', '/tool?tool=tools/attack/bruteforce/metasploit/metasploit_bruteforce_vnc',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/metasploit/metasploit_bruteforce_vnc']],
+                            ['VNC No Authentication', '/tool?tool=tools/attack/bruteforce/metasploit/metasploit_vnc_non_auth',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/metasploit/metasploit_vnc_non_auth']],
+                            ['WordPress Bruteforce', '/tool?tool=tools/attack/bruteforce/metasploit/metasploit_bruteforce_wordpress',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/metasploit/metasploit_bruteforce_wordpress']],
+                            ['Perform All Metasploit Bruteforce', '/tool?tool=tools/attack/bruteforce/metasploit/metasploit_all_bruteforce',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/metasploit/metasploit_all_bruteforce']]
+                        ]
+                    ],
+                    ['Metasploit Attack Modules', [
+                            ['ExtraBacon ASA Exploit', '/tool?tool=tools/attack/metasploit_extrabacon_asa',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/metasploit_extrabacon_asa']],
+                            ['OWA Bruteforce (single password attempt)', '/tool?tool=tools/attack/metasploit_owa_bruteforce_single_password_attempt',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/metasploit_owa_bruteforce_single_password_attempt']]
+                        ]
+                    ],
+                    ['Ncrack Bruteforce', [
+                            ['FTP Bruteforce', '/tool?tool=tools/attack/bruteforce/ncrack/ncrack_bruteforce_ftp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/ncrack/ncrack_bruteforce_ftp']],
+                            ['HTTPS Bruteforce', '/tool?tool=tools/attack/bruteforce/ncrack/ncrack_bruteforce_https',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/ncrack/ncrack_bruteforce_https']],
+                            ['MySQL Bruteforce', '/tool?tool=tools/attack/bruteforce/ncrack/ncrack_bruteforce_mysql',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/ncrack/ncrack_bruteforce_mysql']],
+                            ['POP3 Bruteforce', '/tool?tool=tools/attack/bruteforce/ncrack/ncrack_bruteforce_pop3',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/ncrack/ncrack_bruteforce_pop3']],
+                            ['Redis Bruteforce', '/tool?tool=tools/attack/bruteforce/ncrack/ncrack_bruteforce_redis',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/ncrack/ncrack_bruteforce_redis']],
+                            ['RDP Bruteforce', '/tool?tool=tools/attack/bruteforce/ncrack/ncrack_bruteforce_rdp',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/ncrack/ncrack_bruteforce_rdp']],
+                            ['SIP Bruteforce', '/tool?tool=tools/attack/bruteforce/ncrack/ncrack_bruteforce_sip',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/ncrack/ncrack_bruteforce_sip']],
+                            ['SMB Bruteforce', '/tool?tool=tools/attack/bruteforce/ncrack/ncrack_bruteforce_smb',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/ncrack/ncrack_bruteforce_smb']],
+                            ['SSH Bruteforce', '/tool?tool=tools/attack/bruteforce/ncrack/ncrack_bruteforce_ssh',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/ncrack/ncrack_bruteforce_ssh']],
+                            ['Telnet Bruteforce', '/tool?tool=tools/attack/bruteforce/ncrack/ncrack_bruteforce_telnet',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/ncrack/ncrack_bruteforce_telnet']],
+                            ['VNC Bruteforce', '/tool?tool=tools/attack/bruteforce/ncrack/ncrack_bruteforce_vnc',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/ncrack/ncrack_bruteforce_vnc']],
+                            ['Perform All Ncrack Bruteforce', '/tool?tool=tools/attack/bruteforce/ncrack/ncrack_all_bruteforce',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/bruteforce/ncrack/ncrack_all_bruteforce']]
+                        ]
+                    ]#,
+                    #['Ruler Bruteforce', '/tool?tool=tools/attack/ruler_bruteforce',
+                    #                ['tools.tool_config', 'ToolConfig.setup:tools/attack/ruler_bruteforce']
+                    #]
+                ]
+            ],
+            #['Network', [
+            #        ['ARP Spoof', '/tool?tool=tools/attack/network/arpspoof/', ['tools.tool_config', 'ToolConfig.setup:tools/attack/network/arpspoof']],
+                    #['SMBetray', [
+                    #    ['SMBetray ',
+                    #        '/tool?tool=tools/attack/network/smbetray/', ['tools.tool_config', 'ToolConfig.setup:tools/attack/network/dhcp_forcerenew']],
+            #        ['Not yet implemented: DHCP server', '/tool?tool=tools/attack/network/dhcp_server', ['tools.tool_config', 'ToolConfig.setup:tools/attack/network/dhcp_server']],
+            #        ['Scapy', [
+            #                ['Not yet implemented: DHCP FORCERENEW (use this with start own DHCP server & DNS server to control target\'s DNS)',
+            #                '/tool?tool=tools/attack/network/dhcp_forcerenew', ['tools.tool_config', 'ToolConfig.setup:tools/attack/network/dhcp_forcerenew']],
+            #                #['Steal Email Creds (will attempt to ARP poison email server!)', '/attack/scapy/email_creds', ['tools.attack.scapy_setup', 'ScapySetup.scan']]
+            #            ]
+            #        ],
+            #    ]
+            #],
+            ['Web Attacks', [
+                    ['Apache Struts', [
+                            ['Struts PWN 2017-9805', '/tool?tool=tools/attack/web/struts/struts_pwn_2017-9805', ['tools.tool_config', 'ToolConfig.setup:tools/attack/web/struts/struts_pwn_2017-9805']],
+                            ['Struts PWN 2018-11776', '/tool?tool=tools/attack/web/struts/struts_pwn_2018-11776', ['tools.tool_config', 'ToolConfig.setup:tools/attack/web/struts/struts_pwn-2018-11776']],
+                        ]
+                     ],
+                    ['WPScan Bruteforce', '/tool?tool=tools/attack/web/wpscan_bruteforce_admin', ['tools.tool_config', 'ToolConfig.setup:tools/attack/web/wpscan_bruteforce_admin']],
+                    ['XSStrike', '/tool?tool=tools/attack/web/xsstrike', ['tools.tool_config', 'ToolConfig.setup:tools/attack/web/xsstrike']]
+                ]
+            ],
+            ['Windows', [
+                    #['ComplianceOne', '/tool?tool=tools/attack/complianceone_attack',
+                    #                ['tools.tool_config', 'ToolConfig.setup:tools/attack/complianceone_attack']],
+                    ['Responder (llmnr/nbns)', '/tool?tool=tools/attack/responder',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/responder']],
+                    ['RunFinger (identify smb signing disabled devices)', '/tool?tool=tools/attack/runfinger',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/runfinger']],
+                    #['Seth (RDP mitm)', '/tool?tool=tools/attack/seth_rdp_mitm',
+                    #                ['tools.tool_config', 'ToolConfig.setup:tools/attack/seth_rdp_mitm']],
+                    ['Smbrelay (smbrelayx)', '/tool?tool=tools/attack/smbrelay',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/smbrelay']],
+                    ['NTLM Relay', '/tool?tool=tools/attack/ntmlrelay',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/attack/ntmlrelay']]
+                    #['Responder + ntlmrelayx (smbrelay)', '/attack/smbrelay', ['tools.attack.smbrelay_setup2', 'SmbRelaySetup.setup']],
+                ]
+            ],
+        ]
+    ],
+    ['Credentials', [
+            #['Cracking', [
+            #        ['Hashcat Cracking', '/credential/cracking/hashcat/', ['tools.credential.hashcat_setup', 'Hashcat.setup']],
+            #        #['John the Ripper', '/credential/john/', ['tools.credential.john_setup', 'John.setup']]
+            #    ]
+            #],
+            ['Active Directory Hashes', [
+                    ['Grab Active Directory Hashes (secretsdump)', '/tool?tool=tools/credential/secretsdump_hashdump',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/credential/secretsdump_hashdump']],
+                    ['Domain Users Password Detail (secretsdump)', '/tool?tool=tools/credential/secretsdump_domain_pwdlastset',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/credential/secretsdump_domain_pwdlastset']],
+                    ['Domain Users Password History (secretsdump)', '/tool?tool=tools/credential/secretsdump_domain_history',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/credential/secretsdump_domain_history']],
+                    ['TGT No Kerberos Preauth (getnpusers)', '/tool?tool=tools/credential/tgt_no_kerberos_preauth',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/credential/tgt_no_kerberos_preauth']],
+                ]
+            ],
+            ['Local Hashes', [
+                    ['Local Users Detail (secretsdump)', '/tool?tool=tools/credential/secretsdump_local_hashdump',
+                                ['tools.tool_config', 'ToolConfig.setup:tools/credential/secretsdump_local_hashdump']],
+                    ['Local Users Detail (samrdump)', '/tool?tool=tools/credential/samrdump_local',
+                                ['tools.tool_config', 'ToolConfig.setup:tools/credential/samrdump_local']],
+                    ['Remote Local Users Pwd Expires', '/tool?tool=tools/credential/remote_local_users_pwd_expires',
+                                ['tools.tool_config', 'ToolConfig.setup:tools/credential/remote_local_users_pwd_expires']],
+                    ['John\'s Local Hashdump Script', '/tool?tool=tools/credential/john_local_la',
+                                    ['tools.tool_config', 'ToolConfig.setup:tools/credential/john_local_la']],
+                ]
+            ]
+        ]
+    ],
+    #['Audit', [
+    #        ['Not implemented yet - Pywerview & pysmb (grab GPOs)', '/tool?tool=tools/audit/pywerview_gpo_download',
+    #                                ['tools.tool_config', 'ToolConfig.setup:tools/audit/pywerview_gpo_download']]
+    #    ]
+    #],
+    #['Forensics', [
+    #        ['Not implemented yet - WindowsEventstoCSVTimeline', '/tool?tool=tools/forensics/windowsevents2timeline',
+    #                                ['tools.tool_config', 'ToolConfig.setup:tools/forensics/windowsevents2timeline']]
+    #    ]
+    #],
+    #['Servers', [
+    #        ['Not implemented yet - Smbserver (445 share)', '/tool?tool=tools/server/smbserver',
+    #                                ['tools.tool_config', 'ToolConfig.setup:tools/server/smbserver']]
+    #    ]
+    #],
+    ['Results', [
+            ['Devices', [
+                    ['View Device', '/view?table=EngagementDevice', ['result.engagementdevice', 'EngagementDevice.join_view']],
+                    ['Filtered View Device', None, ['result.engagementdevice', 'EngagementDevice.join_view_filter']],
+                    ['Add Device', None, ['result.engagementdevice', 'EngagementDevice.add']],
+                    ['Update Device', None, ['result.engagementdevice', 'EngagementDevice.update']],
+                    ['Delete Device', None, ['result.engagementdevice', 'EngagementDevice.delete']],
+                    ['Bulk Delete Device', None, ['result.engagementdevice', 'EngagementDevice.delete_where']],
+                    ['Delete All Devices', None, ['result.engagementdevice', 'EngagementDevice.truncate']]
+                ],
+            ],
+            ['Open Ports', [
+                    ['View Open Port', '/view?table=DevicePort', ['result.deviceport', 'DevicePort.join_view']],
+                    ['Filtered View Open Port', None, ['result.deviceport', 'DevicePort.join_view_filter']],
+                    ['Add Open Port', None, ['result.deviceport', 'DevicePort.add']],
+                    ['Update Open Port', None, ['result.deviceport', 'DevicePort.update']],
+                    ['Delete Open Port', None, ['result.deviceport', 'DevicePort.delete']],
+                    ['Bulk Delete Open Port', None, ['result.deviceport', 'DevicePort.delete_where']],
+                    ['Delete All Open Ports', None, ['result.deviceport', 'DevicePort.truncate']]
+                ]
+            ],
+            ['Reconnaissance', [
+                    ['View Reconnaissance', '/view?table=Recon', ['result.recon', 'Recon.join_view']],
+                    ['Filtered View Reconnaissance', None, ['result.recon', 'Recon.join_view_filter']],
+                    ['Add Reconnaissance', None, ['result.recon', 'Recon.add']],
+                    ['Update Reconnaissance', None, ['result.recon', 'Recon.update']],
+                    ['Delete Reconnaissance', None, ['result.recon', 'Recon.delete']],
+                    ['Bulk Delete Reconnaissance', None, ['result.recon', 'Recon.delete_where']],
+                    ['Delete All Reconnaissance', None, ['result.recon', 'Recon.truncate']]
+                ]
+            ],
+            ['Person', [
+                    ['View Person', '/view?table=Person', ['result.person', 'Person.join_view']],
+                    ['Filtered View Person', None, ['result.person', 'Person.join_view_filter']],
+                    ['Add Person', None, ['result.person', 'Person.add']],
+                    ['Update Person', None, ['result.person', 'Person.update']],
+                    ['Delete Person', None, ['result.person', 'Person.delete']],
+                    ['Bulk Delete Person', None, ['result.person', 'Person.delete_where']],
+                    ['Delete All Person', None, ['result.person', 'Person.truncate']]
+                ]
+            ],
+            ['Finding', [
+                    ['View Finding', '/view?table=Result', ['result.result', 'Result.join_view']],
+                    ['Filtered View Finding', None, ['result.result', 'Result.join_view_filter']],
+                    ['Add Finding', None, ['result.result', 'Result.add']],
+                    ['Update Finding', None, ['result.result', 'Result.update']],
+                    ['Delete Finding', None, ['result.result', 'Result.delete']],
+                    ['Bulk Delete Finding', None, ['result.result', 'Result.delete_where']],
+                    ['Delete All Finding', None, ['result.result', 'Result.truncate']]
+                ]
+            ],
+            ['Phished', [
+                    ['View Phished', '/view?table=Phishing', ['result.phished', 'PhishingResult.join_view']],
+                    ['Filtered View Phished', None, ['result.phished', 'PhishingResult.join_view_filter']],
+                    ['Add Phished', None, ['result.phished', 'PhishingResult.add']],
+                    ['Update Phished', None, ['result.phished', 'PhishingResult.update']],
+                    ['Delete Phished', None, ['result.phished', 'PhishingResult.delete']],
+                    ['Bulk Delete Phished', None, ['result.phished', 'PhishingResult.delete_where']],
+                    ['Delete All Phished', None, ['result.phished', 'PhishingResult.truncate']]
+                ]
+            ],
+            ['Credential', [
+                    ['View Credential', '/view?table=Credential', ['result.credential', 'Credential.join_view']],
+                    ['Filtered View Credential', None, ['result.credential', 'Credential.join_view_filter']],
+                    ['Add Credential', None, ['result.credential', 'Credential.add']],
+                    ['Update Credential', None, ['result.credential', 'Credential.update']],
+                    ['Delete Credential', None, ['result.credential', 'Credential.delete']],
+                    ['Bulk Delete Credential', None, ['result.credential', 'Credential.delete_where']],
+                    ['Delete All Credential', None, ['result.credential', 'Credential.truncate']]
+                ]
+            ]
+        ]
+    ],
+    ['Job', [
+            ['Queued Jobs', '/view/job/queued', ['menus.job', 'list_scheduled_job']],
+            ['Active Jobs', '/view/job/active', ['menus.job', 'list_active_job']],
+            ['Kill Job', None, ['menus.job', 'kill_active_job']],
+            ['Kill All Active/Running Jobs', None, ['menus.job', 'kill_all_running']],
+            ['Kill All Jobs (queued & running)', None, ['menus.job', 'kill_all']],
+            ['Stop Celery Processes', None, ['menus.job', 'stop_celery']]
+        ]
+    ],
+    ['Log', [
+            ['View Log', '/view?table=Log', ['menus.log', 'LogEntry.join_view']],
+            ['Filter View Log', None, ['menus.log', 'LogEntry.join_view_filter']],
+            ['Add Log Special', None, ['menus.log', 'LogEntry.add']],
+            ['Update Log', None, ['menus.log', 'LogEntry.update']],
+            ['Delete Log', None, ['menus.log', 'LogEntry.delete']],
+            ['Bulk Delete Log', None, ['menus.log', 'LogEntry.delete_where']],
+            ['Delete All Logs', None, ['menus.log', 'LogEntry.truncate']]
+        ]
+    ],
+    ['Parse File', '/file_parse', ['tools.parse_file.file_parser', 'FileParser.setup']],
+    ['Report', [
+            ['Excel Report', '/report/excel', ['export.excel_export', 'Excel.export']]
+        ]
+    ],
+    ['Encrypt Everything', [
+            ['Encrypt All Output (run \'7z x file.7z -p\' to decrypt again)', '/encrypt/all', ['menus.encrypt_output', 'EncryptOutput.all']],
+        ]
+    ],
+    ['Download .Out File', '/download_results/out', ['menus.encrypt_output', 'EncryptOutput.all']],
+    #['Duplicate or merge Repositories', [
+    #        ['Duplicate Engagement Repository (.out) File', '/duplicate', ['menus.merge', 'DuplicateOutput.all']],
+    #        ['Merge Engagement Repository (.out) File(s)', '/merge', ['menus.merge', 'MergeOutput.all']]
+    #    ]
+    #],
+    ['Logout (quit)', '/logout', ['menus.quit', 'exit']]
+]

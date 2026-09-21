@@ -1,0 +1,20 @@
+tool author: "https://github.com/droope/droopescan"
+config_creator: "huber"
+tool_name: "droopescan"
+simultaneous: True
+group_by: "target"
+targets:
+      scope: "ALL_WEBSITES"
+target_by_host_file: True
+command: "droopescan scan -u ENTRY -o json > OUTPUT_FOLDER/FORMATTED_ENTRY__sSCOPE_ID.json"
+output_path: "output/vuln/web/droopscan"
+tool_parser: "parsers.vuln.web.droopscan_parser.droopscan_parser"
+check_already_run: True
+create_folder: True
+
+questions:
+      - question: "Number of Threads"
+        name: "num_threads"
+        nullable: True
+        regex:
+        global: False

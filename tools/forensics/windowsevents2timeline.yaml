@@ -1,0 +1,12 @@
+tool author: "https://github.com/piesecurity/WindowsEventsToCSVTimeline"
+config_creator: "huber"
+tool_name: "WindowsEventsToCSVTimeline"
+simultaneous: True
+group_by: "target"
+targets:
+      scope: SINGLE_SCOPE_IP
+command: 'pwsh -exec bypass -file tools/forensics/Gather-LogsToTimeLine.ps1 -Log OUTPUT_FOLDER/network_discovery__sSCOPE_ID__ENTRY'
+output_path: "output/forensics/send-networkdiscovery/"
+tool_parser: "parsers.forensics.winevents2csvtimeline_parser.winevents2csvtimeline"
+check_already_run: False
+create_folder: True

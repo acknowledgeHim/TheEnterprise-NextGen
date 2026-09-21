@@ -1,0 +1,17 @@
+config_creator: huber
+simultaneous: True
+callable_yaml:
+  - tools/recon/theharvester-google
+  - tools/recon/theharvester-baidu
+  - tools/recon/theharvester-bing
+  - tools/recon/theharvester-dogpile
+  - tools/recon/theharvester-pgp
+  - tools/recon/theharvester-yahoo
+sub_group:
+  - name: google
+    members:
+      - tools/recon/theharvester-google
+      - tools/recon/theharvester-googleCSE
+      - tools/recon/theharvester-googlefile
+      - tools/recon/theharvester-googleplus
+      - tools/recon/theharvester-linkedin
