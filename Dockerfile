@@ -71,12 +71,19 @@ RUN curl -fsSL -o /tmp/powershell.deb \
     && apt-get update && apt-get install -y /tmp/powershell.deb && rm -f /tmp/powershell.deb \
     && rm -rf /var/lib/apt/lists/*
 
-# install.sh: Golang (line 213) - apt's golang-go on bookworm is new enough for the
-# `go install pkg@version` syntax used below (the `go get`-for-binaries this script
-# originally used was removed in Go 1.18+).
-RUN apt-get update && apt-get install -y --no-install-recommends golang-go \
-    && rm -rf /var/lib/apt/lists/* \
+# install.sh: Golang (line 213) - NOT apt's golang-go: Debian bookworm ships Go 1.19, and
+# actually running `go install` for every tool below (not just checking the module pages load)
+# surfaced a real failure caused specifically by that old a toolchain - golang.org/x/sys's
+# current release needs the `slices` stdlib package, added in Go 1.21, so it fails to even
+# compile under 1.19 ("package slices is not in GOROOT"). Same class of mistake as the earlier
+# rustc-too-old issue: Debian stable freezes toolchain versions at release, so apt isn't a
+# reliable source for a current one here either. Installing the official binary directly
+# instead, same as the rustup approach above.
+RUN curl -fsSL -o /tmp/go.tar.gz https://go.dev/dl/go1.27.1.linux-amd64.tar.gz \
+    && tar -C /usr/local -xzf /tmp/go.tar.gz \
+    && rm -f /tmp/go.tar.gz \
     && mkdir -p "$GOPATH" "$GOBIN"
+ENV PATH="/usr/local/go/bin:${PATH}"
 
 # install.sh: Mono (lines 272-273)
 RUN apt-get update && apt-get install -y --no-install-recommends mono-devel mono-complete \
