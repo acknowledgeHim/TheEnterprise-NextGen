@@ -705,6 +705,7 @@ NAVIGATION = [
     ['Job', [
             ['Queued Jobs', '/view/job/queued', ['menus.job', 'list_scheduled_job']],
             ['Active Jobs', '/view/job/active', ['menus.job', 'list_active_job']],
+            ['Job History', '/view/job/history', ['menus.job', 'list_job_history']],
             ['Kill Job', None, ['menus.job', 'kill_active_job']],
             ['Kill All Active/Running Jobs', None, ['menus.job', 'kill_all_running']],
             ['Kill All Jobs (queued & running)', None, ['menus.job', 'kill_all']],

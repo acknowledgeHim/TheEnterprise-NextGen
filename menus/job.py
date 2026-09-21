@@ -27,6 +27,27 @@ COLUMN_NAMES = ['id', 'pid', 'target', 'start_time', 'entry', 'name', 'source', 
 JOB_HEADER = [["Row #", "PID", "Target", "Command", "Start Time", "Source"]]
 JOB_COLUMNS = ['id', 'pid', 'target', 'command', 'start_time', 'source']
 
+JOB_HISTORY_HEADER = [["Row #", "Target", "Command", "Source", "Start Time", "End Time", "Finished", "Comment"]]
+JOB_HISTORY_COLUMNS = ['id', 'target', 'command', 'source', 'start_time', 'end_time', 'finished', 'failed',
+                       'allow_rerun', 'comment']
+
+
+def retry_url_for_source(source):
+    """ Returns the /tool?tool=<yaml> URL to retry the tool that produced this Log row, or None if
+    the row isn't a retryable tool job (e.g. a manually-added scope entry or parsed file, not a tool run).
+    Mirrors the exact same source -> yaml_file stripping common/jobs/tasks.py's command_complete() uses
+    to look up a job's parser, so this stays in sync with how `source` is actually populated. """
+    if not source:
+        return None
+    yaml_file = source
+    if "tools/" not in yaml_file:
+        return None
+    if "(" in yaml_file:
+        yaml_file = yaml_file[:yaml_file.find("(")]
+    if yaml_file.endswith(".yaml"):
+        yaml_file = yaml_file[:-len(".yaml")]
+    return "/tool?tool=" + yaml_file
+
 # Implement Pause / Resume Task Functionality
 #https://unix.stackexchange.com/questions/2107/how-to-suspend-and-resume-processes
 
@@ -138,6 +159,16 @@ def list_scheduled_job(db_object, full_client_engagement_path):
         filter_value = [True, False, False]
         db_object.view_results_in_table("Log", COLUMN_NAMES, HEADER_NAMES, JOIN_TABLES, ["queued", "finished", "running"],
                                      filter_value, True)
+    except Exception as e:
+        print_text.print_error("jobs except, " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
+
+def list_job_history(db_object, full_client_engagement_path):
+    """ View finished/failed job history (console version of the web /view/job/history page). """
+    try:
+        db_object.view_results_in_table("Log", COLUMN_NAMES, HEADER_NAMES, JOIN_TABLES, ["queued", "running", "finished"],
+                                     [False, False, True], True)
+        db_object.view_results_in_table("Log", COLUMN_NAMES, HEADER_NAMES, JOIN_TABLES, ["queued", "running", "failed"],
+                                     [False, False, True], True)
     except Exception as e:
         print_text.print_error("jobs except, " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
 

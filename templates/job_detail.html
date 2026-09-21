@@ -1,0 +1,31 @@
+{% extends "main.html" %}
+
+{% block content %}
+<h1>Job Detail</h1>
+<table class="table">
+    <tr><td><b>Target</b></td><td>{{ record.target }}</td></tr>
+    <tr><td><b>Command</b></td><td>{{ record.command }}</td></tr>
+    <tr><td><b>Source</b></td><td>{{ record.source }}</td></tr>
+    <tr><td><b>Status</b></td><td>{{ record.status }}</td></tr>
+    <tr><td><b>Start Time</b></td><td>{{ record.start_time }}</td></tr>
+    <tr><td><b>End Time</b></td><td>{{ record.end_time }}</td></tr>
+    <tr><td><b>Duration</b></td><td>{{ record.duration }}</td></tr>
+    <tr><td><b>Comment</b></td><td>{{ record.comment }}</td></tr>
+    <tr><td><b>Output Path</b></td><td>{{ record.output_filepath }}</td></tr>
+    <tr>
+        <td><b>Live Celery Status</b></td>
+        <td>
+            {% if live_status %}
+                {{ live_status }} <i>(informational only - may be unavailable/stale for older jobs)</i>
+            {% else %}
+                <i>Not available</i>
+            {% endif %}
+        </td>
+    </tr>
+</table>
+
+{% if record.retry %}
+    <p>{{ record.retry|safe }}</p>
+{% endif %}
+<p><a href="/view/job/history">Back to Job History</a></p>
+{% endblock %}

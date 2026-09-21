@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import shlex
@@ -143,6 +144,140 @@ def ajax_queued_job():
     except Exception as e:
         logger.exception("ajax_queued_job failed: %s", e)
         return jsonify({'draw': -1, 'recordTotal': -1})
+
+
+HISTORY_TABLE_HEADERS = ["Row #", "Target", "Command", "Source", "Start Time", "End Time", "Status", "Duration", "Comment", "Retry"]
+HISTORY_TABLE_COLUMNS = ["id", "target", "command", "source", "start_time", "end_time", "status", "duration", "comment", "retry"]
+
+
+def _history_table_header():
+    data = "<table id=datatables_table class='display table-striped table-bordered' width=100% cellspacing=0>"
+    data += "<thead><tr>" + "".join("<th>" + h + "</th>" for h in HISTORY_TABLE_HEADERS) + "</tr></thead><tbody></tbody>"
+    data += "<tfoot><tr>" + "".join("<th>" + h + "</th>" for h in HISTORY_TABLE_HEADERS) + "</tr></tfoot></table>"
+    datatable_columns = ", ".join('{"data": "' + c + '"}' for c in HISTORY_TABLE_COLUMNS)
+    return data, datatable_columns
+
+
+def _history_rows(db_object):
+    """ Finished or failed Log rows - there's no single-query OR helper on db_object, so this
+    mirrors the two-call style already used elsewhere (e.g. the queued-jobs query above) and
+    merges/dedupes by id. """
+    finished = db_object.view("Log", job.JOB_HISTORY_COLUMNS, ["queued", "running", "finished"],
+                              [False, False, True], True) or []
+    failed = db_object.view("Log", job.JOB_HISTORY_COLUMNS, ["queued", "running", "failed"],
+                            [False, False, True], True) or []
+    by_id = {}
+    for row in finished + failed:
+        by_id[row['id']] = row
+    rows = list(by_id.values())
+    rows.sort(key=lambda r: r.get('end_time') or '', reverse=True)
+    return rows
+
+
+def _decorate_history_row(row):
+    """ Adds the derived display fields (status/duration/retry) to a raw Log row dict. """
+    row['status'] = "Finished" if row.get('finished') else "Failed"
+    duration = ""
+    if row.get('start_time') and row.get('end_time'):
+        try:
+            duration = str(row['end_time'] - row['start_time'])
+        except TypeError:
+            duration = ""
+    row['duration'] = duration
+    retry_url = None
+    if row.get('allow_rerun'):
+        retry_url = job.retry_url_for_source(row.get('source'))
+    row['retry'] = ('<a href="' + retry_url + '">Retry</a>') if retry_url else ""
+    return row
+
+
+@jobs_bp.route('/view/job/history', methods=['GET', 'POST'])
+def history_job():
+    try:
+        db_object = common_flask.create_db_object(session.get('engagement_path'),
+                                                  session.get('selected_engagement'), session.get('key'),
+                                                  session.get('username'))
+        setup_dictionary = common_flask.setup_base_page(session, db_object)
+        engagements = setup_dictionary['engagements']
+        menu_items = common_flask.loop_through_menu(NAVIGATION)
+        engagement_path = session.get('engagement_path')
+
+        data, datatable_columns = _history_table_header()
+    except Exception as e:
+        datatable_columns = ""
+        data = ""
+        logger.exception("history_job failed: %s", e)
+
+    celery_cmd = session.get('celery_cmd')
+    return render_template('table_view.html', engagements=engagements, menu_items=menu_items,
+                           engagement_path="Current Engagement: " + engagement_path, celery_cmd=celery_cmd,
+                           current_location="Current Location: " + session.get('current_location_name'),
+                           content=data, celery='', datatable_columns=datatable_columns)
+
+
+@jobs_bp.route('/ajax/job/history', methods=['GET', 'POST'])
+def ajax_history_job():
+    try:
+        db_object = common_flask.create_db_object(session.get('engagement_path'),
+                              session.get('selected_engagement'), session.get('key'), session.get('username'))
+
+        json_data = request.get_json(force=True)
+        rows = _history_rows(db_object)
+        data = [_decorate_history_row(row) for row in rows]
+        result_dict = {'draw': int(json_data['draw']), 'recordsTotal': len(data),
+                       'recordsFiltered': len(data), 'data': data}
+
+        return jsonify(result_dict)
+    except Exception as e:
+        logger.exception("ajax_history_job failed: %s", e)
+        return jsonify({'draw': -1, 'recordTotal': -1})
+
+
+@jobs_bp.route('/view/job/detail', methods=['GET'])
+def job_detail():
+    try:
+        id = request.args['ident']
+        db_object = common_flask.create_db_object(session.get('engagement_path'),
+                                                  session.get('selected_engagement'), session.get('key'),
+                                                  session.get('username'))
+        setup_dictionary = common_flask.setup_base_page(session, db_object)
+        engagements = setup_dictionary['engagements']
+        menu_items = common_flask.loop_through_menu(NAVIGATION)
+        engagement_path = session.get('engagement_path')
+
+        records = db_object.view("Log", None, ["id"], [id])
+        record = records[0] if records else None
+        if record is None:
+            return redirect("/view/job/history")
+
+        _decorate_history_row(record)
+
+        # Best-effort live Celery status - informational only, may be unavailable for older jobs
+        # (see the Phase 3 plan's note on result_expires/celery_info's two write-site shapes).
+        live_status = None
+        if record.get('celery_info'):
+            task_id = None
+            try:
+                info = json.loads(record['celery_info'])
+                task_id = info.get('id') if isinstance(info, dict) else None
+            except (ValueError, TypeError):
+                task_id = record['celery_info']
+            if task_id:
+                try:
+                    from celery.result import AsyncResult
+                    from common.jobs.celery_app import app as celery_application
+                    live_status = AsyncResult(task_id, app=celery_application).state
+                except Exception as e:
+                    logger.debug("job_detail live status lookup failed: %s", e)
+
+        celery_cmd = session.get('celery_cmd')
+        return render_template('job_detail.html', engagements=engagements, menu_items=menu_items,
+                               engagement_path="Current Engagement: " + engagement_path, celery_cmd=celery_cmd,
+                               current_location="Current Location: " + session.get('current_location_name'),
+                               celery='', record=record, live_status=live_status)
+    except Exception as e:
+        logger.exception("job_detail failed: %s", e)
+        return redirect("/view/job/history")
 
 
 @jobs_bp.route('/kill/job', methods=["GET"])
