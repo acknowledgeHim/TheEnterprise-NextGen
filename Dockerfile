@@ -134,11 +134,19 @@ RUN git clone --depth 1 https://github.com/ropnop/windapsearch.git $PENTESTDIR/w
 # DataSploit intentionally NOT cloned - Python 2 only, abandoned upstream since ~2018,
 # would not run without a Python 2.7 interpreter this image doesn't carry. See header.
 
-# ZAP (old pinned release, matches install.sh - a newer ZAP is a separate upgrade)
-RUN mkdir -p $PENTESTDIR/zap && cd $PENTESTDIR/zap \
-    && wget -q https://github.com/zaproxy/zaproxy/releases/download/2.7.0/ZAP_2.7.0_Linux.tar.gz \
-    && tar -xzf ZAP_2.7.0_Linux.tar.gz --strip-components=1 \
-    && rm -f ZAP_2.7.0_Linux.tar.gz \
+# ZAP - install.sh pinned 2.7.0 (2018), whose release asset is gone from GitHub entirely
+# (confirmed via a real build attempt: 404, not a URL typo - old release assets appear to have
+# been cleaned up). Using the current release instead. It also needs a JRE, which nothing in
+# this Dockerfile installed before now - confirmed via zap.sh itself: "ZAP requires a minimum
+# of Java 17 to run". openjdk-17-jre-headless is enough since ZAP runs here in -daemon mode
+# (see webapp/blueprints/main.py's ZAP_STARTUP), no GUI needed.
+RUN apt-get update && apt-get install -y --no-install-recommends openjdk-17-jre-headless \
+    && rm -rf /var/lib/apt/lists/*
+RUN ZAP_VERSION="$(curl -s https://api.github.com/repos/zaproxy/zaproxy/releases/latest | grep -oP '"tag_name":\s*"v\K[^"]+')" \
+    && mkdir -p $PENTESTDIR/zap && cd $PENTESTDIR/zap \
+    && wget -q "https://github.com/zaproxy/zaproxy/releases/download/v${ZAP_VERSION}/ZAP_${ZAP_VERSION}_Linux.tar.gz" \
+    && tar -xzf "ZAP_${ZAP_VERSION}_Linux.tar.gz" --strip-components=1 \
+    && rm -f "ZAP_${ZAP_VERSION}_Linux.tar.gz" \
     && chmod +x *.sh
 
 # EyeWitness (own installer - apt/pip heavy, most likely single point of build failure
