@@ -84,9 +84,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends mono-devel mono
 
 # install.sh: Python3 toolchain (lines 335-337) - python3-venv skipped (no venv here, the
 # container's own interpreter is already isolated); python3-pip needed by every pip3 install
-# below, including the very next step.
+# below, including the very next step. libgeoip-dev/libffi-dev are here for requirements.txt's
+# GeoIP==1.3.2 (an old C-extension binding with no prebuilt wheel, confirmed it needs
+# libgeoip-dev to compile) and cryptography's native extension, needed by the final
+# `pip3 install -r requirements.txt` app-dependency step much further down this file.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        python3-pip zlib1g-dev \
+        python3-pip zlib1g-dev libgeoip-dev libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # install.sh: CrackMapExec (line 315) - the `crackmapexec` PyPI package is gone (confirmed via
@@ -150,9 +153,10 @@ RUN ZAP_VERSION="$(curl -s https://api.github.com/repos/zaproxy/zaproxy/releases
     && chmod +x *.sh
 
 # EyeWitness (own installer - apt/pip heavy, most likely single point of build failure
-# in this whole file given its age)
+# in this whole file given its age). Its setup.sh lives under Python/setup/, not setup/ at the
+# repo root (confirmed against the real repo - there's no top-level setup/ dir at all).
 RUN git clone --depth 1 https://github.com/ChrisTruncer/EyeWitness.git $PENTESTDIR/eyewitness \
-    && $PENTESTDIR/eyewitness/setup/setup.sh || true
+    && $PENTESTDIR/eyewitness/Python/setup/setup.sh || true
 
 # Responder
 RUN git clone --depth 1 https://github.com/lgandx/Responder.git $PENTESTDIR/responder
@@ -203,6 +207,13 @@ RUN git clone --depth 1 https://github.com/laramies/metagoofil.git $PENTESTDIR/m
 # originally used for binary installs was removed in Go 1.18+); also fixes two typos in
 # the original script (Ruler's GOPATH dir was missing the sensepost org segment,
 # blacksheepwall's cd used "tomsteel" instead of "tomsteele").
+# bettercap needs libusb-1.0 via cgo/pkg-config (confirmed by actually running `go install` for
+# every one of these modules against the real module proxy before writing this file this time,
+# rather than just checking the module pages exist - ruler/gobuster/blacksheepwall/amass all
+# built real binaries with no extra deps; bettercap alone failed on this). libnetfilter-queue-dev
+# (bettercap's other native dep) is already installed above for thc-ipv6.
+RUN apt-get update && apt-get install -y --no-install-recommends pkg-config libusb-1.0-0-dev \
+    && rm -rf /var/lib/apt/lists/*
 RUN go install github.com/sensepost/ruler@latest \
     && go install github.com/OJ/gobuster/v3@latest \
     && go install github.com/bettercap/bettercap@latest \
@@ -223,8 +234,10 @@ RUN git clone --depth 1 https://github.com/vysec/S3Scanner.git $PENTESTDIR/s3sca
     && cd $PENTESTDIR/s3scanner && pip3 install --break-system-packages --no-cache-dir -r requirements.txt
 
 # Jexboss (same cd-before-pip-install bug fix)
+# jexboss's dependency file is named requires.txt, not requirements.txt (confirmed against
+# the real repo - no requirements.txt exists there at all).
 RUN git clone --depth 1 https://github.com/joaomatosf/jexboss.git $PENTESTDIR/jexboss \
-    && cd $PENTESTDIR/jexboss && pip3 install --break-system-packages --no-cache-dir -r requirements.txt
+    && cd $PENTESTDIR/jexboss && pip3 install --break-system-packages --no-cache-dir -r requires.txt
 
 # Seth (same cd-before-pip-install bug fix)
 RUN git clone --depth 1 https://github.com/SySS-Research/Seth.git $PENTESTDIR/seth \
