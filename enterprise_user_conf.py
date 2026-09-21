@@ -2,7 +2,9 @@ import os
 import secrets
 
 # Auto Start Celery (means it will be in the background and you will not see outputed data)
-AUTO_START_CELERY = False # False / True
+# TE_AUTO_START_CELERY overrides this - Docker defaults it to true since there's no separate
+# interactive terminal to run "celery worker" in by hand inside a container.
+AUTO_START_CELERY = os.environ.get("TE_AUTO_START_CELERY", "false").lower() == "true" # False / True
 CELERY_CONCURRENCY = 8
 
 # Auto Start TheEnterprise Flask (Web GUI) - only useful when starting enterprise from the command line
@@ -10,6 +12,13 @@ AUTO_START_GUI = False # False / True
 
 #Base absolute path where client/engagements will be saved.
 OUTPUT_PATH = '/usr/local/clients/'
+
+# Optional deterministic first-run admin account (used by install.py's bootstrap). If unset,
+# install.py falls back to its existing random-Star-Trek-username/random-password generation.
+# Mainly useful for Docker, where you want a known login rather than digging a random one out
+# of container logs.
+ADMIN_USERNAME = os.environ.get("TE_ADMIN_USERNAME")
+ADMIN_PASSWORD = os.environ.get("TE_ADMIN_PASSWORD")
 
 # Linux group that created folders will be assigned to
 LINUX_GROUP = 'staff'
@@ -27,7 +36,11 @@ DEVICE_IP = '0.0.0.0' # IP Address of this device (where TheEnterprise is runnin
 PENTEST_DIR = "/pentest/"
 
 # Path to python 2.7 version (some external tools use 2.7)
-PYTHONV2_PATH = "/usr/bin/python2.7"
+# Note: every call site (tools/attack/scapy_setup.py, tools/scan/create_hosts_file.py,
+# tools/credential/responder_hashcat_setup.py, tools/recon/datasploit_setup.py,
+# tools/credential/secretsdump_setup.py) imports this as PYTHONv2_PATH (lowercase v) - keeping
+# the name in that case here rather than PYTHONV2_PATH, which no code actually imported.
+PYTHONv2_PATH = "/usr/bin/python2.7"
 
 # GOLANG path
 GOLANG_PATH = PENTEST_DIR + "golang/"

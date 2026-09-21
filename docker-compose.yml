@@ -1,0 +1,62 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${TE_FLASK_PORT:-1820}:1820"
+    environment:
+      TE_FLASK_KEY: ${TE_FLASK_KEY:?set a real TE_FLASK_KEY in .env for anything but throwaway use}
+      TE_HASH_KEY: ${TE_HASH_KEY:?set a real TE_HASH_KEY in .env - changing it later breaks existing encrypted data}
+      TE_ADMIN_USERNAME: ${TE_ADMIN_USERNAME:-}
+      TE_ADMIN_PASSWORD: ${TE_ADMIN_PASSWORD:-}
+      TE_ZAP_API_KEY: ${TE_ZAP_API_KEY:-}
+      TE_MSFRPC_USER: ${TE_MSFRPC_USER:-}
+      TE_MSFRPC_PASSWORD: ${TE_MSFRPC_PASSWORD:-}
+      TE_RABBITMQ_HOST: rabbitmq
+      TE_RABBITMQ_PORT: "5672"
+      TE_RABBITMQ_USER: ${TE_RABBITMQ_USER:-guest}
+      TE_RABBITMQ_PASS: ${TE_RABBITMQ_PASS:-guest}
+      TE_REDIS_HOST: redis
+      TE_REDIS_PORT: "6379"
+      TE_AUTO_START_CELERY: "true"
+      FLASK_DEBUG: "false"
+    volumes:
+      - client_data:/usr/local/clients/
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: ${TE_RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${TE_RABBITMQ_PASS:-guest}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    restart: unless-stopped
+
+volumes:
+  client_data:
+  rabbitmq_data:
+  redis_data:

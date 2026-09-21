@@ -1,0 +1,11 @@
+.git
+.gitignore
+__pycache__
+*.pyc
+*.pyo
+logs/
+.venv/
+venv/
+.env
+flask_files/flask.crt
+flask_files/flask.key

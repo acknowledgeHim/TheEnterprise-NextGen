@@ -5,13 +5,14 @@ import string
 from common import encryption
 from common import email_db_model
 from common import print_text
+from common.database_object import OurCoolDBObject
 from setup import install_helper
 import getpass
 from enterprise_user_conf import *
 
 try:
     # change 'setup/' directory permissions, otherwise event.db permission errors
-    os.system('chmod 774 ' +os.path.dirname(os.path.realpath(__file__)) + 'setup')
+    os.system('chmod 774 ' + os.path.join(os.path.dirname(os.path.realpath(__file__)), 'setup'))
 
     import nltk
     curr_dir = os.getcwd() #os.path.dirname(os.path.realpath(__file__))
@@ -24,8 +25,8 @@ try:
     print_text.print_bold("Finally all the children are taken care of, now time to configure The Enterprise!")
 
     star_trek_characters = ['picard', 'data', 'spock', 'kirk', 'mccoy', 'worf', 'q', 'scott', 'riker', 'laforge', 'chekov']
-    user_entered_username = star_trek_characters[random.randint(0, 9)]
-    user_pass = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=100))
+    user_entered_username = ADMIN_USERNAME or star_trek_characters[random.randint(0, len(star_trek_characters) - 1)]
+    user_pass = ADMIN_PASSWORD or ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=100))
 
     """
     user_entered_username = ''
@@ -47,49 +48,35 @@ try:
             print_text.print_error("\tLooks like your password did not match!  Please try again.")
     """
 
-    user_entered_hash = 'WF1fj3kUBBjeZKsu9acBKFOmC1spequUqYG4cMgj'
-    """user_specified_hash = input("Do you want to specify your own hash key, this can NOT be changed later without "
-                                "affecting data integrity, Y|N (default is N): ")
-    if user_entered_hash == "Y":
-        while True:
-            user_entered_hash = input("Please enter the hash  to use for The Enterprise: ")
-            confirm_user_hash = input("Please re-enter the hash: ")
-            if user_entered_hash == confirm_user_hash:
-                break
-            else:
-                print_text.print_error("\tLooks like your hash did not match!  Please try again.")
-    """
-    user_entered_hash = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=40))
-
     base = os.path.dirname(os.path.realpath(__file__)) + "/"
     if "/common" in base:
         base = base.replace("/common/", "/")
 
-    email_db_model.initialize_email_db(base + 'setup/email_event.db')
+    email_event_db = base + 'setup/email_event.db'
+    email_db_model.initialize_email_db(email_event_db)
 
-    # Add flaskuser
-    flask_add_values = {'username': user_entered_username, 'passwd': encryption.hash_string(user_pass)}
-    flask_add_values = encryption.get_hash_string(["username"], flask_add_values)
-    install_helper.add_flaskuser(flask_add_values)
+    # HASH_KEY/ZAP_API_KEY used to live here as a config-file rewrite (this script would splice a
+    # freshly-generated HASH_KEY into enterprise_user_conf.py and append a ZAP_API_KEY line on
+    # every run). Both are now read from TE_HASH_KEY/TE_ZAP_API_KEY environment variables
+    # (see enterprise_conf.py/enterprise_user_conf.py) - rewriting a config file baked into a
+    # Docker image wouldn't persist anyway, and the old append-a-second-ZAP_API_KEY-line behavior
+    # would have silently shadowed the env-driven one. Nothing to do here anymore.
 
-    new_global_user_str = ""
-    user_conf = os.path.dirname(os.path.realpath(__file__)) + "/enterprise_user_conf.py"
-    if "the_enterprise" not in os.path.dirname(os.path.realpath(__file__)):
-        user_conf = os.path.dirname(os.path.realpath(__file__)) + "/the_enterprise/enterprise_conf.py"
-    with open(user_conf, 'r') as global_user_conf:
-        user_lines = global_user_conf.readlines()
-        for user_line in user_lines:
-            if "HASH_KEY" in user_line:
-                new_global_user_str = new_global_user_str + "HASH_KEY = '" + user_entered_hash + "'\n"
-            else:
-                new_global_user_str = new_global_user_str + user_line
+    # Only create the admin FlaskUser on a genuinely first run - re-running this on every
+    # container start (which the Docker entrypoint does, to keep bootstrap idempotent) must not
+    # reset an existing admin's password to a fresh random one each time.
+    with OurCoolDBObject(email_event_db, 'common.email_db_model') as db_check:
+        existing_flaskusers = db_check.count_records("FlaskUser")
 
-    zap_api_key = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=49))
-    new_global_user_str = new_global_user_str + "\nZAP_API_KEY='" + zap_api_key + "'\n"
+    if existing_flaskusers > 0:
+        print_text.print_msg("A WebApp (Flask) user already exists - skipping admin account creation.")
+    else:
+        flask_add_values = {'username': user_entered_username, 'passwd': encryption.hash_string(user_pass)}
+        flask_add_values = encryption.get_hash_string(["username"], flask_add_values)
+        install_helper.add_flaskuser(flask_add_values)
 
-    # Now rewrite enterprise_user_conf.py
-    with open(user_conf, 'w') as global_user_conf:
-        global_user_conf.write(new_global_user_str)
+        print_text.print_msg("Your default WebApp (Flask) credentials are: " + user_entered_username + "/" + user_pass +
+                             " which SHOULD be changed by running enterprise.py.")
 
     """
     # default Email Event records
@@ -201,8 +188,6 @@ try:
                           "use golang tools (like gobuster, bettercap, etc). "
                           "You can append: ':/" + PENTEST_DIR + "golang/bin' to /etc/profile to apply to all users or "
                         "do: export PATH=$PATH:" + PENTEST_DIR + "golang/bin for just you")
-    print_text.print_msg("Your default WebApp (Flask) credentials are: " + user_entered_username +  "/" + user_pass + " which "
-                                                                        "SHOULD be changed by running enterprise.py.")
 except Exception as e:
     print_text.print_error("\tInstallation failed. Error: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
 
