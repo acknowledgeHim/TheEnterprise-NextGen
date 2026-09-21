@@ -3,7 +3,7 @@
 {% block leftcolumn %}
 <div class="leftside_tab" id="leftside_tab" onclick="$('#left_popout').toggle();">Show/Hide Engagements</div>
 <div class="engagements" id="left_popout">
-    <ul id="main-menu2" class="sm sm-blue">
+    <ul id="main-menu2" class="list-group">
         {{ engagements|safe }}
     </ul>
 </div>

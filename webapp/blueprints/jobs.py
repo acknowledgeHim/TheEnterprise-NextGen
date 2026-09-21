@@ -6,6 +6,7 @@ import subprocess
 
 import yaml
 from flask import Blueprint, jsonify, redirect, render_template, request, session
+from markupsafe import escape
 
 from common import common, print_text, system_process
 from common.navigation_menu import NAVIGATION
@@ -318,7 +319,7 @@ def kill_single_job_confirm():
         with FormSetup('edit_entry', '/kill/single?table=Job&ident=' + id) as form:
             html_form = form.create_form(inputs, "black_text")
 
-        return "<h1>Kill " + table_name + "</h1>" + html_form
+        return "<h1>Kill " + str(escape(table_name)) + "</h1>" + html_form
 
 
 @jobs_bp.route('/kill/single', methods=["GET", "POST"])

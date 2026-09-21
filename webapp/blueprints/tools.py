@@ -6,6 +6,14 @@ import sys
 
 import yaml
 from flask import Blueprint, redirect, render_template, request, session, url_for
+from markupsafe import escape
+
+def _js_str(value):
+    """ A JS string literal (quotes included) safe to splice into an inline HTML event-handler
+    attribute - json.dumps() handles JS-level escaping (quotes/backslashes), and the caller must
+    still HTML-escape the attribute value as a whole (a bare `'` surviving json.dumps could still
+    break out of a single-quoted HTML attribute otherwise). """
+    return json.dumps(str(value))
 
 from common import keep_tags, print_text
 from common.navigation_menu import NAVIGATION
@@ -244,7 +252,11 @@ def lookup_merge():
         if devices is not None and len(devices) > 0:
             ips = "<ul id='mergeto_selection' class='selection'>"
             for device in devices:
-                ips = ips + "<li class='selection_item' onClick='select_item(\"" + div_id + "\", \"" + str(device['id']) + "\", \"" + device['target_name'] + " (" + device['target_ip'] + ") @ " + device['name'] + "\", \"" + str(device['id']) + "\")'>" + device['target_name'] + " (" + device['target_ip'] + ") @ " + device['name'] + "</li>"
+                display = device['target_name'] + " (" + device['target_ip'] + ") @ " + device['name']
+                onclick_js = "select_item(" + _js_str(div_id) + ", " + _js_str(device['id']) + ", " + \
+                             _js_str(display) + ", " + _js_str(device['id']) + ")"
+                ips = ips + "<li class='selection_item' onClick='" + str(escape(onclick_js)) + "'>" + \
+                      str(escape(display)) + "</li>"
             ips = ips + "</ul>"
         return ips
 
@@ -266,15 +278,15 @@ def lookup_info():
 
         info = "No matches found, please try searching again!"
         for device in devices:
-            info = '<center><u><b>' + device['target_name'] + '</b></u>'
-            info = info + '<br><b>IP</b>: ' + str(device['target_ip'])
-            info = info + '<br><b>Location</b>: ' + str(device['name'])
-            info = info + '<br><b>Scope</b>: ' + str(device['entry'])
-            info = info + '<br><b>OS</b>: ' + str(device['os'])
-            info = info + '<br><b>MAC</b>: ' + str(device['mac'])
-            info = info + '<br><b>Info</b>: ' + str(device['info'])
-            info = info + '<br><b>Source</b>: ' + device['source']
-            info = info + '<br><b>Modified By</b>: ' + device['modified_by']
+            info = '<center><u><b>' + str(escape(device['target_name'])) + '</b></u>'
+            info = info + '<br><b>IP</b>: ' + str(escape(device['target_ip']))
+            info = info + '<br><b>Location</b>: ' + str(escape(device['name']))
+            info = info + '<br><b>Scope</b>: ' + str(escape(device['entry']))
+            info = info + '<br><b>OS</b>: ' + str(escape(device['os']))
+            info = info + '<br><b>MAC</b>: ' + str(escape(device['mac']))
+            info = info + '<br><b>Info</b>: ' + str(escape(device['info']))
+            info = info + '<br><b>Source</b>: ' + str(escape(device['source']))
+            info = info + '<br><b>Modified By</b>: ' + str(escape(device['modified_by']))
             info = info + '<br><b>Modified Date</b>: ' + str(device['modified_date'])
             info = info + '</center>'
 

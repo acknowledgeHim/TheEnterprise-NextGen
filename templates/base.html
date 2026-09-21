@@ -1,14 +1,13 @@
+<!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script type="text/javascript" charset="utf-8" src="/static/jquery.min.js"></script>
 
     <!-- Bootstrap core CSS -->
-    <link href="/static/smartmenu/css/bootstrap.min.css" rel="stylesheet">
-    <!-- SmartMenus jQuery Bootstrap Addon CSS -->
-    <link href="/static/smartmenu/css/jquery.smartmenus.bootstrap.css" rel="stylesheet">
-    <link href="/static/jquery-ui/jquery-ui.min.css" rel=stylesheet>
-    <script src="/static/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <link rel="stylesheet" href="/static/style.css" type="text/css">
 
@@ -30,46 +29,27 @@
             } else { return txt; }
         }
 
+        var dialogModal;
+        $(document).ready(function() {
+            dialogModal = new bootstrap.Modal(document.getElementById('dialog'));
+        });
+
         function dialog_text(tle, text) {
-            $("#dialog").html(text);
-            $("#dialog").dialog();
+            $('#dialogTitle').text(tle);
+            $('#dialogBody').html(text);
             $('#message').hide();
-            $("#dialog").dialog({
-                collision: "flip",
-                width: 700,
-                position: {my: 'center top+100', at: 'center top+100', of: '.container_menu'},
-                draggable: true,
-                resizable: true,
-                title: tle});
-            // Fix input element click problem
-            $('.input-append').bind('click mouseup mousedown keypress keydown keyup', function (e) {
-              e.stopPropagation();
-            });
-            $("#dialog").show();
+            dialogModal.show();
         }
 
         function dialog_html(ajax_url) {
-            $("#dialog").dialog();
+            $('#dialogTitle').text("Loading ... ");
+            $('#dialogBody').html("");
             $('#message').hide();
-            $("#dialog").dialog("option", "title", "Loading ... ").dialog("open");
-            $("#dialog").load(ajax_url, function() {
-                //$(this).dialog("option", "title", $(this).find("h1").text());
-                $(this).dialog({
-                    collision: "flip",
-                    draggable: true,
-                    resizable: true,
-                    title: $(this).find("h1").text(),
-                    width: 700,
-                    position: {my: 'center top+100', at: 'center top+100', of: '.container_menu'},
-                    closeOnEscape: true,
-                });
-                $(this).find("h1").remove();
+            dialogModal.show();
+            $('#dialogBody').load(ajax_url, function() {
+                $('#dialogTitle').text($('#dialogBody').find("h1").text());
+                $('#dialogBody').find("h1").remove();
             });
-            // Fix input element click problem
-            $('.input-append').bind('click mouseup mousedown keypress keydown keyup', function (e) {
-              e.stopPropagation();
-            });
-            $("#dialog").show();
         }
 
         function close_popup(div_id) {
@@ -164,31 +144,36 @@
 <body>
 
 <!-- Static navbar -->
-  <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" role="navigation">
     <div class="container_menu">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <p class="navbar-brand homepagelink">TheEnterprise: The Pentest Automation Framework
-          <br><font size="2">{{ engagement_path }} | {{ current_location }}</i></font>
-        </p>
-      </div>
-      <div class="navbar-collapse collapse">
+      <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <span class="navbar-brand homepagelink">TheEnterprise: The Pentest Automation Framework
+        <br><small>{{ engagement_path }} | {{ current_location }}</small>
+      </span>
+      <div class="navbar-collapse collapse" id="navbarCollapse">
         <!-- Left nav -->
-        <ul class="nav navbar-nav">
+        <ul class="navbar-nav">
             {{ menu_items|safe }}
         </ul>
       </div><!--/.nav-collapse -->
     </div><!--/.container -->
-  </div>
+  </nav>
 
 <div style="height:110px">&nbsp;</div>
 
-<div id="dialog"></div>
+<div class="modal fade" id="dialog" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="dialogTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="dialogBody"></div>
+    </div>
+  </div>
+</div>
 <div id="popup" class="message"></div>
 <div id=message class="message">
 
@@ -197,7 +182,7 @@
         {% for message in messages %}
             <p>{{ message }}</p>
             <script language="JavaScript">
-                $('#message').html({{ message }});
+                $('#message').html({{ message|tojson }});
                 $('#message').show();
                 setTimeout(function() { $("#message").hide();}, 5000); };
             </script>
@@ -222,14 +207,9 @@
 
 {% endblock %}
 
-<!-- Bootstrap core JavaScript ================================================== -->
+<!-- Bootstrap core JavaScript (includes Popper, needed for dropdowns/modals) -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="/static/smartmenu/bootstrap.min.js"></script>
-<!-- SmartMenus jQuery plugin -->
-<script type="text/javascript" src="/static/smartmenu/jquery.smartmenus.js"></script>
-<!-- SmartMenus jQuery Bootstrap Addon -->
-<script type="text/javascript" src="/static/smartmenu/jquery.smartmenus.bootstrap.min.js"></script>
-
+<script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

@@ -9,33 +9,35 @@ from common.database_object import OurCoolDBObject
 logger = logging.getLogger(__name__)
 
 
-def loop_through_menu(menu, count=0):
+def loop_through_menu(menu, top_level=True):
     """
     Recursively loops through each menu item, if child found then calls itself to loop through sub layer, etc.
-    Returns a list of dict (can be many layers deep depending upon # of sub layers).
+    Emits Bootstrap 5 navbar-nav markup (nav-item/dropdown/dropdown-menu/dropdown-item), since Bootstrap's
+    own dropdown JS (data-bs-toggle) replaced the old SmartMenus-based nav.
 
-    :param menu: a nested list where list.0 is Name to display, list.1 is string containing app_name.url_mapper_method.url_append
-        and optional list.2 can be a sub list for sub menu.
+    :param menu: a nested list where list.0 is Name to display, list.1 is a URL string, None (CLI-only entry,
+        skipped in the web view), or a further nested list for a submenu.
     :return: string of the current navigation menu
     """
-    count += 1
-
     nav_menu = ''
     for item in menu:
-        child_menu = ''
+        name = item[0]
         url = item[1]
-        if url is not None:
-            if isinstance(url, str):
-                nav_menu = nav_menu + '<li><a href="' + url + '">' + item[0]
-            else:
-                nav_menu = nav_menu + '<li><a href=#>' + item[0]
+        if url is None:
+            continue
 
-            if isinstance(item[1], list):
-                child_menu =  loop_through_menu(item[1], count)
+        if isinstance(url, list):
+            child_menu = loop_through_menu(url, top_level=False)
             if child_menu.strip() != "":
-                nav_menu = nav_menu + '<span class="caret"></span></a><ul class="dropdown-menu">' + child_menu + '</ul></li>'
-            else:
-                nav_menu = nav_menu + '</a></li>'
+                item_class = "nav-item dropdown" if top_level else "dropdown dropdown-submenu"
+                toggle_class = "nav-link dropdown-toggle" if top_level else "dropdown-item dropdown-toggle"
+                nav_menu = nav_menu + ('<li class="' + item_class + '"><a class="' + toggle_class +
+                    '" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">' + name +
+                    '</a><ul class="dropdown-menu">' + child_menu + '</ul></li>')
+        else:
+            link_class = "nav-link" if top_level else "dropdown-item"
+            item_open = '<li class="nav-item">' if top_level else '<li>'
+            nav_menu = nav_menu + item_open + '<a class="' + link_class + '" href="' + url + '">' + name + '</a></li>'
     return nav_menu
 
 

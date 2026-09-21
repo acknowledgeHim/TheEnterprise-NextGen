@@ -1,6 +1,7 @@
 import logging
 
 from flask_wtf.csrf import generate_csrf
+from markupsafe import escape
 
 logger = logging.getLogger(__name__)
 
@@ -9,7 +10,7 @@ class FormSetup():
     def __init__(self, form_name, action_url):
         """ Creates form. """
         csrf_field = '<input type="hidden" name="csrf_token" value="' + generate_csrf() + '">'
-        self.html_form = '<form name="' + form_name + '" action="' + action_url + '" method=post enctype="multipart/form-data">' + csrf_field + '<table>'
+        self.html_form = '<form name="' + str(escape(form_name)) + '" action="' + str(escape(action_url)) + '" method=post enctype="multipart/form-data">' + csrf_field + '<table>'
 
     def __enter__(self):
         return self
@@ -73,7 +74,7 @@ class FormSetup():
     def text_area(self, name, regex, value):
         if value is None:
             value = ""
-        return "<td><textarea name='" + name + "' cols=50 rows=4 onBlur='validate_input(this, \""+regex+"\");'>" + str(value) + "</textarea>"
+        return "<td><textarea name='" + name + "' cols=50 rows=4 onBlur='validate_input(this, \""+regex+"\");'>" + str(escape(value)) + "</textarea>"
 
     def dropdown(self, name, regex, value, names):
         try:
@@ -111,7 +112,7 @@ class FormSetup():
                 if names is not None:
                     name = str(names[count])
 
-                select_box = select_box + "<option value='" + option + "' " + checked + ">" + name + "</option>"
+                select_box = select_box + "<option value='" + str(escape(option)) + "' " + checked + ">" + str(escape(name)) + "</option>"
 
             return select_box + "</select>"
         except Exception as e:
@@ -121,10 +122,10 @@ class FormSetup():
     def text_box(self, name, regex, value):
         if value is None:
             value = ""
-        return "<td><input type=text name='" + name + "' size=75 id='" + name + "' value='" + str(value) + "' onBlur='validate_input(this, \""+regex+"\");'>"
+        return "<td><input type=text name='" + name + "' size=75 id='" + name + "' value='" + str(escape(value)) + "' onBlur='validate_input(this, \""+regex+"\");'>"
 
     def password_field(self, name, regex, value):
         if value is None:
             value = ""
         return "<td><input type=password name='" + name + "' size=75 id='" + name + "' value='" + str(
-            value) + "' onBlur='validate_input(this, \"" + regex + "\");'>"
+            escape(value)) + "' onBlur='validate_input(this, \"" + regex + "\");'>"

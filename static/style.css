@@ -37,12 +37,6 @@ input, select, textarea {
     margin-bottom: 10px;
 }
 
-.ui-dialog { z-index: 200 !important; width: 700px; }
-.ui-front { z-index: 200 !important; }
-.dialog {
-    font-size: .7em;
-}
-
 input {
     text-align: center;
     background-color: #ECF0F1;
@@ -59,27 +53,6 @@ input {
 input:focus {
     border: 2px solid black;
     box-shadow: none;
-}
- 
-.btn {
-  border: 2px solid transparent;
-  background: black;
-  color: #ffffff;
-  font-size: 16px;
-  line-height: 25px;
-  padding: 10px 0;
-  text-decoration: none;
-  text-shadow: none;
-  border-radius: 3px;
-  box-shadow: none;
-  transition: 0.25s;
-  display: block;
-  width: 250px;
-  margin: 0 auto;
-}
- 
-.btn:hover {
-  background-color: #2980B9;
 }
  
 .login-link {
@@ -166,22 +139,6 @@ a:hover {color: #DB7633; text-decoration: none; }
     top:0px;
     right:0px;
     z-index:99;
-}
-
-.modal {
-    height: auto !important;
-    width: auto;
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform: translate(-50%, -50%);
-    background-color:white;
-    border:2px solid orange;
-    border-radius:14px;
-    padding:15px;
-    overflow: scroll;
-    display:none;
-    z-index:101;
 }
 
 #main {

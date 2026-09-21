@@ -12,6 +12,30 @@ from menus import job
 records_bp = Blueprint("records", __name__)
 logger = logging.getLogger(__name__)
 
+# request.args['table'] flows unescaped into flask_files/table_class.py's HTML building and into
+# common/sqlalchemy_db.py's getattr(importlib.import_module(...), table_name) ORM lookup - an
+# allowlist here closes both the reflected-XSS and the unvalidated-getattr issues at their one
+# common origin point, rather than trying to escape/guard every downstream use individually.
+ALLOWED_TABLES = frozenset([
+    # common/sqlalchemy_model.py (per-engagement DB)
+    "Information", "CurrentLocation", "ClientContact", "CorpContact", "Engagement",
+    "DevicePort", "Recon", "Person", "Phishing", "PhishingScenario", "Credential",
+    "Result", "Log", "EventMessage", "TesterDevice", "Webspider", "ForensicLog",
+    "EngagementDevice", "Scope", "Location", "Schedule", "ScheduledTask",
+    # common/email_db_model.py (setup/email_event.db, used when ?model= is set)
+    "FlaskUser", "EmailEvent", "OSExploitationPath", "ServiceExploitationPath",
+    "NetworkExploitationPath", "PrivilegeEscallationPath",
+])
+
+
+def _validate_table(table_name):
+    """ Raises ValueError (caught by each route's existing except block) for anything not on the
+    allowlist. The error message deliberately does not echo the invalid value back - doing so
+    would just move the reflected-XSS risk into the error message instead of fixing it. """
+    if table_name not in ALLOWED_TABLES:
+        raise ValueError("Unknown table.")
+    return table_name
+
 
 @records_bp.route('/ajax', methods=['GET', 'POST'])
 def ajaxs():
@@ -27,7 +51,7 @@ def ajaxs():
             db_object = common_flask.just_db_object('setup/email_event.db')
 
         json_data = request.get_json(force=True)
-        with TableClass(db_object, request.args['table'], True, json_data, session.get('username')) as table_class:
+        with TableClass(db_object, _validate_table(request.args['table']), True, json_data, session.get('username')) as table_class:
             if 'i' in request.args:
                 device = request.args['i']
                 device_info = db_object.get('EngagementDevice', ['target_name'], [device], True)
@@ -60,7 +84,7 @@ def views():
         engagement_path = session.get('engagement_path')
 
         data = "<table id=datatables_table></table>"
-        with TableClass(db_object, request.args['table'], True, None, session.get('username')) as table_class:
+        with TableClass(db_object, _validate_table(request.args['table']), True, None, session.get('username')) as table_class:
             data, datatable_columns = table_class.list_view()
 
     except Exception as e:
@@ -116,7 +140,7 @@ def detail():
 @records_bp.route('/add', methods=['GET'])
 def add():
     try:
-        table_name = request.args['table']
+        table_name = _validate_table(request.args['table'])
         model = None
         if 'model' in request.args:
             model = request.args['model']
@@ -136,7 +160,7 @@ def add():
 @records_bp.route('/insert', methods=['GET', 'POST'])
 def insert():
     try:
-        table_name = request.args['table']
+        table_name = _validate_table(request.args['table'])
 
         fields = {}
         for key, value in request.form.items():
@@ -167,7 +191,7 @@ def insert():
 @records_bp.route('/edit', methods=['GET'])
 def edit():
     try:
-        table_name = request.args['table']
+        table_name = _validate_table(request.args['table'])
         id = request.args['ident']
 
         model = None
@@ -189,7 +213,7 @@ def edit():
 @records_bp.route('/update', methods=['GET', 'POST'])
 def update():
     try:
-        table_name = request.args['table']
+        table_name = _validate_table(request.args['table'])
         id = request.args['ident']
 
         fields = {"id": str(id)}
@@ -229,7 +253,7 @@ def update():
 @records_bp.route('/delete', methods=['GET'])
 def delete():
     try:
-        table_name = request.args['table']
+        table_name = _validate_table(request.args['table'])
         model = None
         if 'model' in request.args:
             model = request.args['model']
@@ -265,7 +289,7 @@ def delete():
 @records_bp.route('/truncate', methods=['GET'])
 def truncate():
     try:
-        table_name = request.args['table']
+        table_name = _validate_table(request.args['table'])
 
         return '<h1>Delete All ' + table_name + ' Records</h1>' + '<form name="truncate" action="/truncate_confirmed?table=' + table_name + '" ' \
                 'method=post enctype="multipart/form-data">' \
@@ -279,7 +303,7 @@ def truncate():
 @records_bp.route('/truncate_confirmed', methods=['GET', 'POST'])
 def truncate_confirmed():
     try:
-        table_name = request.args['table']
+        table_name = _validate_table(request.args['table'])
 
         model = None
         if 'model' in request.args:
@@ -301,7 +325,7 @@ def truncate_confirmed():
 @records_bp.route('/merge', methods=['GET'])
 def merge():
     try:
-        table_name = request.args['table']
+        table_name = _validate_table(request.args['table'])
         model = None
         if 'model' in request.args:
             model = request.args['model']
