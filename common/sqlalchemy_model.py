@@ -11,7 +11,7 @@ Base = declarative_base()
 def initialize(sqlite_file):
     """ Create SQLite Database. """
     try:
-        engine = create_engine('sqlite:///' + sqlite_file)
+        engine = create_engine('sqlite:///' + sqlite_file, connect_args={"check_same_thread": False})
         Base.metadata.create_all(engine)
         return True
     except Exception as e:

@@ -52,7 +52,16 @@ class Interaction():
 
     def initialize(self, db_file):
         # Setup Engine
-        self.engine = create_engine('sqlite:///' + db_file)
+        # check_same_thread=False: every Flask request builds a brand-new Interaction/engine
+        # (see common_flask.create_db_object, called per-route) and none of them are ever
+        # explicitly closed/disposed, so the old one is only reclaimed whenever Python's GC
+        # gets to it - which, under Werkzeug's dev server, is not reliably the same OS thread
+        # that created it. SQLite's default same-thread check then raises
+        # "SQLite objects created in a thread can only be used in that same thread" from deep
+        # inside connection-pool teardown, on an unrelated later request. That's caught by this
+        # class's own blanket except-return-None handling (see view(), etc.), so it doesn't
+        # surface as an error - it just makes random queries silently return no results.
+        self.engine = create_engine('sqlite:///' + db_file, connect_args={"check_same_thread": False})
 
         # Setup Session (handles db conversation for us)
         Session = sessionmaker(bind=self.engine)
@@ -495,7 +504,16 @@ class Interaction():
         try:
             result = []
             for row in queryset:
-                result.append({c.key: getattr(row, c.key) for c in inspect(row).mapper.column_attrs})
+                if hasattr(row, '_asdict'):
+                    # SQLAlchemy Core Row - what a query for specific columns (rather than
+                    # whole-entity) returns. In 1.4 this no longer subclasses tuple, so the
+                    # isinstance(..., tuple) checks callers use to route here (e.g. view())
+                    # never match it and everything ends up here regardless. It isn't a mapped
+                    # entity, so inspect(row).mapper below raises for it - it already knows its
+                    # own columns, so just use those instead.
+                    result.append(dict(row._asdict()))
+                else:
+                    result.append({c.key: getattr(row, c.key) for c in inspect(row).mapper.column_attrs})
             return result
         except Exception as e:
             print("common.sqlalchemy_db 389 except: " + str(e) + " Error on line {}".format(

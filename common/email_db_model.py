@@ -9,7 +9,7 @@ from common import common
 Base = declarative_base()
 
 def initialize_email_db(sqlite_file):
-    engine = create_engine('sqlite:///' + sqlite_file)
+    engine = create_engine('sqlite:///' + sqlite_file, connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
 
 

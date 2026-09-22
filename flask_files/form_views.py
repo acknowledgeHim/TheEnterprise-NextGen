@@ -237,7 +237,13 @@ def insert_entry(db_object, table_name, fields):
             from setup import scope
             msg = scope.add_scope(db_object, fields, True)
         else:
-            db_object.add(table_name, fields)
+            # add() returns (True, hashval) on success or (error message, None) on failure -
+            # it never raises for a DB-level failure (bad column, constraint violation, etc.),
+            # it just swallows the exception internally. Not checking this meant every such
+            # failure still reported "Successfully inserted" below.
+            success, hashval = db_object.add(table_name, fields)
+            if success is not True:
+                return "Failed inserting " + table_name + ", error: " + str(success)
         return "Successfully inserted " + table_name + ". " + str(msg)
 
     except Exception as e:
@@ -247,7 +253,9 @@ def insert_entry(db_object, table_name, fields):
 def update_entry(db_object, table_name, fields):
     fields = mod_fields(table_name, fields)
 
-    db_object.update(table_name, fields, ['id'], [fields['id']])
+    success, hashval = db_object.update(table_name, fields, ['id'], [fields['id']])
+    if success is not True:
+        return "Failed updating " + table_name + ", error: " + str(success)
     return "Success.  " + table_name + " was updated."
 
 

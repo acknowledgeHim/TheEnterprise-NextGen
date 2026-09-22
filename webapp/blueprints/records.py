@@ -164,6 +164,12 @@ def insert():
 
         fields = {}
         for key, value in request.form.items():
+            # csrf_token isn't a model column - passing it through to the ORM constructor
+            # raises TypeError, which sqlalchemy_db.py's blanket retry/except machinery
+            # swallows without re-raising, so the insert silently no-ops while insert_entry()
+            # still reports success below.
+            if key == "csrf_token":
+                continue
             if value.strip() == "":
                 value = None
             fields[key] = value
@@ -218,6 +224,9 @@ def update():
 
         fields = {"id": str(id)}
         for key, value in request.form.items():
+            # csrf_token isn't a model column - see the matching comment in insert() above.
+            if key == "csrf_token":
+                continue
             if value.strip() == "":
                 value = None
             fields[key] = value
