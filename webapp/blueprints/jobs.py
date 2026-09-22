@@ -3,6 +3,7 @@ import logging
 import os
 import shlex
 import subprocess
+from datetime import datetime
 
 import yaml
 from flask import Blueprint, jsonify, redirect, render_template, request, session
@@ -279,6 +280,78 @@ def job_detail():
     except Exception as e:
         logger.exception("job_detail failed: %s", e)
         return redirect("/view/job/history")
+
+
+# Cap per read, not per file - large files are tailed (this many bytes from the end), not
+# rejected, so this stays useful for exactly the case it exists for: watching an active job's
+# output grow without re-reading (and re-transmitting) the whole file on every poll.
+JOB_OUTPUT_TAIL_BYTES = 200 * 1024
+
+
+@jobs_bp.route('/view/job/output', methods=['GET'])
+def job_output():
+    """
+    Serves the on-disk output for a job (Log.output_filepath), for job_detail.html's live
+    console view. Scoped to the current engagement's db_object exactly like job_detail() -
+    the filesystem path always comes from the DB record for `ident`, never from the request,
+    so this can't be used to read arbitrary files. The one client-supplied value that does
+    reach the filesystem (`file`, for picking an entry out of a directory) is resolved and
+    checked to still be inside output_filepath before it's read.
+
+    output_filepath is a directory for most tools (their own structured output lands there -
+    see self.output_folder in common/tool.py) and a single raw-stdout capture file only for
+    the shell commands that happened to use `> file` redirection (see common/jobs/tasks.py) -
+    so this returns a directory listing when it's a directory, and file content (tailed to
+    JOB_OUTPUT_TAIL_BYTES) when it's a file.
+    """
+    try:
+        id = request.args['ident']
+        db_object = common_flask.create_db_object(session.get('engagement_path'),
+                                                  session.get('selected_engagement'), session.get('key'),
+                                                  session.get('username'))
+        records = db_object.view("Log", None, ["id"], [id])
+        record = records[0] if records else None
+        if record is None:
+            return jsonify({'error': 'Job not found.'}), 404
+
+        running = bool(record.get('running'))
+        base_path = record.get('output_filepath')
+        if not base_path:
+            return jsonify({'type': 'none', 'running': running, 'message': 'No output path recorded for this job.'})
+
+        target_path = base_path
+        requested_file = request.args.get('file')
+        if requested_file:
+            base_real = os.path.realpath(base_path)
+            candidate = os.path.realpath(os.path.join(base_path, requested_file))
+            if not (candidate == base_real or candidate.startswith(base_real + os.sep)):
+                return jsonify({'error': 'Invalid file.'}), 400
+            target_path = candidate
+
+        if not os.path.exists(target_path):
+            return jsonify({'type': 'none', 'running': running, 'message': 'No output written yet.'})
+
+        if os.path.isdir(target_path):
+            entries = []
+            for name in sorted(os.listdir(target_path)):
+                full_path = os.path.join(target_path, name)
+                if os.path.isfile(full_path):
+                    file_stat = os.stat(full_path)
+                    entries.append({'name': name, 'size': file_stat.st_size,
+                                     'modified': datetime.fromtimestamp(file_stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S')})
+            return jsonify({'type': 'dir', 'path': target_path, 'files': entries, 'running': running})
+
+        size = os.path.getsize(target_path)
+        with open(target_path, 'rb') as output_file:
+            if size > JOB_OUTPUT_TAIL_BYTES:
+                output_file.seek(size - JOB_OUTPUT_TAIL_BYTES)
+            raw = output_file.read()
+        content = raw.decode('utf-8', errors='replace')
+        return jsonify({'type': 'file', 'path': target_path, 'content': content,
+                         'truncated': size > JOB_OUTPUT_TAIL_BYTES, 'size': size, 'running': running})
+    except Exception as e:
+        logger.exception("job_output failed: %s", e)
+        return jsonify({'error': str(e)}), 500
 
 
 @jobs_bp.route('/kill/job', methods=["GET"])

@@ -1,5 +1,89 @@
 {% extends "main.html" %}
 
+{% block head %}
+<script language="JavaScript">
+    var jobOutputIdent = {{ record.id|tojson }};
+    var jobOutputPolling = null;
+
+    function jobOutputRenderDir(data) {
+        var $list = $('#job-output-files');
+        $list.empty();
+        if (data.files.length === 0) {
+            $list.append('<p><i>No files yet.</i></p>');
+            return;
+        }
+        var $ul = $('<ul class="list-group"></ul>');
+        data.files.forEach(function(f) {
+            var $li = $('<a href="#" class="list-group-item"></a>')
+                .text(f.name + '  (' + f.size + ' bytes, modified ' + f.modified + ')')
+                .on('click', function(e) {
+                    e.preventDefault();
+                    jobOutputFetch(f.name);
+                });
+            $ul.append($li);
+        });
+        $list.append($ul);
+    }
+
+    function jobOutputRenderFile(data) {
+        var $pre = $('#job-output-content');
+        var wasAtBottom = ($pre.scrollTop() + $pre.innerHeight() >= $pre[0].scrollHeight - 20);
+        $pre.text((data.truncated ? '... (showing last ' + data.content.length + ' characters) ...\n' : '') + data.content);
+        if (wasAtBottom) {
+            $pre.scrollTop($pre[0].scrollHeight);
+        }
+    }
+
+    function jobOutputFetch(file) {
+        var url = '/view/job/output?ident=' + encodeURIComponent(jobOutputIdent);
+        if (file) {
+            url += '&file=' + encodeURIComponent(file);
+        }
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(data) {
+                if (data.error) {
+                    $('#job-output-content').text('Error: ' + data.error).show();
+                    $('#job-output-files').hide();
+                    return;
+                }
+                $('#job-output-status').text(data.running ? 'Running - refreshing every 3s' : 'Job finished');
+                if (data.type === 'dir') {
+                    $('#job-output-content').hide();
+                    $('#job-output-files').show();
+                    jobOutputRenderDir(data);
+                } else if (data.type === 'file') {
+                    $('#job-output-files').hide();
+                    $('#job-output-content').show();
+                    jobOutputRenderFile(data);
+                } else {
+                    $('#job-output-files').hide();
+                    $('#job-output-content').show().text(data.message || 'No output.');
+                }
+
+                if (data.running && !file) {
+                    if (jobOutputPolling) { clearTimeout(jobOutputPolling); }
+                    jobOutputPolling = setTimeout(function() { jobOutputFetch(); }, 3000);
+                } else if (jobOutputPolling) {
+                    clearTimeout(jobOutputPolling);
+                    jobOutputPolling = null;
+                }
+            },
+            error: function() {
+                $('#job-output-status').text('Failed to load output.');
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        if (jobOutputIdent) {
+            jobOutputFetch();
+        }
+    });
+</script>
+{% endblock %}
+
 {% block content %}
 <h1>Job Detail</h1>
 <table class="table">
@@ -27,5 +111,10 @@
 {% if record.retry %}
     <p>{{ record.retry|safe }}</p>
 {% endif %}
+
+<h3>Output <small id="job-output-status" class="small_font"></small></h3>
+<div id="job-output-files" style="display:none;"></div>
+<pre id="job-output-content" class="job-output-console"></pre>
+
 <p><a href="/view/job/history">Back to Job History</a></p>
 {% endblock %}

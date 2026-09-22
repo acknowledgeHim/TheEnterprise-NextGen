@@ -621,3 +621,23 @@ tfoot input {
     font-size: .85em;
     font-weight: 600;
 }
+
+/* job_detail.html's live output view (webapp/blueprints/jobs.py's /view/job/output) */
+.job-output-console {
+    background-color: #05070c;
+    color: #c9d1d9;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    max-height: 480px;
+    overflow-y: auto;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+#job-output-files .list-group-item {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+}
