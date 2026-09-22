@@ -31,8 +31,14 @@ def loop_through_menu(menu, top_level=True):
             if child_menu.strip() != "":
                 item_class = "nav-item dropdown" if top_level else "dropdown dropdown-submenu"
                 toggle_class = "nav-link dropdown-toggle" if top_level else "dropdown-item dropdown-toggle"
+                # autoClose="outside": without it, Bootstrap's default autoClose=true treats a
+                # click on a nested submenu toggle (e.g. Setup > Location) as a click "outside"
+                # this dropdown (the toggle link isn't a descendant of *this* menu's own toggle),
+                # so it closes this dropdown - and with it, the submenu that click just opened,
+                # since the submenu lives inside it. Net effect: clicking a submenu item appeared
+                # to do nothing. "outside" only closes on a real click outside the whole menu tree.
                 nav_menu = nav_menu + ('<li class="' + item_class + '"><a class="' + toggle_class +
-                    '" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">' + name +
+                    '" href="#" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">' + name +
                     '</a><ul class="dropdown-menu">' + child_menu + '</ul></li>')
         else:
             link_class = "nav-link" if top_level else "dropdown-item"
