@@ -199,13 +199,18 @@ class ScopeEntry():
             if self.public_only and self.__is_private(single_ip):
                 msg = "Only Public/External IPs should be entered. You entered a Private IP address/range.  Try again!"
                 print_text.print_error("\t" + msg)
-                return None, None, None
+                # add_scope() routes a string field_values straight back to the caller as the
+                # real error message (only a bare None becomes the generic "Failed."), so this
+                # needs to carry msg, not throw it away - same 3-tuple shape the caller unpacks
+                # into (field_values, insert_many, list_of_ips_to_remove) either way.
+                return msg, None, None
             ip_type = 'v4'
             if network.is_valid_ipv6_address(single_ip):
                 ip_type = 'v6'
         except Exception as e:
-            print_text.print_error("\tEngagement Scope Except: " +  str(e))
-            return None, None, None
+            msg = "Engagement Scope Except: " + str(e)
+            print_text.print_error("\t" + msg)
+            return msg, None, None
 
         if isinstance(single_ip, str):
             single_ip.encode("utf-8")
@@ -214,7 +219,11 @@ class ScopeEntry():
 
         # If str then IP notation was messed up and so reject
         if isinstance(list_of_ips_in_cidr, str):
-            return list_of_ips_in_cidr
+            # Same 3-tuple contract as every other return in this function - a bare string here
+            # unpacks character-by-character into (field_values, insert_many,
+            # list_of_ips_to_remove) at the call site and raises ValueError for anything but an
+            # exactly-3-character message.
+            return list_of_ips_in_cidr, None, None
 
         list_of_ips_to_add = []
         list_of_ips_to_remove = []
@@ -236,7 +245,7 @@ class ScopeEntry():
         except Exception as e:
             msg = "EngagementScope check if exists except: " + str(e)
             print_text.print_error("\t" + msg)
-            return msg
+            return msg, None, None
 
         try:
             open_ip = ""
@@ -273,7 +282,7 @@ class ScopeEntry():
             return fields_value, insert_many, list_of_ips_to_remove
         except Exception as e:
             print_text.print_error("engagement scope except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
-            return "EngagementScope check if exists except: " + str(e)
+            return "EngagementScope check if exists except: " + str(e), None, None
 
     def add_website(self, current_websites_in_db, location_id):
         """
