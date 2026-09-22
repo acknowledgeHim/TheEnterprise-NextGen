@@ -235,7 +235,15 @@ def insert_entry(db_object, table_name, fields):
         fields = mod_fields(table_name, fields)
         if table_name == "Scope":
             from setup import scope
-            msg = scope.add_scope(db_object, fields, True)
+            # add_scope()'s return shape isn't consistent - a plain error string (bad/duplicate
+            # entry), None (bare `return` on an unknown type), an int (0 rows added, no location),
+            # or - only on genuine success - the same (True, hashval) tuple db_object.add()
+            # itself returns. Treating anything else as success (the old behavior) meant every
+            # rejection/duplicate/error still reported "Successfully inserted Scope."
+            result = scope.add_scope(db_object, fields, True)
+            if not (isinstance(result, tuple) and len(result) == 2 and result[0] is True):
+                return "Failed inserting Scope, error: " + str(result)
+            msg = ""
         else:
             # add() returns (True, hashval) on success or (error message, None) on failure -
             # it never raises for a DB-level failure (bad column, constraint violation, etc.),

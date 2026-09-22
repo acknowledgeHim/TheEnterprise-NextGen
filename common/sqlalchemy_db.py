@@ -174,7 +174,14 @@ class Interaction():
                     # Rollback changes since errored out
                     self.session.rollback()
 
-                    time.sleep(randint(5, 45))
+                    # Only worth waiting out if the *while* condition above will actually loop
+                    # again for it ("database is locked" - contention from another writer that
+                    # may clear up). For any other error (bad column, UNIQUE constraint, ...)
+                    # the loop is about to exit anyway, so sleeping here just makes a failure
+                    # that was never going to succeed on retry take up to 45s to report - which
+                    # from the browser looks exactly like the request hanging/doing nothing.
+                    if "database is locked" in except_msg:
+                        time.sleep(randint(5, 45))
 
                 count += 1
 

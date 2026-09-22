@@ -354,7 +354,14 @@ class ScopeEntry():
         permission = True
         if domain is None:
             domain = self.passed_fields_value['entry']
-            permission = self.passed_fields_value['permission']
+            # The Add Scope web form only submits "entry" (setup/scope.py's MANUAL_FIELDS has
+            # the "Permission to test" field commented out - only UPDATE_MANUAL_FIELDS has it),
+            # so 'permission' is never in passed_fields_value from that flow. add_ip() and
+            # add_website() both already guard this the same way; this one didn't, and unlike
+            # them raised a bare KeyError - caught by add_scope()'s outer except and reported
+            # as "Failed to add Scope entry to database." for every single domain scope entry.
+            if 'permission' in self.passed_fields_value:
+                permission = self.passed_fields_value['permission']
 
         for domain_db in current_domains_in_db:
             if domain_db == domain:
