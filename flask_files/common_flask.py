@@ -9,6 +9,23 @@ from common.database_object import OurCoolDBObject
 logger = logging.getLogger(__name__)
 
 
+def _single_visible_link(children):
+    """
+    Many Setup groups (Location, Scope, Client Contact, ...) list a "View X" entry plus several
+    CRUD siblings (Add/Update/Delete X) whose url is None - CLI-only entries the web view already
+    skips (see loop_through_menu's docstring) - because those actions are reachable from buttons
+    on the View X page itself (see table_class.py's "Insert X"/edit/delete controls). That leaves
+    a dropdown that only ever offers one real choice, so it costs a click for nothing. Returns
+    that one URL so the caller can render the group as a single direct link instead, or None if
+    the group has more than one real choice (e.g. Recon > Amass) and should stay a dropdown.
+    """
+    visible_links = [child for child in children if child[1] is not None and not isinstance(child[1], list)]
+    has_nested_submenu = any(isinstance(child[1], list) for child in children)
+    if len(visible_links) == 1 and not has_nested_submenu:
+        return visible_links[0][1]
+    return None
+
+
 def loop_through_menu(menu, top_level=True):
     """
     Recursively loops through each menu item, if child found then calls itself to loop through sub layer, etc.
@@ -27,6 +44,13 @@ def loop_through_menu(menu, top_level=True):
             continue
 
         if isinstance(url, list):
+            single_url = _single_visible_link(url)
+            if single_url is not None:
+                link_class = "nav-link" if top_level else "dropdown-item"
+                item_open = '<li class="nav-item">' if top_level else '<li>'
+                nav_menu = nav_menu + item_open + '<a class="' + link_class + '" href="' + single_url + '">' + name + '</a></li>'
+                continue
+
             child_menu = loop_through_menu(url, top_level=False)
             if child_menu.strip() != "":
                 item_class = "nav-item dropdown" if top_level else "dropdown dropdown-submenu"
