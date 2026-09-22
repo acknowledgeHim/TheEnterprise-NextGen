@@ -9,8 +9,6 @@
     <!-- Bootstrap core CSS -->
     <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="/static/style.css" type="text/css">
-
     <script language="JavaScript">
         // Attach the CSRF token (see the meta tag above) to every AJAX POST this app makes,
         // so Flask-WTF's CSRFProtect accepts them without touching each call site individually.
@@ -139,6 +137,10 @@
     {% block head %}
 
     {% endblock %}
+
+    <!-- Loaded last (after page-specific head blocks like DataTables' own CSS) so its
+         overrides for third-party component colors/spacing always win on tied specificity. -->
+    <link rel="stylesheet" href="/static/style.css" type="text/css">
 </head>
 
 <body>
