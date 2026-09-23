@@ -20,7 +20,12 @@ services:
       TE_AUTO_START_CELERY: "true"
       FLASK_DEBUG: "false"
     volumes:
-      - client_data:/usr/local/clients/
+      # Bind mount, not a named volume - engagement data needs to be a real, browsable folder
+      # on the host (for backups, direct inspection, restoring from a snapshot, etc.), not
+      # opaque Docker-managed storage under /var/lib/docker/volumes/ that's only reachable
+      # through the container. Defaults to ./clients next to this file; set TE_CLIENT_DATA_PATH
+      # in .env to put it somewhere else (a specific data disk, for example).
+      - ${TE_CLIENT_DATA_PATH:-./clients}:/usr/local/clients/
     cap_add:
       - NET_RAW
       - NET_ADMIN
@@ -57,6 +62,5 @@ services:
     restart: unless-stopped
 
 volumes:
-  client_data:
   rabbitmq_data:
   redis_data:
