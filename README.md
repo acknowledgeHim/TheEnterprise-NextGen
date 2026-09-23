@@ -48,9 +48,9 @@ binary).
    comments in `.env.example` for exactly where each one shows up (or how to read the live value
    straight out of the running container at any time).
 6. `docker compose down` stops everything (engagement data survives - it's bind-mounted from
-   `./clients` on the host, not a Docker-managed volume, so it's a real folder you can browse,
-   back up, or point at a specific disk via `TE_CLIENT_DATA_PATH` in `.env`); `docker compose up
-   -d` restarts it in the background.
+   `/usr/local/clients` on the host, not a Docker-managed volume, so it's a real folder you can
+   browse, back up, or point at a specific disk via `TE_CLIENT_DATA_PATH` in `.env`); `docker
+   compose up -d` restarts it in the background.
 
 This has been validated structurally (`docker compose config`) and the underlying code paths
 (Celery/RabbitMQ/Redis wiring, the install bootstrap) have been tested directly, but the full
