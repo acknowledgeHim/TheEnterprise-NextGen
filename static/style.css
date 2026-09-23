@@ -121,6 +121,56 @@ h1, h2, h3, h4, h5 {
     filter: invert(1) grayscale(1);
 }
 
+/* This app has 16 top-level nav items (Setup, Recon, Scan, ... Job, Log, ... Logout) - more
+   than fits in one row on most real screens. Bootstrap's navbar-nav is a plain flex row with
+   no wrap and no scroll by default, so anything past what fits just flows off the right edge:
+   still in the DOM (a plain visibility check won't catch it), just permanently unreachable -
+   "Job" among them, reported missing. Wrapping to a second row would grow the navbar's actual
+   height past the fixed 110px spacer below it (base.html), overlapping page content, so this
+   scrolls horizontally instead - same row, same height, every item still reachable.
+   navbar-collapse needs min-width: 0 here because it's a flex child of .container_menu -
+   without it, a flex item won't shrink below its content's natural width, so the overflow on
+   navbar-nav below would never actually trigger. */
+.navbar-collapse {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.navbar-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+    /* Scrollbars alone aren't a reliable enough hint that this scrolls - many OSes/browsers
+       auto-hide them until you're already interacting with the element, which is exactly
+       backwards for "does this thing scroll at all?". This is the classic CSS-only "scroll
+       shadow" technique: two solid covers that scroll WITH the content (background-attachment:
+       local) sit on top of two shadow gradients that stay put (background-attachment: scroll).
+       A cover fully hides its shadow once you've scrolled all the way to that edge, so a fade
+       is visible only on the side(s) that actually still have more items past it - no JS,
+       updates automatically as you scroll. */
+    background-image:
+        linear-gradient(to right, var(--bg-raised) 50%, transparent),
+        linear-gradient(to left, var(--bg-raised) 50%, transparent),
+        linear-gradient(to right, rgba(0, 0, 0, .45), transparent),
+        linear-gradient(to left, rgba(0, 0, 0, .45), transparent);
+    background-repeat: no-repeat;
+    background-color: var(--bg-raised);
+    background-size: 24px 100%, 24px 100%, 10px 100%, 10px 100%;
+    background-position: left center, right center, left center, right center;
+    background-attachment: local, local, scroll, scroll;
+}
+.navbar-nav::-webkit-scrollbar {
+    height: 6px;
+}
+.navbar-nav::-webkit-scrollbar-thumb {
+    background-color: var(--border-strong);
+    border-radius: 3px;
+}
+.navbar-nav .nav-item {
+    flex: 0 0 auto;
+}
+
 .navbar-nav .nav-link {
     color: var(--text-secondary) !important;
     font-weight: 500;
