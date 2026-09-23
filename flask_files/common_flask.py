@@ -1,5 +1,6 @@
 import logging
 import os
+from urllib.parse import quote
 from common import common
 from setup.client_engagement import ClientEngagement
 from setup import profile
@@ -140,7 +141,14 @@ def setup_base_page(session, db_object=None):
 
         engagements = "Select Client/Engagement<div class='list-group'>"
         for engagement in client_engagements:
-            engagements = engagements + "<a class='list-group-item' href='/select_engagement?selected_engagement=" + engagement + "'>" + engagement + "</a>"
+            engagement_url = quote(engagement)
+            engagements = engagements + "<div class='list-group-item d-flex justify-content-between align-items-center'>" \
+                "<a href='/select_engagement?selected_engagement=" + engagement_url + "'>" + engagement + "</a>"
+            if engagement != "Create New Client/Engagement":
+                engagements = engagements + "<img onclick='confirm_delete_engagement(\"" + engagement_url + "\", \"" \
+                    + engagement.replace('"', '&quot;') + "\")' src=/static/images/delete.png height=20 " \
+                    "title='Delete this client/engagement' style='cursor:pointer'>"
+            engagements = engagements + "</div>"
 
         return {'engagements': engagements + "</div>", 'tester': tester, 'only_owner': only_owner, 'newer_than': newer_than,
                 'client_engagements': client_engagements}

@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 
+{% block head %}
+<script language="JavaScript">
+    function confirm_delete_engagement(engagement_url, engagement_name) {
+        if (confirm("Permanently delete '" + engagement_name + "'?  This removes all its data and cannot be undone.")) {
+            window.location.href = '/delete_engagement?selected_engagement=' + engagement_url;
+        }
+    }
+</script>
+{% endblock %}
+
 {% block body %}
 <center>
 <div class="engagements">
