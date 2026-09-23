@@ -178,10 +178,22 @@ def add_scope(db_object, field_values, allow_unknown=True):
 
             insert_many = False  # only IP ranges entered will set this to True if multiple standardized ranges entered
             try:
+                # view() returns None both on a real query error and on a genuinely empty
+                # result (see its own fallthrough `return None`), and there should always be
+                # exactly one Engagement row per engagement - but if this engagement's Engagement
+                # row is missing (e.g. from insert_views.py's insert() not checking whether that
+                # insert actually succeeded when the engagement was first created), the old
+                # `for eoi in external_or_internal_dictionary:` here raised a bare
+                # "'NoneType' object is not iterable" and add_scope() never got past this point
+                # for *any* Scope entry, IP or not. Defaults to "both" (not externally
+                # restricted) when it can't be determined - permissive, so a data gap here
+                # doesn't also block adding scope.
                 external_or_internal_dictionary = db_object.view("Engagement", ["external_only"])
-                for eoi in external_or_internal_dictionary:
-                    external_or_internal = eoi['external_only']
-                if external_or_internal:
+                external_only = False
+                if external_or_internal_dictionary is not None:
+                    for eoi in external_or_internal_dictionary:
+                        external_only = eoi['external_only']
+                if external_only:
                     external_or_internal = "external"
                 else:
                     external_or_internal = "both"

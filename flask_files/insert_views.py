@@ -56,6 +56,16 @@ def insert(session, inputs, request, table_name, column_names, header_names):
         if not isinstance(db_object, str):
             if field_values is not None:
                 success, hashval = db_object.add(table_name, field_values)
+                # add() returns (True, hashval) on success or (error message, None) on failure -
+                # it never raises for a DB-level failure, it just swallows the exception
+                # internally (see common/sqlalchemy_db.py). Not checking this meant a failed
+                # Engagement insert (this is the table_name=="Engagement" call path -
+                # insert_engagement() in this same file) still reported success and handed back
+                # a db_object as if the Engagement row existed - it didn't, and every later
+                # Scope add crashed on "'NoneType' object is not iterable" trying to read
+                # Engagement.external_only for a row that was never created.
+                if success is not True:
+                    return "Failed inserting " + table_name + ", error: " + str(success), None
                 return "Successfully inserted " + table_name + ".", db_object
             else:
                 return "Failed.  Nice try, but your posted data to insert was not valid. <br>Dang it Jim, I'm a Doctor not your pentest-validation-monitoring babysitter!", None
