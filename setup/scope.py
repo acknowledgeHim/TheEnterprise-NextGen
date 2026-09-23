@@ -350,12 +350,23 @@ def add_scope(db_object, field_values, allow_unknown=True):
                             scope_file.write(entry["entry"] + "\n")
 
             except Exception as e:
-                print_text.print_error(
-                    "\tFailed to add Scope entry to database except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
-                return "Failed to add Scope entry to database."
+                # insert_entry() (flask_files/form_views.py) routes a string return straight
+                # back to the browser as the failure reason - dropping str(e) here and only
+                # print_text.print_error'ing it meant the user only ever saw the generic
+                # "Failed to add Scope entry to database.", while the actual cause sat in a
+                # server log they can't see.
+                msg = "Failed to add Scope entry to database, error: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno)
+                print_text.print_error("\t" + msg)
+                return msg
         else:
             print_text.print_error("\tPlease add a location first!")
             number_rows_added = 0
         return number_rows_added
     except Exception as e:
-        print_text.print_error("\tFailed to add Scope entry to database except: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno))
+        # Same as the inner except above - this is the outer catch-all for the whole function
+        # (a bug outside the ScopeEntry block, e.g. in db_object.dictionary_list("Location", ...)
+        # right at the top), and previously had no return at all here, falling through to an
+        # implicit `return None` that insert_entry() reports as the unhelpful "error: None".
+        msg = "Failed to add Scope entry, error: " + str(e) + " Error on line {}".format(sys.exc_info()[-1].tb_lineno)
+        print_text.print_error("\t" + msg)
+        return msg
