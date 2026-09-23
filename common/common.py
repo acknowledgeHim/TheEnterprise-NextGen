@@ -135,7 +135,8 @@ def assign_permissions(path_to_assign):
 def create_path(path_to_create):
     """
     Creates necessary folder structure for client/engagement.
-    Returns True if successful, False if not
+    Returns True if the directory exists afterward (created now, or already existed),
+    False if not.
     """
     try:
         #oldmask = os.umask(000)
@@ -156,7 +157,16 @@ def create_path(path_to_create):
                 file_path = os.path.join(root, f)
                 if "/nmap/" not in file_path:
                     assign_permissions(file_path)
-    return assign_permissions(path_to_create)
+
+    # assign_permissions() (chmod/chown) is best-effort cosmetic, not proof the directory
+    # exists - this used to `return assign_permissions(path_to_create)` directly, so a chmod
+    # failure (e.g. LINUX_GROUP in enterprise_user_conf.py not being a real system group) could
+    # report "folder creation failed" for a directory that actually got created fine, or - the
+    # more dangerous direction - a genuine os.makedirs() failure above (permissions, disk full,
+    # invalid path) could still end up reporting True if assign_permissions happened to succeed
+    # or fail in a way unrelated to whether the directory exists. Check reality instead.
+    assign_permissions(path_to_create)
+    return os.path.isdir(path_to_create)
 
 
 def create_filepath_if_not_exists(filepath):

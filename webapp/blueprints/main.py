@@ -3,7 +3,7 @@ import shlex
 import subprocess
 import sys
 
-from flask import Blueprint, render_template, session
+from flask import Blueprint, redirect, render_template, session
 
 from common import common, copy_keys, network, print_text, system_process
 from common.navigation_menu import NAVIGATION
@@ -22,13 +22,19 @@ def home(msg=""):
 
     setup_dictionary = common_flask.setup_base_page(session)
     engagements = setup_dictionary['engagements']
-    engagement_path = None
+    engagement_path = session.get('engagement_path')
 
     menu_items = common_flask.loop_through_menu(NAVIGATION)
-    if session.get('selected_engagement') and session.get('engagement_path'):
-        db_object = common_flask.create_db_object(session.get('engagement_path'),
-                                  session.get('selected_engagement'), session.get('key'), session.get('username'))
-        engagement_path = session.get('engagement_path')
+    if not (session.get('selected_engagement') and engagement_path):
+        # Both should always be set together (select_engagement()/insert_engagement() only ever
+        # set one without the other on a failure path - which used to leave engagement_path as
+        # this function's own `= None` default while 'selected_engagement' was still truthy, so
+        # the unconditional use of engagement_path below crashed instead of just going back to
+        # the engagement picker, which is the only sane thing to do without a real one selected).
+        return redirect("/select_engagement")
+
+    db_object = common_flask.create_db_object(engagement_path,
+                              session.get('selected_engagement'), session.get('key'), session.get('username'))
 
     client_name = common.format_target(engagement_path.rstrip("/"))
 

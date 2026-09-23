@@ -180,19 +180,23 @@ def add_scope(db_object, field_values, allow_unknown=True):
             try:
                 # view() returns None both on a real query error and on a genuinely empty
                 # result (see its own fallthrough `return None`), and there should always be
-                # exactly one Engagement row per engagement - but if this engagement's Engagement
-                # row is missing (e.g. from insert_views.py's insert() not checking whether that
-                # insert actually succeeded when the engagement was first created), the old
-                # `for eoi in external_or_internal_dictionary:` here raised a bare
-                # "'NoneType' object is not iterable" and add_scope() never got past this point
-                # for *any* Scope entry, IP or not. Defaults to "both" (not externally
-                # restricted) when it can't be determined - permissive, so a data gap here
-                # doesn't also block adding scope.
+                # exactly one Engagement row per engagement, inserted atomically with everything
+                # else at engagement-creation time (flask_files/insert_views.py's
+                # insert_engagement() - fixed to roll back the whole engagement, folder included,
+                # if any step of creating it fails, rather than leaving a partially-created one
+                # around). A None here means exactly that invariant is broken for this
+                # engagement - fail with a clear, specific reason rather than silently guessing
+                # a default (which only hides that the underlying data is corrupt) or crashing
+                # on a bare "'NoneType' object is not iterable" (which is what this did before
+                # insert_engagement() was made atomic).
                 external_or_internal_dictionary = db_object.view("Engagement", ["external_only"])
+                if external_or_internal_dictionary is None:
+                    return ("Failed.  This engagement has no Engagement record (it should always have exactly "
+                            "one) - it may not have finished being created successfully.  Please recreate this "
+                            "engagement.")
                 external_only = False
-                if external_or_internal_dictionary is not None:
-                    for eoi in external_or_internal_dictionary:
-                        external_only = eoi['external_only']
+                for eoi in external_or_internal_dictionary:
+                    external_only = eoi['external_only']
                 if external_only:
                     external_or_internal = "external"
                 else:
