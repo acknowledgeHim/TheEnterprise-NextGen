@@ -1,3 +1,4 @@
+import concurrent.futures
 import datetime
 import getpass
 import os
@@ -133,14 +134,27 @@ def list_rabbitmq_queue(db_object, full_client_engagement_path):
     with RabbitMQMonitor(RABBITMQ_HOST, RABBITMQ_PORT , RABBITMQ_USER, RABBITMQ_PASS) as rabbitmq:
         response = rabbitmq.get_queued_messages()
 
-def get_active_tasks(full_client_engagement_path):
-    """ Necessary to initialize 2x to make sure it gets the data correctly. """
+def get_active_tasks(full_client_engagement_path, hard_timeout=2):
+    """ Inspect()'s own timeout only bounds the reply wait, not broker-connection time, which
+    can block the single-threaded server for several seconds; run it with a hard wall-clock cap
+    instead. """
     engagement_path = common.format_target(full_client_engagement_path.rstrip("/"))
 
     inspector = Inspect(app=celery_application, destination=['celery@' + engagement_path])
-    active_tasks = inspector.active()
-
-    return active_tasks
+    # Not `with ThreadPoolExecutor() as executor:` - its __exit__ calls shutdown(wait=True),
+    # which blocks until the submitted task finishes even after result(timeout=...) gives up.
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+    try:
+        return executor.submit(inspector.active).result(timeout=hard_timeout)
+    except concurrent.futures.TimeoutError:
+        print_text.print_error("\tTimed out after " + str(hard_timeout) + "s waiting for " + engagement_path
+                                + "'s celery worker to respond - is it running and able to reach the broker?")
+        return None
+    except Exception as e:
+        print_text.print_error("\tFailed to inspect active tasks for " + engagement_path + ": " + str(e))
+        return None
+    finally:
+        executor.shutdown(wait=False)
 
 def list_active_job(db_object, full_client_engagement_path):
     """ View active/running jobs. """
