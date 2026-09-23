@@ -354,6 +354,65 @@ def job_output():
         return jsonify({'error': str(e)}), 500
 
 
+@jobs_bp.route('/view/job/celery', methods=['GET'])
+def celery_console():
+    """ Live view of this engagement's celery worker process's own console output - what the
+    worker itself is doing (task pickup, worker status, tracebacks Celery caught), as opposed
+    to job_detail's per-job tool output. """
+    try:
+        setup_dictionary = common_flask.setup_base_page(session)
+        engagements = setup_dictionary['engagements']
+        menu_items = common_flask.loop_through_menu(NAVIGATION)
+        engagement_path = session.get('engagement_path')
+        celery_cmd = session.get('celery_cmd')
+
+        return render_template('celery_console.html', engagements=engagements, menu_items=menu_items,
+                               engagement_path="Current Engagement: " + engagement_path, celery_cmd=celery_cmd,
+                               current_location="Current Location: " + session.get('current_location_name'),
+                               celery='')
+    except Exception as e:
+        logger.exception("celery_console failed: %s", e)
+        return redirect("/")
+
+
+@jobs_bp.route('/view/job/celery/output', methods=['GET'])
+def celery_console_output():
+    """
+    AJAX endpoint backing celery_console.html's polling view. The log path is never taken from
+    the request - it's whatever main.py's home() route last recorded in
+    session['celery_log_path'] (set right where the file is created, so the two can't drift
+    apart), the same way job_output() only ever reads the path recorded on a Log row.
+
+    Only actually has content when AUTO_START_CELERY started this engagement's worker (see
+    main.py's home()) - a manually-started worker's output goes to whatever terminal it was
+    started in, same as it always has, since that's not a process this app controls the
+    stdout of.
+    """
+    try:
+        log_path = session.get('celery_log_path')
+        engagement_path = session.get('engagement_path')
+        client_name = common.format_target(engagement_path.rstrip("/")) if engagement_path else None
+        running = bool(client_name) and system_process.process_with_args_is_running('celery', client_name)
+
+        if not log_path or not os.path.exists(log_path):
+            return jsonify({'type': 'none', 'running': running,
+                             'message': 'No celery output captured yet. This is only captured when AUTO_START_CELERY '
+                                        'starts the worker for you - a manually-started celery prints to whatever '
+                                        'terminal you ran it in.'})
+
+        size = os.path.getsize(log_path)
+        with open(log_path, 'rb') as celery_log:
+            if size > JOB_OUTPUT_TAIL_BYTES:
+                celery_log.seek(size - JOB_OUTPUT_TAIL_BYTES)
+            raw = celery_log.read()
+        content = raw.decode('utf-8', errors='replace')
+        return jsonify({'type': 'file', 'path': log_path, 'content': content,
+                         'truncated': size > JOB_OUTPUT_TAIL_BYTES, 'size': size, 'running': running})
+    except Exception as e:
+        logger.exception("celery_console_output failed: %s", e)
+        return jsonify({'error': str(e)}), 500
+
+
 @jobs_bp.route('/kill/job', methods=["GET"])
 def kill_single_job_confirm():
     """ Kill single passed job by setting up the form for necessary user input then doing the killing. """

@@ -1,0 +1,63 @@
+{% extends "main.html" %}
+
+{% block head %}
+<script language="JavaScript">
+    var celeryConsolePolling = null;
+
+    function celeryConsoleRender(data) {
+        var $pre = $('#celery-console-content');
+        var wasAtBottom = ($pre.scrollTop() + $pre.innerHeight() >= $pre[0].scrollHeight - 20);
+        $pre.text((data.truncated ? '... (showing last ' + data.content.length + ' characters) ...\n' : '') + data.content);
+        if (wasAtBottom) {
+            $pre.scrollTop($pre[0].scrollHeight);
+        }
+    }
+
+    function celeryConsoleFetch() {
+        $.ajax({
+            url: '/view/job/celery/output',
+            type: 'GET',
+            success: function(data) {
+                if (data.error) {
+                    $('#celery-console-content').text('Error: ' + data.error);
+                    $('#celery-console-status').text('');
+                    return;
+                }
+                $('#celery-console-status').text(data.running ? 'Celery is running for this engagement - refreshing every 3s' : 'Celery is not currently running for this engagement');
+                if (data.type === 'file') {
+                    celeryConsoleRender(data);
+                } else {
+                    $('#celery-console-content').text(data.message || 'No output.');
+                }
+
+                if (data.running) {
+                    if (celeryConsolePolling) { clearTimeout(celeryConsolePolling); }
+                    celeryConsolePolling = setTimeout(celeryConsoleFetch, 3000);
+                } else if (celeryConsolePolling) {
+                    clearTimeout(celeryConsolePolling);
+                    celeryConsolePolling = null;
+                }
+            },
+            error: function() {
+                $('#celery-console-status').text('Failed to load celery output.');
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        celeryConsoleFetch();
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<h1>Celery Console</h1>
+<p>Raw console output from this engagement's celery worker process - what it's doing (task pickup, worker status,
+    any errors Celery itself caught), separate from an individual job's own tool output (see Job History &rarr;
+    a job's detail page for that).</p>
+
+<h3>Output <small id="celery-console-status" class="small_font"></small></h3>
+<pre id="celery-console-content" class="job-output-console"></pre>
+
+<p><a href="/view/job/active">Back to Active Jobs</a></p>
+{% endblock %}
