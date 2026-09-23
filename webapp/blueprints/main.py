@@ -3,7 +3,7 @@ import shlex
 import subprocess
 import sys
 
-from flask import Blueprint, redirect, render_template, session
+from flask import Blueprint, flash, redirect, render_template, session
 
 from common import common, copy_keys, network, print_text, system_process
 from common.navigation_menu import NAVIGATION
@@ -31,6 +31,18 @@ def home(msg=""):
         # this function's own `= None` default while 'selected_engagement' was still truthy, so
         # the unconditional use of engagement_path below crashed instead of just going back to
         # the engagement picker, which is the only sane thing to do without a real one selected).
+        return redirect("/select_engagement")
+
+    if not os.path.isdir(engagement_path):
+        # Belt-and-suspenders alongside select_engagement()'s own up-front check
+        # (webapp/blueprints/engagements.py) - covers a session that already had this set
+        # before the folder went missing (deleted, or engagement data moved to a different
+        # mount/volume) rather than crashing on the celery log open below.
+        missing_engagement = session.get('selected_engagement', '')
+        session.pop('selected_engagement', None)
+        session.pop('engagement_path', None)
+        flash("Failed.  '" + missing_engagement + "' no longer exists.  It may have been deleted, or its data "
+              "is missing (for example, after changing where engagement data is stored).")
         return redirect("/select_engagement")
 
     db_object = common_flask.create_db_object(engagement_path,

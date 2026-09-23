@@ -1,10 +1,26 @@
-from flask import Blueprint, flash, render_template, request, session
+import os
+import shutil
+
+from flask import Blueprint, flash, redirect, render_template, request, session
 
 from enterprise_user_conf import OUTPUT_PATH
 from flask_files import common_flask, form_views, insert_views
 from webapp.blueprints.main import home
 
 engagements_bp = Blueprint("engagements", __name__)
+
+
+def _resolve_engagement_path(selected_engagement):
+    """ Resolves selected_engagement (untrusted request input) to a real directory strictly
+    inside OUTPUT_PATH, or None if it doesn't exist/escapes OUTPUT_PATH (path traversal, or a
+    stale link to an engagement that's been deleted or is missing after a data migration). """
+    output_real = os.path.realpath(OUTPUT_PATH)
+    candidate = os.path.realpath(OUTPUT_PATH + selected_engagement + '/')
+    if candidate != output_real and not candidate.startswith(output_real + os.sep):
+        return None
+    if not os.path.isdir(candidate):
+        return None
+    return candidate
 
 
 @engagements_bp.route('/engagement')
@@ -19,15 +35,28 @@ def engagement():
 @engagements_bp.route('/select_engagement')
 def select_engagement():
     if 'selected_engagement' in request.args:
-        session['current_location'] = None
-        session['current_location_name'] = None
-
         selected_engagement = request.args['selected_engagement']
-        session['selected_engagement'] = selected_engagement
 
         if selected_engagement == "Create New Client/Engagement":
+            session['current_location'] = None
+            session['current_location_name'] = None
+            session['selected_engagement'] = selected_engagement
             return form_views.create_engagement(session)
 
+        # Validate the folder actually exists before touching session state at all - a stale
+        # link/bookmark to a deleted engagement (or one that vanished because engagement data
+        # moved, e.g. a Docker volume/mount change) used to partially set the session here and
+        # then crash a few lines further down, leaving the session stuck pointing at a bad
+        # engagement on every subsequent page load until it was cleared manually.
+        if _resolve_engagement_path(selected_engagement) is None:
+            flash("Failed.  '" + selected_engagement + "' no longer exists.  It may have been deleted, or its "
+                  "data is missing (for example, after restoring from a backup or changing where engagement "
+                  "data is stored).")
+            return redirect('/select_engagement')
+
+        session['current_location'] = None
+        session['current_location_name'] = None
+        session['selected_engagement'] = selected_engagement
         session['engagement_path'] = OUTPUT_PATH + session.get('selected_engagement') + '/'
 
         db_object = common_flask.create_db_object(session.get('engagement_path'), session.get('selected_engagement'),
@@ -109,3 +138,32 @@ def select_location():
 def insert_passed_engagement():
     flash(insert_views.insert_engagement(session, request))
     return engagement()
+
+
+@engagements_bp.route('/delete_engagement', methods=['GET'])
+def delete_engagement():
+    """ Permanently removes a client/engagement's folder (all its data, no undo - the confirm
+    dialog is the only safety net, matching how record deletes already work elsewhere in the
+    app). Deleting an Engagement row through the generic table view is blocked on purpose
+    (flask_files/table_class.py) since that would leave an orphaned folder on disk with no way
+    to reach it from the UI; this is the actual, supported way to remove one. """
+    selected_engagement = request.args.get('selected_engagement', '')
+    target_path = _resolve_engagement_path(selected_engagement)
+    if target_path is None:
+        flash("Failed.  '" + selected_engagement + "' doesn't exist (it may already be deleted).")
+        return redirect('/select_engagement')
+
+    try:
+        shutil.rmtree(target_path)
+    except Exception as e:
+        flash("Failed to delete '" + selected_engagement + "': " + str(e))
+        return redirect('/select_engagement')
+
+    if session.get('selected_engagement') == selected_engagement:
+        session.pop('selected_engagement', None)
+        session.pop('engagement_path', None)
+        session.pop('current_location', None)
+        session.pop('current_location_name', None)
+
+    flash("Successfully deleted '" + selected_engagement + "'.")
+    return redirect('/select_engagement')
