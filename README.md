@@ -50,7 +50,9 @@ binary).
 6. `docker compose down` stops everything (engagement data survives - it's bind-mounted from
    `/usr/local/clients` on the host, not a Docker-managed volume, so it's a real folder you can
    browse, back up, or point at a specific disk via `TE_CLIENT_DATA_PATH` in `.env`); `docker
-   compose up -d` restarts it in the background.
+   compose up -d` restarts it in the background. The app runs as root in the container, so those
+   files are root-owned on the host - set `TE_LINUX_GID` in `.env` to a GID you belong to (`id
+   -g`) if you want to read/write them without `sudo`; see the comment in `.env.example`.
 
 This has been validated structurally (`docker compose config`) and the underlying code paths
 (Celery/RabbitMQ/Redis wiring, the install bootstrap) have been tested directly, but the full

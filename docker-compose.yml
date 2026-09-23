@@ -19,6 +19,7 @@ services:
       TE_REDIS_PORT: "6379"
       TE_AUTO_START_CELERY: "true"
       FLASK_DEBUG: "false"
+      TE_LINUX_GID: ${TE_LINUX_GID:-1000}
     volumes:
       # Bind mount, not a named volume - engagement data needs to be a real, browsable folder
       # on the host (for backups, direct inspection, restoring from a snapshot, etc.), not
