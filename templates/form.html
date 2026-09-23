@@ -1,5 +1,34 @@
 {% extends "main.html" %}
 
+{% block head %}
+<script language="JavaScript">
+    // Scoped to the Create Engagement form (name="create_engagement") since it's a real page
+    // navigation with no feedback until the new page loads.
+    $(document).ready(function() {
+        $('form[name="create_engagement"]').on('submit', function(e) {
+            var form = this;
+            // preventDefault() + a double rAF before submitting ourselves guarantees the
+            // overlay actually paints before navigation starts tearing down the page.
+            e.preventDefault();
+            var $submitBtn = $(form).find('input[type=Submit]');
+            $submitBtn.prop('disabled', true).val('Creating engagement...');
+            $('#engagement-creating-overlay').css('display', 'flex');
+            requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                    form.submit();
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}
+
 {% block content %}
     {{ html_form|safe }}
+    <div id="engagement-creating-overlay" class="engagement-creating-overlay">
+        <div class="engagement-creating-box">
+            <div class="engagement-creating-spinner"></div>
+            <p>Creating engagement&hellip;</p>
+        </div>
+    </div>
 {% endblock %}
